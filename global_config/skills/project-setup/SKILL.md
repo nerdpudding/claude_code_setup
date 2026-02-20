@@ -41,12 +41,13 @@ If it differs, show the user what's wrong and ask if they want to fix it.
 
 ### 0.2 Global CLAUDE.md
 Read `~/.claude/CLAUDE.md` and verify it contains the key sections:
-- Project structure template (with `AI_INSTRUCTIONS.md`, `claude_plans/`, `archive/`, `.claude/agents/`)
+- Project structure template (with `AI_INSTRUCTIONS.md`, `concepts/`, `docs/lessons_learned.md`, `claude_plans/`, `archive/`, `.claude/agents/`)
 - Plan mode rules (including rename-after-exit)
 - Quality principles (SOLID, DRY, KISS)
 - Always rules (read order, English-only, one source of truth, use agents)
+- Communication style rules
 - Git commit rules (no AI attribution)
-- Compaction rules
+- Compaction rules (including lessons_learned read order)
 
 If sections are missing or outdated, tell the user what needs updating.
 
@@ -160,23 +161,52 @@ Create the project overview:
 
 Create the AI instruction file. **This is the single source of truth for hierarchy and agents.**
 - **Project overview** — one paragraph
-- **Principles** — SOLID/DRY/KISS, one source of truth, never delete (archive), modularity, English-only, build on existing work, use agents, local-first, Docker where possible (adapt to project)
+- **Principles** — SOLID/DRY/KISS, one source of truth, never delete (archive), modularity, English-only (see strong wording below), keep everything up to date, learn from mistakes, build on existing work, use agents (and update agent instructions after changes), local-first, Docker where possible (adapt to project)
+  - **English rule (use this exact wording):** "ALL code, docs, comments, plans, and commit messages MUST be in English — always, no exceptions. The user often communicates in Dutch, but everything written to files must be English."
+  - **Keep up to date:** "After any change, verify that docs, agent instructions, and config files still reflect reality. Stale docs are worse than no docs."
+  - **Learn from mistakes:** "When an approach fails or wastes effort, document it in `docs/lessons_learned.md`. This file is persistent context for AI assistants to avoid repeating the same mistakes."
 - **Workflow** — plan → ask approval → implement → test → iterate → clean up
 - **Project hierarchy** — full file tree with descriptions (THE single source of truth — nowhere else)
 - **Agents table** — placeholder, will be filled in Phase 5
 - **Plan rules** — reference global rules, add project-specific if needed
 - **Archive rules** — what goes to archive/
 - **Git commits** — no AI attribution, only commit when asked
-- **After compaction** — read order: this file → task tracker → active plans → concept → continue
+- **After compaction** — read order: this file → `docs/lessons_learned.md` → task tracker → active plans → concept → list contents of `claude_plans/`, `docs/`, `archive/` → continue
 
-### 3.4 roadmap.md
+### 3.4 docs/lessons_learned.md
+
+Create the lessons learned file with a header and format template:
+- **Header** — purpose statement ("Ongoing log of what worked and what didn't... context for AI assistants")
+- **Format template** — one example entry showing the Lesson / Example / Rule structure:
+
+```markdown
+# Lessons Learned
+
+Ongoing log of what worked and what didn't during development. Primarily intended as context for AI assistants to avoid repeating mistakes, but useful for anyone picking up the project.
+
+---
+
+## [Title of the lesson]
+
+**Lesson:** What was learned.
+
+**Example:** What happened that taught this lesson.
+
+**Rule:** The concrete rule to follow going forward.
+
+---
+```
+
+This file should be referenced in the AI_INSTRUCTIONS.md principles ("Learn from mistakes") and in the compaction read order.
+
+### 3.5 roadmap.md
 
 Create sprint-based roadmap:
 - Sprint 1 — MVP with concrete checkbox tasks
 - Sprint 2+ — planned but less detailed
 - Status table
 
-### 3.5 Daily task tracker
+### 3.6 Daily task tracker
 
 Create `todo_<today's date>.md`:
 - Group tasks by category

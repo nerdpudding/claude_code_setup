@@ -125,6 +125,7 @@ your-project/
 ├── concepts/
 │   └── concept.md              # Detailed concept, diagrams, technical decisions
 ├── docs/                       # Guides, detailed documentation, specs
+│   └── lessons_learned.md      # Ongoing log of what worked and what didn't
 ├── claude_plans/               # Active plans from plan mode
 ├── archive/                    # Completed plans, old trackers (never delete, always archive)
 └── .claude/
@@ -242,4 +243,5 @@ See [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) for the full project hierarchy and 
 |----------|---------|
 | [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) | Project rules, hierarchy, agents (source of truth) |
 | [concepts/concept.md](concepts/concept.md) | Detailed concept and design |
+| [docs/example_ai_instructions.md](docs/example_ai_instructions.md) | Reference example of a generated AI_INSTRUCTIONS.md |
 | [roadmap.md](roadmap.md) | Sprint plan and status |

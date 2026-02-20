@@ -5,15 +5,19 @@
 project/
 ├── AI_INSTRUCTIONS.md                     # AI instructions — read first (always, tool-agnostic)
 ├── README.md                              # Overview + status (always)
-├── ARCHITECTURE.md                        # Design (larger projects)
-├── DECISIONS.md                           # Choices + rationale (larger projects)
-├── DAILY_SCHEDULE_{date}.md               # Today's tasks (temp → archive/)
-├── docs/                                  # Feature proposals, hardware, specs
-├── phase{N}/ (or fase/sprint)             # Work by milestone
+├── roadmap.md                             # Sprint plan and status tracking
+├── todo_<date>.md                         # Daily task tracker (temp → archive/)
+├── concepts/
+│   └── concept.md                         # Initial concept, diagrams, technical decisions
+├── docs/                                  # Guides, specs, detailed documentation
+│   └── lessons_learned.md                 # Ongoing log of what worked and what didn't
+├── phase{N}/ (or sprint)                  # Work by milestone (larger projects)
 │   └── Phase{N}_Implementation_Plan.md    # HOW + order of tasks
 ├── claude_plans/                          # Active plans from plan mode
 ├── archive/                               # Never delete, always archive
-└── .claude/agents/                        # Custom agents (if used)
+└── .claude/
+    ├── settings.json                      # Project-level settings
+    └── agents/                            # Custom agents (if used)
 ```
 
 ### Key Terms
@@ -25,7 +29,7 @@ project/
 2. Plan mode generates random filenames (e.g. `humble-mixing-fern.md`) — this cannot be configured. **Immediately after exiting plan mode**, the FIRST action must be to rename the plan file to a clear name: `PLAN_<topic>.md` (e.g. `PLAN_upstream_sync.md`). Do this with `mv` before any other work.
 3. After completing a plan: move to `archive/` with date prefix (e.g. `2026-01-28_upstream_sync.md`)
 4. Implementation plans: `phase{N}/Phase{N}_Implementation_Plan.md`
-5. Daily schedules: root temporarily → `archive/daily-schedules/`
+5. Daily task trackers: root temporarily → `archive/` with date prefix
 6. Update progress in the appropriate tracker (phase plan, roadmap, or task file — one place, not duplicated)
 7. Archive outdated content, never delete
 
@@ -41,6 +45,13 @@ project/
 - One source of truth (no duplicate info)
 - Use agents when their role fits (check `.claude/agents/` if present)
 - Ask when project conventions are unclear
+
+### Communication style
+- Don't use the word "fair" (as in "fair point", "fair enough") — user hates it
+- NEVER suggest stopping, sleeping, or wrapping up — the user decides when to stop
+- Don't be patronizing or tell the user what they should do with their time
+- Casual is fine, just don't be a 15-year-old from Almere
+- When you don't know something, say so immediately instead of guessing
 
 ### Git commits
 - NEVER add "Co-Authored-By: Claude" or similar AI attribution to commit messages
@@ -62,6 +73,7 @@ Always end with: "Read AI_INSTRUCTIONS.md first, then continue."
 
 After compaction:
 - Read `AI_INSTRUCTIONS.md` first
+- Read `docs/lessons_learned.md` if it exists
 - Then continue with the task
 
 ---

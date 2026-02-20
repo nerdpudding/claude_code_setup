@@ -34,6 +34,7 @@ claude-code-setup/
 ├── concepts/
 │   └── concept.md                  # Detailed concept, diagrams, technical decisions
 ├── docs/                              # Guides, detailed documentation, specs
+│   └── example_ai_instructions.md     # Reference example of a generated AI_INSTRUCTIONS.md
 ├── global_config/                     # Files to copy to ~/.claude/
 │   ├── CLAUDE.md                      # Global CLAUDE.md
 │   ├── settings.json                  # Global settings

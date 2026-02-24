@@ -48,10 +48,17 @@ project/
 
 ### Communication style
 - Don't use the word "fair" (as in "fair point", "fair enough") — user hates it
+- No hollow validation like "You're absolutely right", "Great question", etc. — just get to the point
 - NEVER suggest stopping, sleeping, or wrapping up — the user decides when to stop
 - Don't be patronizing or tell the user what they should do with their time
-- Casual is fine, just don't be a 15-year-old from Almere
+- Casual is fine, but no trendy/hip teenager language, street slang, or internet slang. Standard software development jargon is fine where appropriate.
 - When you don't know something, say so immediately instead of guessing
+
+### Writing style (docs, comments, plans, code)
+- Default: neutral, impersonal language — "This component...", "The system...", "There is..."
+- Avoid "we", "our", or team-based phrasing unless a project explicitly states it's team-based
+- If a personal pronoun is needed, use "I" — but prefer impersonal descriptions
+- Examples: "We set up..." → "This setup...", "Our config uses..." → "The configuration uses..."
 
 ### Git commits
 - NEVER add "Co-Authored-By: Claude" or similar AI attribution to commit messages

@@ -39,16 +39,16 @@ adversarial verification; realigned the format. See `claude_plans/PLAN_opus_4_8_
 - [x] Create `realign-project` skill (`/realign`) — existing-project counterpart to project-setup
 - [x] Create `plan` skill (`/custom_plan`) — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no native plan mode (sidesteps approve-then-build)
 - [x] Light-sync README, concept, AI_INSTRUCTIONS, doc-keeper, example_ai_instructions to the new format
-- [x] Apply live to `~/.claude/` and field-test `/realign` on the local-media-gen project
+- [x] Apply live to `~/.claude/` and field-test `/realign` on a real existing project
 
-## Sprint 4: Finish & Extend (Planned)
+## Sprint 4: Finish & Extend (In progress)
 
-- [ ] Finish documenting the realignment in THIS repo's own docs (see `todo_2026-05-30.md`)
-- [ ] First-class `docs/opus_4_8_alignment.md` (the 10 alignment principles + the why)
-- [ ] Sync `global_config/settings.json` template to the new live defaults (effortLevel high, includeCoAuthoredBy:false, deny example)
+- [x] Finish documenting the realignment in THIS repo's own docs (done 2026-05-30 doc-audit)
+- [x] First-class `docs/opus_4_8_alignment.md` (the 10 alignment principles + the why) — file complete
+- [x] Sync `global_config/settings.json` template to the new live defaults (effortLevel high, includeCoAuthoredBy:false, deny example) — done
 - [x] Decide: wire `personal-voice` output style on by default — DONE, `outputStyle` set in settings (tone is single-homed in the style, removed from CLAUDE.md)
+- [x] Initialize git repository / first commit — done (commit `4c20f43`)
 - [ ] Optional plan-rename hook; agent templates for common project types; install script
-- [ ] Initialize git repository / first commit
 
 ## Status
 
@@ -57,4 +57,4 @@ adversarial verification; realigned the format. See `claude_plans/PLAN_opus_4_8_
 | Sprint 1 | Done | Initial project setup |
 | Sprint 2 | Done | UX improvements, folder rename, README expansion |
 | Sprint 3 | Done | Opus 4.8 realignment (format, skills, output style, live + field-test) |
-| Sprint 4 | Planned | Finish own-docs, alignment doc, template sync, commits |
+| Sprint 4 | In progress | Own-docs + first commit done; optional hook/templates/install-script deferred |

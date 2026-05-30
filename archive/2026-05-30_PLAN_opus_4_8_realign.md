@@ -208,8 +208,8 @@ refuted.
   optionally activate Personal Voice output style via /config.
 
 ### Phase 5 — Finalize
-- [ ] Update this checklist to all-done; move plan to `archive/` with date prefix when complete
-- [ ] Report to user; remind them to TEST the file-based plan workflow
+- [x] Update this checklist to all-done; move plan to `archive/` with date prefix when complete (done 2026-05-30 doc-audit)
+- [x] Report to user; remind them to TEST the file-based plan workflow
 
 ## Risks / watch-outs
 - Re-verify inner line numbers on disk before editing local-media-gen files (diagnosis line cites

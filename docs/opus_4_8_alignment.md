@@ -82,10 +82,11 @@ the channel, and the location** of the rules so a literal model reads them the w
 
 Native plan mode in Claude Code starts implementing as soon as you approve the plan — that is
 built into the harness and cannot be overridden by prose in `CLAUDE.md`. To plan **without**
-auto-building, do not toggle plan mode; instead ask for the plan written to
-`claude_plans/PLAN_<topic>.md` with "don't implement yet", then build later on an explicit
-instruction. `plansDirectory: ./claude_plans` keeps those plan files inside the project (not the
-hidden global `~/.claude/custom_plans/`).
+auto-building, use the `/custom_plan` skill: it researches read-only, writes the plan to
+`claude_plans/PLAN_<topic>.md`, and stops — building happens only later on an explicit "implement
+PLAN_<topic>" instruction. (Equivalent without the skill: ask for the plan written to that path
+with "don't implement yet".) `plansDirectory: ./claude_plans` keeps those plan files inside the
+project, not the hidden global `~/.claude/plans/`.
 
 ## How the principles map to this repo
 
@@ -105,5 +106,5 @@ The diagnosis came from a multi-agent research pass (parallel readers over the r
 the global setup, and a real project, plus web research on current Claude Code best practices and
 the 4.6->4.8 behavior shift), followed by an adversarial verification pass that tried to refute each
 proposed friction point. Only friction points that survived both a skeptic and a practical-impact
-check were kept. The two skills (`/project-setup` for new projects, `/realign` for existing ones)
-are how the surviving principles get applied in practice.
+check were kept. The skills (`/project-setup` for new projects, `/realign` for existing ones, and
+`/custom_plan` for build-it-later planning) are how the surviving principles get applied in practice.

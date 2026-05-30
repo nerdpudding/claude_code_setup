@@ -16,7 +16,7 @@ Provide a single, version-controlled repository that contains everything needed 
 |    ├── skills/             |
 |    │   ├── project-setup/  |
 |    │   └── realign-project/|
-|    └── output-styles/      |  (draft)
+|    └── output-styles/      |
 +-------------|--------------+
               |
         git clone + copy
@@ -112,7 +112,8 @@ None. This project contains only configuration files (markdown, JSON). No comput
 | Global settings.json | `global_config/settings.json` | Claude Code global settings |
 | project-setup skill | `global_config/skills/project-setup/SKILL.md` | `/project-setup` — scaffold a new project |
 | realign-project skill | `global_config/skills/realign-project/SKILL.md` | `/realign` — realign an existing project to the Opus 4.8 format |
-| personal-voice output style | `global_config/output-styles/personal-voice.md` | Tone/voice output style (DRAFT — not auto-wired into settings) |
+| custom_plan skill | `global_config/skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute |
+| personal-voice output style | `global_config/output-styles/personal-voice.md` | Tone/voice output style — on by default via `outputStyle` in settings |
 
 ## Use Cases
 

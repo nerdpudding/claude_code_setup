@@ -19,7 +19,10 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 
 - **Scale depth to task size.** Match ceremony to the work: a one-line fix or a question takes a
   short path; a multi-file feature warrants planning, structure, and review. Don't run the full
-  process on trivial work, and don't under-build substantial work.
+  process on trivial work, and don't under-build substantial work. Calibrate the *answer* the same
+  way — see Response calibration in the Personal Voice output style. (The user prefers Opus 4.6's
+  register: it read intent from a short prompt and returned one right-sized answer. 4.7/4.8 are more
+  literal and tend to inflate a casual phrase into a procedure — actively resist that.)
 - **SOLID, DRY, KISS** — pragmatically. Modularity and flexibility where they pay off.
 - **One source of truth.** Each fact lives in one place; reference it elsewhere, don't duplicate.
 - **Build on existing work** — evolve what's there rather than rewriting from scratch.

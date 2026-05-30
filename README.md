@@ -63,6 +63,23 @@ pressure, and stale in-repo files got trusted as ground truth.
   replaces Claude Code's native plan mode (whose approval step jumps straight to coding — a behavior
   that can't be switched off). Build later on an explicit "implement PLAN_<name>".
 
+**Effect on token usage.** v2 is primarily a *clarity* change, not a shrink — the repo itself grew
+(added principles doc, two skills, an output style). The efficiency gain is structural and shows up
+in the projects the setup produces, not in absolute document count:
+- **Global `CLAUDE.md`** stayed about the same length (~98 lines) — the per-turn always-loaded cost
+  is roughly flat, just tiered and clearer. The output style adds a small always-loaded chunk.
+- **`AI_INSTRUCTIONS.md`** is now a lean tiered core (target under 200 lines) with bulk detail in
+  on-demand sub-docs that load only when relevant — so the always-read file stays small.
+- **Agents** read a targeted set of files instead of a blanket "read everything first" (they don't
+  inherit `CLAUDE.md`/memory), making each spawn cheaper.
+- **Scale-to-size scaffolding** is the biggest win: a small new project generates only
+  `README.md` + `AI_INSTRUCTIONS.md`, not the full document/agent set, so fewer files are written
+  and read. The cost scales with what the project needs rather than a fixed ceremony.
+
+The net: more efficient *per turn* — especially for small/medium new projects and realigned ones —
+because the always-loaded surface stays lean while detail moves on-demand; not a reduction in total
+documentation.
+
 ### v1 — Initial setup
 
 Global `CLAUDE.md`, `settings.json`, the `/project-setup` skill, a `doc-keeper` agent template, and

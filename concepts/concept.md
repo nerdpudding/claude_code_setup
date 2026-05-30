@@ -7,26 +7,30 @@ Provide a single, version-controlled repository that contains everything needed 
 ## Core Idea
 
 ```
-+---------------------------+
-|   claude-code-setup repo  |
-|                           |
-|  global_config/           |
-|    ├── CLAUDE.md          |
-|    ├── settings.json      |
-|    └── skills/            |
-|        └── project-setup/ |
-+-------------|-------------+
++----------------------------+
+|   claude-code-setup repo   |
+|                            |
+|  global_config/            |
+|    ├── CLAUDE.md           |
+|    ├── settings.json       |
+|    ├── skills/             |
+|    │   ├── project-setup/  |
+|    │   └── realign-project/|
+|    └── output-styles/      |  (draft)
++-------------|--------------+
               |
         git clone + copy
               |
               v
-+---------------------------+
-|   ~/.claude/              |
-|    ├── CLAUDE.md          |
-|    ├── settings.json      |
-|    └── skills/            |
-|        └── project-setup/ |
-+---------------------------+
++----------------------------+
+|   ~/.claude/               |
+|    ├── CLAUDE.md           |
+|    ├── settings.json       |
+|    ├── skills/             |
+|    │   ├── project-setup/  |
+|    │   └── realign-project/|
+|    └── output-styles/      |
++----------------------------+
               |
         claude-code reads
               |
@@ -106,7 +110,9 @@ None. This project contains only configuration files (markdown, JSON). No comput
 |----------|----------|---------|
 | Global CLAUDE.md | `global_config/CLAUDE.md` | Global workflow rules and conventions |
 | Global settings.json | `global_config/settings.json` | Claude Code global settings |
-| project-setup skill | `global_config/skills/project-setup/SKILL.md` | Skill for scaffolding new projects |
+| project-setup skill | `global_config/skills/project-setup/SKILL.md` | `/project-setup` — scaffold a new project |
+| realign-project skill | `global_config/skills/realign-project/SKILL.md` | `/realign` — realign an existing project to the Opus 4.8 format |
+| personal-voice output style | `global_config/output-styles/personal-voice.md` | Tone/voice output style (DRAFT — not auto-wired into settings) |
 
 ## Use Cases
 

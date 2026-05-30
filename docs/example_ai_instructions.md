@@ -1,6 +1,13 @@
 # Example AI_INSTRUCTIONS.md
 
-> **This is a reference example** — showing what a generated `AI_INSTRUCTIONS.md` should look like after running `/project-setup`. The actual content is tailored to each project based on user input. This file is NOT used by any project directly.
+> **This is a reference EXAMPLE** — it shows the shape a generated `AI_INSTRUCTIONS.md` should
+> take after running `/project-setup`. The real content is tailored per project. Nothing uses this
+> file directly.
+>
+> It demonstrates the Opus 4.8-aligned format: a tiered **Hard rules / Preferences** split, a
+> single-homed project hierarchy, an agents table, source-of-truth pointers, and workflow depth
+> that scales to task size. Keep the whole thing well under 200 lines — the always-loaded surface
+> stays lean.
 >
 > Fictional project: `task-api` — a REST API for task management.
 
@@ -8,99 +15,121 @@
 
 # AI Instructions — task-api
 
-## Project Overview
+Project rules and structure for `task-api`. Two tiers: **Hard rules** are invariants — never
+violate them. **Preferences** are defaults — apply by judgment, override when a task is genuinely
+better served otherwise. Reserve absolutes for the Hard-rules block.
 
-Task-api is a REST API for managing tasks and projects, built with Python/FastAPI and PostgreSQL. It provides CRUD endpoints for tasks, project grouping, and basic user authentication.
+## Project overview
 
-## Principles
+A REST API for managing tasks and projects, built with Python/FastAPI and PostgreSQL. Provides
+CRUD endpoints for tasks, project grouping, and basic user authentication. Local-first; services
+run via Docker Compose.
 
-- **SOLID, DRY, KISS** — Default yes, adapt to project needs
-- **One source of truth** — No duplicate information across documents
-- **Never delete, always archive** — Move outdated content to `archive/` with date prefix
-- **Modularity & flexibility** — Important for most projects
-- **English only** — ALL code, docs, comments, plans, and commit messages MUST be in English — always, no exceptions. The user often communicates in Dutch, but everything written to files must be English.
-- **Keep everything up to date** — After any change, verify that docs, agent instructions, and config files still reflect reality. Stale docs are worse than no docs.
-- **Learn from mistakes** — When an approach fails or wastes effort, document it in `docs/lessons_learned.md`. This file is persistent context for AI assistants to avoid repeating the same mistakes.
-- **Build on existing work** — Evolve code and docs, don't rewrite from scratch
-- **Use agents** — Check `.claude/agents/` for specialized help before starting tasks. After making changes, update agent instructions if they reference affected files or behavior.
-- **Local-first** — Run everything locally where possible
-- **Docker where possible** — Use Docker for services, databases, reproducible environments
+## Hard rules (never violate)
 
-## Workflow
+- **English in files.** All code, docs, comments, plans, and commit messages are English — even
+  when the conversation is in Dutch.
+- **No AI attribution in commits.** No "Co-Authored-By" or "Generated with Claude". (Also enforced
+  via `includeCoAuthoredBy: false` in settings — keep both.)
+- **Commit and push only when asked.** Don't commit, push, or open PRs unprompted.
+- **Never commit secrets** — `.env`, credentials, API keys. Use `.env.example` for templates.
+- **Don't delete or overwrite files you didn't create** without surfacing it first. If a file's
+  content contradicts how it's described, stop and report rather than proceeding.
 
-1. **Plan** — Use plan mode for any non-trivial changes
-2. **Ask approval** — Confirm approach before making changes
-3. **Implement** — Make the changes
-4. **Test** — Run tests, verify behavior
-5. **Iterate** — Refine based on results
-6. **Clean up** — Archive completed plans, update trackers
+## Preferences (use judgment; override when the task is better served)
 
-## Project Hierarchy
+- **Scale workflow depth to task size.** Match ceremony to the work: a one-line fix or a question
+  takes a short path; a multi-file feature warrants planning, structure, and review. Don't run the
+  full process on trivial work, and don't under-build substantial work.
+- **SOLID, DRY, KISS** — pragmatically. Modularity where it pays off.
+- **One source of truth.** Each fact lives in one place; reference it elsewhere, don't duplicate.
+- **Build on existing work** — evolve code and docs rather than rewriting from scratch.
+- **Keep docs current** — after a change, fix the docs that describe it. Stale docs mislead.
+- **Learn from mistakes** — when an approach fails or wastes effort, log it in
+  `docs/lessons_learned.md` so it isn't repeated.
+- **Use the right agent** for its domain (see the table below; check `.claude/agents/`).
+- **Ask when conventions are unclear** rather than guessing.
+- **Local-first, Docker where possible** — run services, databases, and reproducible environments
+  in containers.
 
-This is the single source of truth for the project file structure:
+## Workflow (depth scales to task size)
+
+Trivial change or a question → just do it / answer. Non-trivial change → plan first, confirm the
+approach, implement, test, then clean up (archive completed plans, update the tracker).
+
+## Project hierarchy
+
+Single source of truth for the file structure. Minimal by default — add directories only as the
+project needs them.
 
 ```
 task-api/
-├── AI_INSTRUCTIONS.md              # This file — project rules, hierarchy, agents
-├── README.md                       # Overview, quick start, documentation links
-├── roadmap.md                      # Sprint plan and status tracking
-├── todo_<date>.md                  # Daily task tracker (temp, archive when done)
-├── concepts/
-│   └── concept.md                  # Detailed concept, diagrams, technical decisions
-├── docs/                           # Guides, detailed documentation, specs
-│   └── lessons_learned.md          # Ongoing log of what worked and what didn't
+├── AI_INSTRUCTIONS.md          # This file — rules, hierarchy, agents (read first, tool-agnostic)
+├── README.md                   # Overview, quick start, doc links
+├── roadmap.md                  # Sprint plan and status tracking
+├── todo_<date>.md              # Daily task tracker (temp → archive/)
+├── concepts/concept.md         # Concept, diagrams, technical decisions
+├── docs/                       # Guides, specs; docs/lessons_learned.md = what worked/didn't
 ├── src/
-│   ├── main.py                     # FastAPI app entry point
-│   ├── models/                     # SQLAlchemy models
-│   ├── routes/                     # API route handlers
-│   ├── schemas/                    # Pydantic schemas
-│   └── services/                   # Business logic
-├── tests/                          # Test suite
-├── claude_plans/                   # Active plans from plan mode
-├── archive/                        # Archived plans, schedules, outdated docs
+│   ├── main.py                 # FastAPI app entry point
+│   ├── models/                 # SQLAlchemy models
+│   ├── routes/                 # API route handlers
+│   ├── schemas/                # Pydantic schemas
+│   └── services/               # Business logic
+├── tests/                      # Test suite
+├── claude_plans/               # Plan files (PLAN_<topic>.md), git-committed
+├── archive/                    # Outdated content (never delete — archive with date prefix)
 ├── .claude/
-│   ├── settings.json               # Project-level Claude settings
-│   └── agents/
-│       └── doc-keeper.md           # Documentation audit agent
-├── docker-compose.yml              # Local development services
-├── Dockerfile                      # Application container
-├── requirements.txt                # Python dependencies
-└── .env.example                    # Environment variable template
+│   ├── settings.json           # Project settings (plansDirectory: ./claude_plans)
+│   └── agents/doc-keeper.md    # Documentation audit agent
+├── docker-compose.yml          # Local development services
+├── Dockerfile                  # Application container
+├── requirements.txt            # Python dependencies
+└── .env.example                # Environment variable template
 ```
 
 ## Agents
 
-| Agent | File | When to use |
-|-------|------|-------------|
-| doc-keeper | `.claude/agents/doc-keeper.md` | After making changes — to verify docs still reflect reality. When asked to clean up, audit, or organize documentation. |
+| Agent | File | Use proactively when |
+|-------|------|----------------------|
+| doc-keeper | `.claude/agents/doc-keeper.md` | After changes that touch docs/structure, or when asked to audit, clean up, or organize documentation. Verifies docs still reflect reality. |
 
-## Plan Rules
+Add project-specific agents (e.g. `db-migrator`, `api-tester`) as needs grow; keep one owner per
+domain and list each here.
 
-- Plans go in `claude_plans/` (configured in `.claude/settings.json`)
-- Rename plan files immediately after exiting plan mode: `PLAN_<topic>.md`
-- Archive completed plans to `archive/` with date prefix
-- Update progress in `roadmap.md` (single tracker for this project)
+## Source of truth
 
-## Archive Rules
+- **Project rules, hierarchy, agents** → this file (`AI_INSTRUCTIONS.md`).
+- **Actual filesystem** → what really exists on disk; docs conform to it, not the reverse.
+- **Cross-project preferences and tone** → global `~/.claude/CLAUDE.md` (don't restate here).
+- **Volatile cross-session state** → native auto-memory (`MEMORY.md`), not a hand-kept prose log.
+- One home per fact: README and other docs reference this hierarchy, they don't duplicate it.
 
-Move to `archive/` with date prefix (`YYYY-MM-DD_filename.md`):
-- Completed plans
-- Daily task trackers after the day is done
-- Outdated documentation
+## Plan rules (plan → save → rename → build later)
 
-## Git Commits
+Plans live in `claude_plans/` (set via `plansDirectory`), are git-committed, and are named after
+the feature or sprint (`PLAN_<topic>.md`).
 
-- No AI attribution in commit messages
-- Only commit when explicitly asked
-- Write normal, descriptive commit messages
+1. **Save:** use plan mode to draft, then exit via the save-without-implementing option ("don't
+   implement — save plan and return"). The plan is written to `claude_plans/` and nothing runs.
+2. **Rename:** rename the generated `*-ultraplan.md` to `PLAN_<topic>.md`. Safe to rename now —
+   nothing is executing. Then review / edit / commit.
+3. **Build later, on explicit instruction:** implement only when told to (e.g. "implement
+   PLAN_<name>"). Saving a plan is never a signal to start coding.
+4. **Archive when done:** move to `archive/` with a `YYYY-MM-DD_` prefix.
 
-## After Compaction
+Track progress in one place — `roadmap.md` for this project. Don't duplicate status across files.
 
-Read order:
-1. This file (`AI_INSTRUCTIONS.md`)
-2. `docs/lessons_learned.md`
-3. Active task tracker (`todo_<date>.md`)
-4. Active plans in `claude_plans/`
-5. `concepts/concept.md`
-6. List contents of `claude_plans/`, `docs/`, `archive/`
-7. Continue with the task
+## Archive rules
+
+Move to `archive/` with a date prefix (`YYYY-MM-DD_filename.md`), never delete: completed plans,
+daily task trackers after the day is done, and outdated documentation.
+
+## Git commits
+
+No AI attribution; commit only when asked; write normal, descriptive messages.
+
+## After compaction
+
+Re-read `AI_INSTRUCTIONS.md` and `docs/lessons_learned.md` (if it exists), then continue. Native
+auto-memory holds volatile cross-session state — don't reconstruct it by hand.

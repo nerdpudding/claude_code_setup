@@ -6,10 +6,17 @@
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "600000"
   },
-  "permissions": {
-    "defaultMode": "plan"
-  },
-  "model": "opus",
   "alwaysThinkingEnabled": true,
-  "plansDirectory": "./claude_plans"
+  "effortLevel": "high",
+  "plansDirectory": "./claude_plans",
+  "includeCoAuthoredBy": false,
+  "outputStyle": "Personal Voice",
+  "showThinkingSummaries": true,
+  "verbose": true,
+  "skipWorkflowUsageWarning": true,
+  "permissions": {
+    "deny": [
+      "Read(**/sampling_prompts.txt)"
+    ]
+  }
 }

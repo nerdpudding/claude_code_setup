@@ -1,247 +1,174 @@
 # claude-code-setup
 
-Template repository for setting up and managing global Claude Code configuration, skills, and workflow settings.
+A version-controlled home for a personal Claude Code environment: the global `CLAUDE.md`,
+`settings.json`, an output style, and a set of skills. Clone it, copy `global_config/*` into
+`~/.claude/`, and any machine works the same way.
 
 ## Table of Contents
 
-- [Goal](#goal)
-- [Quick Start Overview](#quick-start-overview)
-- [Two Setup Approaches](#two-setup-approaches)
-- [What `/project-setup` Creates](#what-project-setup-creates)
-- [Global vs Project-Level Configuration](#global-vs-project-level-configuration)
-- [Skills and Agents](#skills-and-agents)
-- [Use Cases](#use-cases)
-- [Customizing Skills](#customizing-skills)
-- [Going Further](#going-further)
-- [Development Approach](#development-approach)
-- [Project Structure & Agents](#project-structure--agents)
-- [Documentation](#documentation)
+- [What this is](#what-this-is)
+- [Version history](#version-history)
+- [Quick start](#quick-start)
+- [What's in `global_config/`](#whats-in-global_config)
+- [The skills](#the-skills)
+- [Opus 4.8 alignment — why the format looks like this](#opus-48-alignment--why-the-format-looks-like-this)
+- [Global vs project-level config](#global-vs-project-level-config)
+- [Project structure & docs](#project-structure--docs)
 
-## Goal
+## What this is
 
-Provide a single, version-controlled repository that contains everything needed to set up a consistent Claude Code environment on any machine. Clone, copy, and you're ready.
+One repo that holds everything needed to reproduce a consistent Claude Code setup on any machine.
+The `global_config/` folder mirrors `~/.claude/` — copy it across and you have the same CLAUDE.md,
+settings, output style, and skills everywhere.
 
-### About this workflow
+It reflects a **personal** workflow (rapid PoC-style development with light structure), not a
+universal best practice. The development cycle it encourages: **setup → concept → plan → implement →
+test → iterate → update docs → commit**.
 
-This setup reflects **my personal workflow** for developing with Claude Code — it's an example, not a universal best practice. It may not match how you prefer to work, but it's a solid starting point you can adapt.
+Two deliberate choices:
+- **`AI_INSTRUCTIONS.md` per project** (next to `CLAUDE.md`): a tool-agnostic, project-scoped
+  primary doc that's easy to read and works with any AI assistant, not just Claude Code.
+- **Project-local plans & archives** (`claude_plans/`, `archive/` inside each project): each project
+  is self-contained — easy to move, share, commit, or revisit. Plans never live in a global folder.
 
-**What it's aimed at:** Rapid PoC-style development with structure. Fast iteration without chaos — you get a clear project skeleton, persistent documentation, and a repeatable flow, without enterprise-level overhead. The development cycle it encourages is: **setup project → define concept → plan → implement → test → iterate → update docs → commit**.
+## Version history
 
-**Why `AI_INSTRUCTIONS.md` instead of just `CLAUDE.md`?** Claude Code already reads `CLAUDE.md` for global preferences. But I find a separate `AI_INSTRUCTIONS.md` in the project root more practical during development — it's easier to read, clearly scoped to the project, tool-agnostic (works with any AI assistant, not just Claude Code), and gives you a dedicated place to steer the AI with project-specific rules without cluttering the global config.
+### v2 — Opus 4.8 alignment (2026-05-30)
 
-**Why project-local plans and archives?** Plans live in `claude_plans/` inside the project, not in a global Claude folder. Archives stay in the project's `archive/`. This keeps everything self-contained — each project is its own unit of work, easy to move, share, or revisit later.
+**Why v1 needed changing.** v1 was tuned for Claude Opus 4.5/4.6. On 4.7/4.8 the same files felt
+heavier and more bureaucratic: a more **literal** and more **agentic** model executes soft prose
+imperatives close to the letter, so right-sizing hints ("always run the full review", "do NOT skip
+phases") became mandatory ceremony on trivial tasks, duplicated rules became amplified compliance
+pressure, and stale in-repo files got trusted as ground truth.
 
-**IDE and environment:** I use Claude Code in the terminal connected to VS Code, but nothing here depends on that. It works without an IDE, with other editors, or purely terminal-based — Claude Code handles the interaction, the files are just markdown and JSON.
+**What v2 changes to fix it** (full rationale + the ten principles in
+[`docs/opus_4_8_alignment.md`](docs/opus_4_8_alignment.md)):
+- `CLAUDE.md` rewritten from a flat ALWAYS/NEVER wall into a tiered **Hard rules / Preferences**
+  format — the model can now tell load-bearing invariants from soft defaults.
+- Tone/voice moved into a dedicated **output style** (system-prompt channel, reliably honored)
+  instead of being diluted inside `CLAUDE.md`.
+- Enforceable rules made **deterministic** in `settings.json` (`includeCoAuthoredBy: false`,
+  `permissions.deny`) instead of prose the model has to remember.
+- Everyday `effortLevel` set to `high` (not `xhigh`) — 4.8 already supplies more depth per turn.
+- Instruction files kept **lean**; bulk detail moved to on-demand sub-docs.
 
-**Not enterprise, but expandable.** This is built for quick personal development — get an idea, scaffold it, build it. But the structure scales: you can add more agents, more skills, more phases, CI/CD steps, or team conventions as your needs grow.
+**New skills in v2 — and when to use each:**
+- **`/project-setup`** — when starting a NEW project (or filling in a partial one). Scaffolds the
+  structure, docs, agents, and workflow, scaled to project size.
+- **`/realign`** — when an EXISTING project's Claude Code setup feels heavy or bureaucratic after a
+  model upgrade. Audits and modernizes its docs/agents/settings to the v2 format. The counterpart to
+  `/project-setup`.
+- **`/custom_plan`** — when planning a sprint or feature. Researches read-only, writes
+  `claude_plans/PLAN_<name>.md`, then stops. Named `custom_plan` on purpose because it deliberately
+  replaces Claude Code's native plan mode (whose approval step jumps straight to coding — a behavior
+  that can't be switched off). Build later on an explicit "implement PLAN_<name>".
 
-## Quick Start Overview
+### v1 — Initial setup
 
+Global `CLAUDE.md`, `settings.json`, the `/project-setup` skill, a `doc-keeper` agent template, and
+the supporting docs.
+
+## Quick start
+
+> **Warning:** if `~/.claude/` already has files, don't blindly overwrite. Back up or merge first.
+> If Claude Code is freshly installed and uncustomized, copying directly is safe.
+
+```bash
+# 1. Clone
+git clone <repo-url> claude-code-setup
+
+# 2. (Optional) back up an existing config
+# cp -r ~/.claude/ ~/.claude-backup/
+
+# 3. Copy the global config into ~/.claude/
+#    (CLAUDE.md, settings.json, all skills, and the output style)
+cp -r claude-code-setup/global_config/* ~/.claude/
+
+# 4. Restart Claude Code so it picks up the skills + output style, then in any project run:
+#    /project-setup   (verify global setup, or scaffold a project)
 ```
-claude-code-setup repo          ~/.claude/ (target)
-├── global_config/           →  ├── CLAUDE.md
-│   ├── CLAUDE.md               ├── settings.json
-│   ├── settings.json            └── skills/
-│   └── skills/                      └── project-setup/
-│       └── project-setup/
-```
 
-The `global_config/` folder contains three files that go into `~/.claude/`:
+The Personal Voice output style and the skills take effect on the **next session** after copying.
+
+## What's in `global_config/`
 
 | File | What it does |
 |------|-------------|
-| `CLAUDE.md` | Global instructions for Claude Code — your workflow preferences, project structure conventions, plan mode rules. Applied to every session. |
-| `settings.json` | Global settings — model selection, telemetry, timeouts, default permissions. |
-| `skills/project-setup/SKILL.md` | The `/project-setup` skill — an interactive workflow that scaffolds any new project with consistent structure, docs, and agents. |
-
-Both `CLAUDE.md` and skills can exist globally (`~/.claude/`) and project-specifically (`.claude/` in a project root). See [Global vs Project-Level Configuration](#global-vs-project-level-configuration) for details.
-
-### Slash commands in Claude Code
-
-Claude Code has built-in `/` commands you can type in the chat. No need to memorize them — just type `/` and a list of available commands appears to scroll through. Some common ones:
-
-| Command | What it does |
-|---------|-------------|
-| `/help` | Show available commands |
-| `/compact` | Compress conversation context |
-| `/agents` | Manage project agents |
-| `/init` | Initialize project settings |
-
-This repository adds **`/project-setup`** as a custom slash command via the skills system. After copying the skill file to `~/.claude/skills/`, typing `/project-setup` in any Claude Code session launches the interactive project scaffolding workflow. You can create your own custom commands the same way.
-
-**`/project-setup` vs `/init`:** The built-in `/init` generates a single `CLAUDE.md` by analyzing existing code — useful for quickly giving Claude context about a codebase. `/project-setup` is a full development environment scaffolding: it creates directory structure, foundational documents, agents, roadmap, and workflow conventions from scratch. Use `/init` for quick context on existing code, `/project-setup` for structured project setup.
-
-### Prerequisites
-
-This repository provides **configuration** for Claude Code — it does not install Claude Code itself. You need Claude Code installed and working first. See the [official Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code/overview) to get started.
-
-### Installation
-
-> **Warning:** If you already have files in `~/.claude/`, don't blindly overwrite them. Check your current settings first and either merge manually or back up before copying. If unsure, ask Claude to help compare and merge. If you just installed Claude Code and haven't customized anything yet, it's safe to copy directly.
-
-```bash
-# 1. Clone the repository
-git clone <repo-url> claude-code-setup
-
-# 2. (If you have existing ~/.claude/ files, back them up first)
-# cp -r ~/.claude/ ~/.claude-backup/
-
-# 3. Copy global config files to ~/.claude/
-cp -r claude-code-setup/global_config/* ~/.claude/
-
-# 4. Verify setup (optional)
-# Open Claude Code in any project and run: /project-setup
-# Select "check global setup" to verify everything is in place
-```
-
-## Two Setup Approaches
-
-### A) Fresh start — from a generic directory (e.g. `~/repos`)
-
-1. Clone this repo and copy global config (see [Quick Start Overview](#quick-start-overview))
-2. Navigate to where you keep projects (e.g. `cd ~/repos`)
-3. Run `/project-setup` — the skill detects you're in a generic directory and will create a new subfolder
-4. Answer the prompts: project name, description, goals, etc.
-5. The skill creates the full project structure inside a new `~/repos/<project-name>/` folder
-
-### B) Existing project folder — already has files
-
-1. Clone this repo and copy global config (see [Quick Start Overview](#quick-start-overview))
-2. Navigate into your existing project (e.g. `cd ~/repos/my-app`)
-3. Run `/project-setup` — the skill detects project files and works IN the current directory
-4. It suggests the folder name as the project name (you can override)
-5. Only missing subdirectories are created; existing files are preserved
-
-## What `/project-setup` Creates
-
-The skill walks through 7 phases interactively. Here's what you end up with:
+| `CLAUDE.md` | Global instructions — tiered Hard rules / Preferences, project conventions, plan rules. Auto-loaded every session. |
+| `settings.json` | Global settings — telemetry/timeouts, `effortLevel: high`, `includeCoAuthoredBy: false`, `outputStyle: "Personal Voice"`, `plansDirectory`, a `permissions.deny` example. |
+| `output-styles/personal-voice.md` | Tone/voice output style — the single home for tone rules (no "fair", no hollow validation, neutral voice, no emojis). **On by default** via `outputStyle`; `keep-coding-instructions: true` keeps all standard coding behavior, so it's purely additive. |
+| `skills/project-setup/SKILL.md` | `/project-setup` — scaffold a NEW project. |
+| `skills/realign-project/SKILL.md` | `/realign` — modernize an EXISTING project to the v2 format. |
+| `skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute. |
 
 ```
-your-project/
-├── AI_INSTRUCTIONS.md          # Project rules, file hierarchy, agents table (source of truth)
-├── README.md                   # Project overview, goals, architecture, use cases
-├── roadmap.md                  # Sprint plan with checkboxes
-├── todo_<date>.md              # Daily task tracker
-├── concepts/
-│   └── concept.md              # Detailed concept, diagrams, technical decisions
-├── docs/                       # Guides, detailed documentation, specs
-│   └── lessons_learned.md      # Ongoing log of what worked and what didn't
-├── claude_plans/               # Active plans from plan mode
-├── archive/                    # Completed plans, old trackers (never delete, always archive)
-└── .claude/
-    ├── settings.json           # Project-level settings (plans directory, etc.)
-    └── agents/
-        └── doc-keeper.md       # Documentation audit agent (optional)
+claude-code-setup repo              ~/.claude/ (target)
+└── global_config/          →       ├── CLAUDE.md
+    ├── CLAUDE.md                    ├── settings.json
+    ├── settings.json               ├── output-styles/
+    ├── output-styles/              │   └── personal-voice.md
+    │   └── personal-voice.md       └── skills/
+    └── skills/                         ├── project-setup/
+        ├── project-setup/             ├── realign-project/
+        ├── realign-project/           └── custom_plan/
+        └── custom_plan/
 ```
 
-### Phases overview
+## The skills
 
-| Phase | What happens | Required? |
-|-------|-------------|-----------|
-| 0. Environment check | Verify your global `~/.claude/` setup is correct | Optional — on request |
-| 1. Define | Detect context (existing folder vs fresh start), gather project name, goals, use cases | Yes |
-| 2. Structure | Create directories, clone repos if needed | Yes |
-| 3. Documents | Generate `concept.md`, `README.md`, `AI_INSTRUCTIONS.md`, `roadmap.md`, task tracker | Yes |
-| 4. Settings | Create `.claude/settings.json` | Yes |
-| 5. Agents & Skills | Offer `doc-keeper` agent, suggest others based on project needs, optionally create project-specific skills | Agents are offered, you choose |
-| 6. Verify | Run consistency check across all generated docs | Yes |
-| 7. Explain | Teach the daily workflow and key principles | Yes |
+| Skill | Use it when… | What it does |
+|-------|--------------|--------------|
+| `/project-setup` | Starting a new project, or verifying the global setup on a new PC | Scaffolds structure, docs, agents, workflow — scaled to project size (a small script needs only README + AI_INSTRUCTIONS). |
+| `/realign` | An existing project feels heavy/bureaucratic after a model upgrade | Audits CLAUDE.md / AI_INSTRUCTIONS / agents / settings / memory and modernizes them to the v2 format. Asks before editing. |
+| `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, stops. Build later on "implement PLAN_<name>". |
 
-### Optional components
+**`/project-setup` vs `/realign`:** `/project-setup` builds structure that isn't there yet;
+`/realign` leaves the structure and updates the *wording, channel, and location* of an existing
+project's instructions. Create with one, modernize with the other.
 
-- **doc-keeper agent** — Offered in Phase 5. Audits documentation for consistency, detects stale references, and checks that the file hierarchy matches reality. Recommended for any project with multiple docs.
-- **Additional agents** — Based on your project, the skill may suggest a `repo-researcher` (for cloned repos), `environment-setup` (for Docker/GPU/infra), or `builder` (for multi-component projects). You choose which to add.
-- **Project-specific skills** — Phase 5.5 offers to create custom `/` commands scoped to your project (e.g. a `/deploy` or `/test` workflow).
+**`/custom_plan` vs native plan mode:** native plan mode starts implementing the moment you approve
+the plan — that's hardcoded and can't be overridden. `/custom_plan` keeps the good part (disciplined
+read-only exploration + a structured design) but makes saving a plan and building it two separate,
+user-controlled steps. The plan file lands in your project's `claude_plans/`, never in a global
+folder.
 
-Everything is generated from your answers — no boilerplate copy-paste. You can re-run `/project-setup` later to extend or verify an existing project.
+**`/project-setup` vs `/init`:** the built-in `/init` writes a single `CLAUDE.md` by reading
+existing code. `/project-setup` scaffolds a whole environment (structure, docs, agents, workflow).
 
-### After setup: restart Claude Code
+## Opus 4.8 alignment — why the format looks like this
 
-After `/project-setup` finishes creating agents and skills, **exit Claude Code and start a new session** for them to be registered. New agents and skills are only picked up on startup. Use `/exit`, then re-launch Claude Code in the project directory. To continue where you left off, use `/resume` after launching to pick up an existing session.
+The short version of [`docs/opus_4_8_alignment.md`](docs/opus_4_8_alignment.md) — ten principles:
 
-### Tip: agent model selection
+1. **Tier emphasis** — a small Hard-rules block + a Preferences block; absolutes only for real invariants.
+2. **Intent + conditions, not universal imperatives** — scope-gate ceremony; "scale depth to task size".
+3. **Right channel per rule** — tone → output style; process → CLAUDE.md/AI_INSTRUCTIONS; volatile state → native memory.
+4. **Deterministic over prose** — `includeCoAuthoredBy: false`, `permissions.deny` instead of remembered rules.
+5. **One home per fact** — single-source each rule; reference, don't restate.
+6. **Lean always-loaded surface** — keep CLAUDE.md/AI_INSTRUCTIONS small; push detail to on-demand sub-docs.
+7. **Minimal by default, scale up only when asked** — scaffolding starts small.
+8. **Trust native systems over shadow copies** — no git-tracked duplicate of native memory.
+9. **Tune depth at the settings layer** (`effortLevel`), not via prose "be thorough".
+10. **Crisp, non-overlapping subagent descriptions** — keyword-led, one owner per domain.
 
-Agents can run on different models — this is configured in the agent's frontmatter. For example, `doc-keeper` uses `model: sonnet` instead of Opus because documentation auditing doesn't need the most expensive model, and Sonnet is fast and capable enough for the task. This saves API costs. To view or edit agent settings after setup, use the `/agents` command.
+## Global vs project-level config
 
-## Global vs Project-Level Configuration
+| Aspect | Global (`~/.claude/`) | Project (`.claude/` in a repo) |
+|--------|----------------------|-------------------------------|
+| Scope | Every session on the machine | Only that project |
+| Holds | `CLAUDE.md`, `settings.json`, output style, global skills | `settings.json`, agents, project-specific skills |
+| Managed by | This repo (`global_config/`) | Created per-project by `/project-setup` |
 
-| Aspect | Global (`~/.claude/`) | Project (`.claude/` in project root) |
-|--------|----------------------|--------------------------------------|
-| Scope | All Claude Code sessions on this machine | Only this specific project |
-| Contains | `CLAUDE.md`, `settings.json`, global skills | `settings.json`, agents, project-specific skills |
-| Managed by | This repository (`global_config/`) | Created per-project by `/project-setup` |
-| Skills | `~/.claude/skills/` — available everywhere | `.claude/skills/` — only in this project |
-| Agents | Not applicable (agents are always project-specific) | `.claude/agents/` — project-specific personas |
-| Example | Global CLAUDE.md with your workflow preferences | Project settings with `plansDirectory` |
+Skills can be global (`~/.claude/skills/`, available everywhere) or project-specific
+(`.claude/skills/`). Agents are always project-specific (`.claude/agents/`).
 
-## Skills and Agents
+## Project structure & docs
 
-| | Skills | Agents |
-|---|--------|--------|
-| **What** | Step-by-step workflows | Specialized personas with domain expertise |
-| **Trigger** | User invokes with `/skill-name` | Claude delegates automatically, or user invokes with `/agents` |
-| **Location** | `~/.claude/skills/` (global) or `.claude/skills/` (project) | `.claude/agents/` (always project-specific) |
-| **Example** | `/project-setup` — scaffolds a new project | `doc-keeper` — audits documentation consistency |
-| **When to use** | Repeatable multi-step processes you want to standardize | Specialized tasks where deep domain focus helps (auditing, research, building) |
-
-Skills can be global (available in all projects) or project-specific. Agents are always project-specific because they need to understand that project's structure and context.
-
-## Use Cases
-
-- **New PC setup** — Clone repo, copy files to `~/.claude/`, have a fully configured Claude Code environment
-- **Share config** — Share this repo with collaborators for consistent setups across teams
-- **Evolve settings** — Version-control changes to global settings, skills, and conventions
-- **Onboard projects** — After global setup, run `/project-setup` in any new project for consistent structure
-
-## Customizing Skills
-
-The `project-setup` skill included in this repo is a starting point. You can:
-
-- **Edit it** — modify phases, add/remove questions, change the generated file templates in `global_config/skills/project-setup/SKILL.md`
-- **Add phases** — e.g. add a "CI/CD setup" phase or "Docker configuration" phase
-- **Create new global skills** — add new folders under `global_config/skills/<name>/SKILL.md`, then copy to `~/.claude/skills/`
-- **Create project-specific skills** — add `.claude/skills/<name>/SKILL.md` inside any project (the `/project-setup` skill offers this in Phase 5.5)
-
-## Going Further
-
-The current setup covers the essentials: global config, a project scaffolding skill, and documentation agents. Claude Code has additional features you could integrate into your workflow or extend the `/project-setup` skill with — for example, adding phases that set these up during project onboarding.
-
-| Feature | What it does | When to consider |
-|---------|-------------|-----------------|
-| [MCP Servers](https://docs.anthropic.com/en/docs/claude-code/mcp) | Connect Claude Code to external tools and data sources (databases, APIs, issue trackers) via the Model Context Protocol | When your projects regularly need access to external services |
-| [Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks) | Shell commands that run automatically at lifecycle events (before/after tool use, on session start, on prompt submit, etc.) | When you want deterministic automation — auto-formatting, validation, notifications |
-| [Agent Teams](https://docs.anthropic.com/en/docs/claude-code/agent-teams) | Multiple Claude Code instances working together in parallel, coordinating through a shared task list (experimental) | When tasks benefit from parallel work with inter-agent discussion |
-| [Server-managed settings](https://docs.anthropic.com/en/docs/claude-code/server-managed-settings) | Organization-wide Claude Code configuration managed centrally through Claude.ai (Teams/Enterprise) | When you need consistent policy across a team |
-
-### Subagents vs Agent Teams
-
-This setup includes **subagents** (like `doc-keeper` in `.claude/agents/`). Agent Teams are a different concept:
-
-| | Subagents | Agent Teams |
-|---|---|---|
-| **How it works** | Claude delegates a task to one agent, it works alone, returns results | Multiple Claude Code instances run in parallel, coordinating through a shared task list |
-| **Communication** | Agent reports back to the main session only | Teammates message each other directly |
-| **Use case** | Focused tasks — "audit the docs", "research this repo" | Complex parallel work — "one teammate on frontend, one on backend, one reviewing" |
-| **Setup** | `.claude/agents/<name>.md` in the project | Enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings |
-| **Status** | Stable | Experimental |
-
-For most personal development, subagents are enough. Agent Teams become useful for larger efforts where you want multiple Claude instances collaborating simultaneously.
-
-These all work alongside what's in this repo. For example, you could add an MCP server config phase to `/project-setup`, or use hooks to auto-run the doc-keeper agent after file changes. In practice, most of these are added later as project needs evolve — the current setup is a clean starting point.
-
-## Development Approach
-
-Mostly static. This repository changes infrequently — only when global settings, skills, or conventions need updating.
-
-## Project Structure & Agents
-
-See [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) for the full project hierarchy and agents table.
-
-## Documentation
+This repo's own structure and rules live in [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md).
 
 | Document | Purpose |
 |----------|---------|
-| [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) | Project rules, hierarchy, agents (source of truth) |
-| [concepts/concept.md](concepts/concept.md) | Detailed concept and design |
-| [docs/example_ai_instructions.md](docs/example_ai_instructions.md) | Reference example of a generated AI_INSTRUCTIONS.md |
+| [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) | This repo's rules, hierarchy, agents, skills (source of truth) |
+| [docs/opus_4_8_alignment.md](docs/opus_4_8_alignment.md) | Why the format is tuned for Opus 4.8 — rationale + the ten principles |
+| [docs/example_ai_instructions.md](docs/example_ai_instructions.md) | Reference example of a generated AI_INSTRUCTIONS.md (v2 format) |
+| [concepts/concept.md](concepts/concept.md) | Concept and design |
 | [roadmap.md](roadmap.md) | Sprint plan and status |

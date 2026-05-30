@@ -1,99 +1,98 @@
-# Project Organization
+# Global Claude Code Preferences
 
-### Structure (adapt to project size)
+Personal cross-project preferences. Two tiers: **Hard rules** are invariants — never violate
+them. **Preferences** are defaults — apply them by judgment and override when a task is genuinely
+better served otherwise. Reserve absolutes for the Hard-rules block; everything else is guidance.
+
+## Hard rules (never violate)
+
+- **English in files.** All code, docs, comments, plans, and commit messages are English — even
+  when the conversation is in Dutch.
+- **No AI attribution in commits.** No "Co-Authored-By", "Generated with Claude", or similar.
+  (Also enforced via `includeCoAuthoredBy: false` in settings — keep both.)
+- **Commit and push only when asked.** Don't commit, push, or open PRs on your own initiative.
+- **Never commit secrets or large artifacts** — `.env`, credentials, API keys, model weights.
+- **Don't delete or overwrite files you didn't create** without surfacing it first. If a file's
+  content contradicts how it was described, stop and report rather than proceeding.
+
+## Preferences (use judgment; override when the task is better served)
+
+- **Scale depth to task size.** Match ceremony to the work: a one-line fix or a question takes a
+  short path; a multi-file feature warrants planning, structure, and review. Don't run the full
+  process on trivial work, and don't under-build substantial work.
+- **SOLID, DRY, KISS** — pragmatically. Modularity and flexibility where they pay off.
+- **One source of truth.** Each fact lives in one place; reference it elsewhere, don't duplicate.
+- **Build on existing work** — evolve what's there rather than rewriting from scratch.
+- **Keep docs current** — after a change, fix the docs that describe it. Stale docs mislead.
+- **Use the right agent** for its domain (check `.claude/agents/` if present).
+- **Ask when project conventions are unclear** rather than guessing.
+- **Session start:** if they exist, read `AI_INSTRUCTIONS.md`, then `README.md`, then the relevant
+  active plan, before diving in.
+
+## Project organization (adapt to size)
+
+Minimal by default; add structure only as a project needs it. A small script may only need
+`README.md` + `AI_INSTRUCTIONS.md`.
+
 ```
 project/
-├── AI_INSTRUCTIONS.md                     # AI instructions — read first (always, tool-agnostic)
-├── README.md                              # Overview + status (always)
-├── roadmap.md                             # Sprint plan and status tracking
-├── todo_<date>.md                         # Daily task tracker (temp → archive/)
-├── concepts/
-│   └── concept.md                         # Initial concept, diagrams, technical decisions
-├── docs/                                  # Guides, specs, detailed documentation
-│   └── lessons_learned.md                 # Ongoing log of what worked and what didn't
-├── phase{N}/ (or sprint)                  # Work by milestone (larger projects)
-│   └── Phase{N}_Implementation_Plan.md    # HOW + order of tasks
-├── claude_plans/                          # Active plans from plan mode
-├── archive/                               # Never delete, always archive
+├── AI_INSTRUCTIONS.md          # Project rules, hierarchy, agents — tool-agnostic, read first
+├── README.md                   # Overview + status
+├── roadmap.md                  # Sprint plan and status (larger projects)
+├── todo_<date>.md              # Daily task tracker (temp → archive/)
+├── concepts/concept.md         # Concept, diagrams, technical decisions
+├── docs/                       # Guides, specs; docs/lessons_learned.md = what worked/didn't
+├── claude_plans/               # Plan files (PLAN_<topic>.md), git-committed
+├── archive/                    # Outdated content (never delete — archive with date prefix)
 └── .claude/
-    ├── settings.json                      # Project-level settings
-    └── agents/                            # Custom agents (if used)
+    ├── settings.json           # Project settings (plansDirectory: ./claude_plans)
+    └── agents/                 # Project-specific subagents
 ```
 
-### Key Terms
-- **Schedule/Planning** = WHEN do we do WHAT (time-bound)
-- **Plan** = HOW do we do WHAT, in what ORDER (implementation)
+- **Schedule/Planning** = WHEN to do WHAT (time-bound). **Plan** = HOW + in what ORDER.
+- **Never delete, always archive** — move outdated content to `archive/` with a `YYYY-MM-DD_` prefix.
 
-### Plan Mode Rules
-1. Plans go in project repo in `claude_plans/` folder (configured in settings.json)
-2. Plan mode generates random filenames (e.g. `humble-mixing-fern.md`) — this cannot be configured. **Immediately after exiting plan mode**, the FIRST action must be to rename the plan file to a clear name: `PLAN_<topic>.md` (e.g. `PLAN_upstream_sync.md`). Do this with `mv` before any other work.
-3. After completing a plan: move to `archive/` with date prefix (e.g. `2026-01-28_upstream_sync.md`)
-4. Implementation plans: `phase{N}/Phase{N}_Implementation_Plan.md`
-5. Daily task trackers: root temporarily → `archive/` with date prefix
-6. Update progress in the appropriate tracker (phase plan, roadmap, or task file — one place, not duplicated)
-7. Archive outdated content, never delete
+## Planning workflow (in-project plans; build only on explicit request)
 
-### Quality Principles
-- **SOLID, DRY, KISS** - Default yes, adapt to project needs
-- **Modularity & flexibility** - Important for most projects
-- **Testing** - Manual or automated based on requirements (ask if unclear)
-- **Security** - Consider but not always enterprise-level (project dependent)
+Plans live **in the project** in `claude_plans/` (via `plansDirectory`, which is set — so plans
+are NOT written to the hidden global `~/.claude/plans/`). They are git-committed, named after the
+feature or sprint (`PLAN_<feature>.md`, e.g. `PLAN_sprint3_auth.md`), and persist for review and
+manual editing. Archive with a date prefix when done.
 
-### Always
-- Read `AI_INSTRUCTIONS.md` first (if it exists), then `README.md`, then relevant phase plan
-- All code, docs, comments, plans, and commit messages in English
-- One source of truth (no duplicate info)
-- Use agents when their role fits (check `.claude/agents/` if present)
-- Ask when project conventions are unclear
+**Preferred: the `/custom_plan` skill.** For a sprint or feature, use `/custom_plan <name>` — it researches
+read-only, writes `claude_plans/PLAN_<name>.md`, and stops. It deliberately avoids native plan mode
+(whose approval step jumps straight to coding). Building happens only on a later explicit
+"implement PLAN_<name>".
 
-### Communication style
-- Don't use the word "fair" (as in "fair point", "fair enough") — user hates it
-- No hollow validation like "You're absolutely right", "Great question", etc. — just get to the point
-- NEVER suggest stopping, sleeping, or wrapping up — the user decides when to stop
-- Don't be patronizing or tell the user what they should do with their time
-- Casual is fine, but no trendy/hip teenager language, street slang, or internet slang. Standard software development jargon is fine where appropriate.
-- When you don't know something, say so immediately instead of guessing
+Equivalent without the skill: ask for the plan written to `claude_plans/PLAN_<name>.md` with "don't
+implement yet". Either way, producing/approving a plan is for review — NOT a signal to start coding.
 
-### Writing style (docs, comments, plans, code)
-- Default: neutral, impersonal language — "This component...", "The system...", "There is..."
-- Avoid "we", "our", or team-based phrasing unless a project explicitly states it's team-based
-- If a personal pronoun is needed, use "I" — but prefer impersonal descriptions
-- Examples: "We set up..." → "This setup...", "Our config uses..." → "The configuration uses..."
+> Avoid native plan mode for build-it-later planning: approving its plan transitions straight to
+> implementation and that can't be overridden here. Use `/custom_plan` (or the file-first request) instead.
+> Implement only when explicitly told (e.g. "implement PLAN_<name>").
 
-### Git commits
-- NEVER add "Co-Authored-By: Claude" or similar AI attribution to commit messages
-- Just write normal commit messages without AI mentions
+## Tone & writing style
 
-### Compaction
-When compacting (automatic or via /compact), include in summary:
-- What was completed
-- What to continue with next
-- Important findings and discoveries
-- Issues encountered and how they were resolved
-- What to avoid / watch out for
-- User preferences observed (how they like to work)
-- Key decisions made and why
-- Areas that need focus or attention
-- Any other context that shouldn't be lost
+Governed by the **Personal Voice** output style (`~/.claude/output-styles/personal-voice.md`),
+active via `outputStyle` in settings — the system-prompt channel, so it actually sticks. That file
+is the single home for the tone/register rules (no "fair", no hollow validation, never suggest
+stopping, neutral/impersonal voice, no emojis). Edit tone there, not here.
 
-Always end with: "Read AI_INSTRUCTIONS.md first, then continue."
+## Memory & compaction
 
-After compaction:
-- Read `AI_INSTRUCTIONS.md` first
-- Read `docs/lessons_learned.md` if it exists
-- Then continue with the task
+- **Native auto-memory owns volatile cross-session state** (`MEMORY.md` and the per-project
+  memory dir). Don't hand-maintain a parallel state log in prose.
+- **Compaction summary** — keep it short: what's done, what's next, key decisions, watch-outs.
+- **After compaction**, re-read `AI_INSTRUCTIONS.md` and `docs/lessons_learned.md` (if they
+  exist), then continue.
 
----
-
-### Relationship with AI_INSTRUCTIONS.md
+## CLAUDE.md vs AI_INSTRUCTIONS.md
 
 | File | Scope | Purpose |
 |------|-------|---------|
-| `CLAUDE.md` (this file) | Global | Your personal preferences for Claude Code across all projects |
-| `AI_INSTRUCTIONS.md` | Per-project | Project-specific instructions, works with any AI tool |
+| `CLAUDE.md` (this file) | Global | Cross-project preferences, auto-loaded by Claude Code |
+| `AI_INSTRUCTIONS.md` | Per-project | Project rules/hierarchy/agents; tool-agnostic primary doc |
 
-**When to use which:**
-- Use `CLAUDE.md` in `~/.claude/` for settings you want everywhere
-- Use `AI_INSTRUCTIONS.md` in project root for project-specific rules, or when collaborating with people using different AI tools
-
-For projects with multiple AI tools or collaborators, prefer `AI_INSTRUCTIONS.md` in the project root.
+Keep cross-project process/preferences here and project specifics in `AI_INSTRUCTIONS.md`. Tone
+lives in the **Personal Voice** output style (see "Tone & writing style" above) — one home, the
+strong channel.

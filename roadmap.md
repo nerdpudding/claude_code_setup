@@ -27,12 +27,28 @@
 - [x] README: Add overwrite warning to Quick Start
 - [x] README: Add Customizing Skills section
 
-## Sprint 3: Further Polish & Extend (Planned)
+## Sprint 3: Opus 4.8 Realignment (Done — 2026-05-30)
 
-- [ ] Add installation script or Makefile for automated copy to `~/.claude/`
-- [ ] Add more skills (e.g., code review, commit helper)
-- [ ] Add agent templates for common project types
-- [ ] Add a "verify global setup" checklist document
+The setup was tuned for Opus 4.5/4.6 and felt heavier on 4.7/4.8 (a more literal, more agentic
+model executes soft prose imperatives close to the letter). Diagnosed via multi-agent research +
+adversarial verification; realigned the format. See `claude_plans/PLAN_opus_4_8_realign.md`.
+
+- [x] Rewrite `global_config/CLAUDE.md` to tiered **Hard rules / Preferences** (was a flat ALWAYS/NEVER wall)
+- [x] Add `global_config/output-styles/personal-voice.md` (tone style, `keep-coding-instructions: true`, on by default via `outputStyle`)
+- [x] Modernize `project-setup` skill (scale-to-task-size; no "do not skip phases"; key-presence settings check)
+- [x] Create `realign-project` skill (`/realign`) — existing-project counterpart to project-setup
+- [x] Create `plan` skill (`/custom_plan`) — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no native plan mode (sidesteps approve-then-build)
+- [x] Light-sync README, concept, AI_INSTRUCTIONS, doc-keeper, example_ai_instructions to the new format
+- [x] Apply live to `~/.claude/` and field-test `/realign` on the local-media-gen project
+
+## Sprint 4: Finish & Extend (Planned)
+
+- [ ] Finish documenting the realignment in THIS repo's own docs (see `todo_2026-05-30.md`)
+- [ ] First-class `docs/opus_4_8_alignment.md` (the 10 alignment principles + the why)
+- [ ] Sync `global_config/settings.json` template to the new live defaults (effortLevel high, includeCoAuthoredBy:false, deny example)
+- [x] Decide: wire `personal-voice` output style on by default — DONE, `outputStyle` set in settings (tone is single-homed in the style, removed from CLAUDE.md)
+- [ ] Optional plan-rename hook; agent templates for common project types; install script
+- [ ] Initialize git repository / first commit
 
 ## Status
 
@@ -40,4 +56,5 @@
 |--------|--------|-------|
 | Sprint 1 | Done | Initial project setup |
 | Sprint 2 | Done | UX improvements, folder rename, README expansion |
-| Sprint 3 | Planned | Further polish and new skills |
+| Sprint 3 | Done | Opus 4.8 realignment (format, skills, output style, live + field-test) |
+| Sprint 4 | Planned | Finish own-docs, alignment doc, template sync, commits |

@@ -44,8 +44,12 @@ Read `~/.claude/CLAUDE.md` and verify it contains the current tiered sections:
 - **Hard rules (never violate)** — English-only, no AI attribution, commit/push only when asked, no secrets, don't delete/overwrite files you didn't create.
 - **Preferences (use judgment)** — scale depth to task size, SOLID/DRY/KISS, one source of truth, build on existing work, keep docs current, session-start read order.
 - **Project organization** — the structure tree and key terms (single canonical home for the hierarchy).
-- **Planning workflow** — in-project plans, save → rename to `PLAN_<topic>.md` → build later on explicit request.
-- **Communication style** and **Writing style**.
+- **Planning workflow** — in-project plans via the `/custom_plan` skill: plan file first
+  (`claude_plans/PLAN_<name>.md`), build only on an explicit "implement PLAN_<name>". Native plan
+  mode is avoided for build-later planning (approving its plan starts implementation).
+- **Tone & writing style** — a short pointer to the Personal Voice output style
+  (`~/.claude/output-styles/personal-voice.md`, active via `outputStyle` with
+  `keep-coding-instructions: true`); the tone rules themselves live there, not in CLAUDE.md.
 - **Memory & compaction** — native auto-memory (MEMORY.md); short compaction summary; re-read order.
 
 If the file is missing or a section is absent, offer to create or update it from the reference template. Do not force a rewrite of sections that are present and reasonable.
@@ -56,7 +60,9 @@ Check `~/.claude/plans/` — it should be empty when `plansDirectory` points pla
 
 ### 0.4 Global skills
 
-Verify this skill exists at `~/.claude/skills/project-setup/SKILL.md`, and that the `/realign` counterpart exists at `~/.claude/skills/realign-project/SKILL.md`.
+Verify the global skill set exists under `~/.claude/skills/`: `project-setup` (this skill), its
+`/realign` counterpart (`realign-project`), `custom_plan` (the planning workflow), and
+`feature-close` (post-delivery hygiene).
 
 **Report findings and ask before fixing anything. Then continue to Phase 1 (or stop if this was a verify-only run).**
 
@@ -198,24 +204,25 @@ The most important file — it tells any AI tool how to work in the project, and
 - <testing expectation: e.g. tests required for core logic; manual elsewhere>
 
 ## Workflow
-- Use plan mode for non-trivial features; plans live in claude_plans/ (see Planning below).
+- Use /custom_plan for non-trivial features; plans live in claude_plans/ (see Planning below).
 - Code review for substantial or risky changes — not mandatory on every trivial edit.
 - <branching / CI / release notes as the project needs>
 
 ## Planning (in-project plans)
-- Draft in plan mode; the plan is saved to a file in claude_plans/. To avoid building right
-  away, pick a non-implementing exit ("keep planning" / decline), or ask for the plan written
-  to claude_plans/PLAN_<name>.md with an explicit "don't implement yet".
-- Rename the saved file to PLAN_<topic>.md; build later only on an explicit instruction.
-- After completing a plan, archive it with a date prefix.
+- Plan with the /custom_plan skill: it researches read-only, writes
+  claude_plans/PLAN_<name>.md, and STOPS. Build later only on an explicit
+  "implement PLAN_<name>". (Avoid native plan mode for build-later planning — approving
+  its plan starts implementation immediately.)
+- After delivery, close out with /feature-close: docs check, leftovers to the backlog,
+  archive the plan with a date prefix.
 
 ## Project hierarchy (single source of truth — nowhere else)
 - <full file tree with short descriptions>
 
 ## Agents
-| Agent | When to use |
-|-------|-------------|
-| <filled in Phase 5> | |
+| Agent | Model | When to use |
+|-------|-------|-------------|
+| <filled in Phase 5> | | |
 
 ## Sub-docs (detail lives here, not above)
 - docs/<...>.md — <what>
@@ -294,6 +301,14 @@ Explain that `plansDirectory` keeps plans in the project repo (not the hidden `~
 ## Phase 5: Create Agents (optional, medium/large)
 
 Subagents do not inherit the global `CLAUDE.md` or project memory, so give each a self-contained prompt and a targeted set of files to read (not a blanket "read everything first").
+
+**Token economy first.** Every agent pins the cheapest `model:` that does the job: `haiku` for
+mechanical/bulk work (renames, formatting, simple lookups), `sonnet` for research, docs, and
+standard implementation, `opus` only for genuinely hard implementation or design work. `fable`
+(above opus) is never an agent default — it is expensive and reserved for the very hardest tasks,
+only when the user explicitly asks for it. Never omit `model:` — an unpinned agent silently
+inherits the (expensive) session model. Record each agent's tier in the AI_INSTRUCTIONS agents
+table so the policy survives sessions.
 
 ### 5.1 Doc-keeper (offer when the project has 3+ docs)
 
@@ -377,7 +392,7 @@ Evaluate and **ask the user** about each. Only offer agents that make sense — 
 ### 5.3 For each agent to create
 
 Write the agent definition with:
-- **Frontmatter:** keyword-led `description` (when to use it; keep worked examples in the body, not the description), `model: sonnet`
+- **Frontmatter:** keyword-led `description` (when to use it; keep worked examples in the body, not the description), and a `model:` pinned per the token-economy rule at the top of this phase (`haiku` mechanical / `sonnet` research-docs-standard / `opus` hard implementation only).
 - **Role statement:** what it does and explicitly what it does NOT do (one owner per domain — avoid overlapping responsibilities between agents)
 - **Startup procedure:** the targeted files this agent needs to read
 - **Source of truth hierarchy:** when documents disagree, what wins
@@ -390,7 +405,7 @@ Create the agent by writing to `.claude/agents/<name>.md` or using the `/agents`
 
 ### 5.4 Update AI_INSTRUCTIONS.md
 
-After all agents are created, fill in the agents table in `AI_INSTRUCTIONS.md` with every agent and its "when to use" description.
+After all agents are created, fill in the agents table in `AI_INSTRUCTIONS.md` with every agent, its pinned model tier, and its "when to use" description.
 
 ### 5.5 Project-specific skills (optional)
 
@@ -435,16 +450,18 @@ After everything is set up, walk the user through how to work in the project:
 
 - **Read `AI_INSTRUCTIONS.md` first**, then README.md, then the relevant active plan.
 - **Scale workflow depth to the task** — a small fix needs no plan, roadmap, or ceremony.
-- **Use plan mode for non-trivial features.** The plan is saved to a file in `claude_plans/`. To capture a plan without building it, pick a non-implementing exit ("keep planning" / decline), or ask for the plan written to `claude_plans/PLAN_<name>.md` with an explicit "don't implement yet".
-- **Rename** the saved plan (it gets a generated name) to `PLAN_<topic>.md`.
+- **Use /custom_plan for non-trivial features.** It researches read-only, writes
+  `claude_plans/PLAN_<name>.md`, and stops — a persistent, reviewable plan file.
 - **Build later, only on an explicit instruction** (e.g. "implement PLAN_<name>"). Saving or approving a plan is not approval to start coding.
-- **After completing a plan, archive it** with a date prefix (e.g. `2026-01-28_<topic>.md`).
-- **Use agents for their domain** — check the agents table before doing specialized work manually.
+- **After delivery, run /feature-close** — docs check, leftovers carried to the backlog, the plan archived with a date prefix (e.g. `2026-01-28_PLAN_<topic>.md`).
+- **Use agents for their domain** — check the agents table before doing specialized work manually. Delegate implementation to pinned-model agents (each pinned to the cheapest tier that does the job — see the agents table) rather than doing it inline on a top-tier session model.
 - **Canonical rules** (one source of truth, archive-never-delete, English-only, no AI attribution) live in the global `CLAUDE.md` — they apply here too.
 
 ### Available commands
 - `/project-setup` — this skill (run again to verify or extend a new project)
 - `/realign` — audit/fix an EXISTING project against these conventions
+- `/custom_plan <name>` — plan a feature/sprint to a reviewable file, without auto-building
+- `/feature-close` — post-delivery hygiene (docs check, backlog carry-over, archive the plan)
 - `/agents` — manage agents
 - `/compact` — compress context (re-reads `AI_INSTRUCTIONS.md` after)
 

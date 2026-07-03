@@ -36,7 +36,15 @@ Detect and cite exact files + line numbers for each:
 6. **Subagent description hygiene.** Vague or overlapping descriptions; multiple owners for one domain; worked examples bloating the description field; dead agent references (named in docs/CLAUDE.md but no file exists). Fix only real problems — descriptions are often already fine.
 7. **Shadow memory vs native memory (first-class check).** Find git-tracked in-repo memory (e.g. `.claude/projects/.../memory/*.md`; confirm with `git ls-files`). DIFF it against the native `MEMORY.md` fact by fact: a copy that *contradicts* native memory is higher-consequence than one that merely duplicates it (subagents act on the in-repo file but don't inherit native memory). Before recommending deletion, check whether the shadow file holds anything UNIQUE (e.g. open research questions) not in native memory — preserve that to a tracked doc first; delete only the stale/duplicated remainder.
 8. **Doc self-contradictions.** Two sections describing different file layouts; inconsistent file-naming schemes (e.g. `todo_<date>.md` vs another tracker); mis-located or partially-done plans; settings-check blocks that mis-report the current config as drift.
-9. **Response-calibration register.** Over-ceremony is not only in workflow prose — it is also a response habit (padding a small ask with unrequested checks, rollbacks, caveats; or the opposite, half-baked answers the user must drag the rest out of). Check that the tone/register channel — the Personal Voice output style, or the project's own tone instructions — carries a *response calibration* rule: match answer size to request, neither padded nor half-baked. If absent, flag it.
+9. **Model tiering (token economy).** The main thread's model is the expensive tier; agents
+   without a `model:` frontmatter key silently inherit it. Check: every project agent pins the
+   cheapest model that does the job (`haiku` for mechanical/bulk work, `sonnet` for
+   research/docs/standard implementation, `opus` only for genuinely hard implementation or
+   design; `fable` never as an agent default — expensive, reserved for the very hardest tasks on
+   explicit user request); implementation work is delegated to agents rather than done inline
+   when the session runs on a top-tier model; the project's agent table (AI_INSTRUCTIONS) records
+   the tiers so the policy survives sessions. Flag any agent pinned to `fable` as a finding.
+10. **Response-calibration register.** Over-ceremony is not only in workflow prose — it is also a response habit (padding a small ask with unrequested checks, rollbacks, caveats; or the opposite, half-baked answers the user must drag the rest out of). Check that the tone/register channel — the Personal Voice output style, or the project's own tone instructions — carries a *response calibration* rule: match answer size to request, neither padded nor half-baked. If absent, flag it.
 
 **Corroborate every prose rule against deterministic state.** For each "always/never" prose rule, check whether `settings.json` / `settings.local.json` / `.gitignore` / agent frontmatter already enforces it. If so, the prose is redundant — downgrade it to a one-line pointer rather than a restated rule. This single step surfaces most duplication findings; do it explicitly, not incidentally.
 
@@ -92,7 +100,7 @@ After applying, do a final consistency pass and report what changed.
 - `.claude/rules/*.md` with `paths:` frontmatter is a **Cursor** convention, NOT native Claude Code. Do not recommend it. Use a lean core + on-demand sub-docs instead.
 - `plansDirectory` LOCATES plans; it does not rename them. Plan mode's save-and-return option writes the plan to that directory WITHOUT executing it; rename the generated `*-ultraplan.md` to `PLAN_<topic>.md` afterward.
 - Tune depth with `effortLevel`, not by adding or removing prose "be thorough" mandates.
-- A custom output style REPLACES the default software-engineering system prompt. Treat moving tone into an output style as advanced/optional, and verify the keep-coding mechanism before recommending it. Tone rules stay in CLAUDE.md by default.
+- Tone/register is single-homed in the **Personal Voice output style** (`~/.claude/output-styles/personal-voice.md`, active via `outputStyle` in settings, with `keep-coding-instructions: true` so default coding behavior is preserved). CLAUDE.md keeps only a short pointer. When auditing a project, restated tone rules in CLAUDE.md/AI_INSTRUCTIONS are duplication — trim to the pointer. (Historical note: tone-in-CLAUDE.md was the old default before the keep-coding mechanism was verified.)
 - Descriptions are often already fine — fix only real overlaps and dead references; do not wholesale-rewrite them.
 
 ---

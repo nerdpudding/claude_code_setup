@@ -30,6 +30,7 @@ This is the single source of truth for the project file structure:
 claude-code-setup/
 ├── AI_INSTRUCTIONS.md              # This file — project rules, hierarchy, agents
 ├── README.md                       # Overview, quick start, documentation links
+├── install.sh                      # Sync script: diff / install / pull between repo and ~/.claude/
 ├── roadmap.md                      # Sprint plan and status tracking
 ├── concepts/
 │   └── concept.md                  # Detailed concept, diagrams, technical decisions
@@ -42,7 +43,8 @@ claude-code-setup/
 │   ├── skills/
 │   │   ├── project-setup/SKILL.md     # /project-setup — scaffold a new project
 │   │   ├── realign-project/SKILL.md   # /realign — realign an existing project to 4.8 format
-│   │   └── custom_plan/SKILL.md       # /custom_plan — read-only sprint/feature planning, no auto-execute
+│   │   ├── custom_plan/SKILL.md       # /custom_plan — read-only sprint/feature planning, no auto-execute
+│   │   └── feature-close/SKILL.md     # /feature-close — post-delivery hygiene (docs, backlog, archive)
 │   └── output-styles/
 │       └── personal-voice.md          # Tone/voice output style (on by default via outputStyle)
 ├── claude_plans/                   # Active plans from plan mode
@@ -67,6 +69,7 @@ claude-code-setup/
 | `/project-setup` | `global_config/skills/project-setup/SKILL.md` | Scaffold a NEW project with the preferred structure, docs, agents, workflow. |
 | `/realign` | `global_config/skills/realign-project/SKILL.md` | Realign an EXISTING project's docs to the Opus 4.8 format. Counterpart to `/project-setup`. |
 | `/custom_plan` | `global_config/skills/custom_plan/SKILL.md` | Plan a sprint/feature read-only into `claude_plans/PLAN_<name>.md`, then stop. Replaces native plan mode (which auto-executes on approval). Build later on an explicit "implement PLAN_<name>". |
+| `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, graduate lessons, archive the plan with a date prefix. |
 
 ## Plan Rules (plan in-project; build only on explicit request)
 

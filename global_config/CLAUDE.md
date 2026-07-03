@@ -28,6 +28,13 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 - **Build on existing work** — evolve what's there rather than rewriting from scratch.
 - **Keep docs current** — after a change, fix the docs that describe it. Stale docs mislead.
 - **Use the right agent** for its domain (check `.claude/agents/` if present).
+- **Token economy for subagents.** Match the model to the task — don't default to the top tier.
+  Every agent pins the cheapest `model:` that does the job (`haiku` for mechanical/bulk work,
+  `sonnet` for research/docs/standard implementation, `opus` only for genuinely hard
+  implementation or design); an unpinned agent silently inherits the expensive session model.
+  `fable` sits above opus and is expensive — never pin it as an agent default; use it only for
+  the very hardest tasks and only when the user explicitly asks for it. Delegate sizable
+  implementation to pinned agents rather than doing it inline on a top-tier session.
 - **Ask when project conventions are unclear** rather than guessing.
 - **Session start:** if they exist, read `AI_INSTRUCTIONS.md`, then `README.md`, then the relevant
   active plan, before diving in.
@@ -65,7 +72,8 @@ manual editing. Archive with a date prefix when done.
 **Preferred: the `/custom_plan` skill.** For a sprint or feature, use `/custom_plan <name>` — it researches
 read-only, writes `claude_plans/PLAN_<name>.md`, and stops. It deliberately avoids native plan mode
 (whose approval step jumps straight to coding). Building happens only on a later explicit
-"implement PLAN_<name>".
+"implement PLAN_<name>". After delivery, `/feature-close` runs the hygiene pass (docs check,
+leftovers to the backlog, archive the plan with a date prefix).
 
 Equivalent without the skill: ask for the plan written to `claude_plans/PLAN_<name>.md` with "don't
 implement yet". Either way, producing/approving a plan is for review — NOT a signal to start coding.

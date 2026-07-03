@@ -97,7 +97,7 @@ project, not the hidden global `~/.claude/plans/`.
 | 4 | `global_config/settings.json` (`includeCoAuthoredBy: false`, `permissions.deny`) |
 | 5, 8 | the `/realign` audit (drift, duplication, shadow memory) |
 | 7 | `project-setup` skill (scale-to-size, no "do not skip phases") |
-| 9 | `effortLevel: high` in the settings template |
+| 9 | `effortLevel` in the settings template (`high` at the time of this alignment; `xhigh` since the Fable 5 sync) |
 | 10 | `doc-keeper.md` description style; `/realign` description-hygiene checks |
 
 ## How this was derived

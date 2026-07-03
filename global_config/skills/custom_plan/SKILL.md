@@ -42,8 +42,10 @@ Explore enough to write a concrete plan, not a vague one:
 - Note current behavior, the layers a change touches, constraints, and risks.
 - If the project has them, consult `AI_INSTRUCTIONS.md`, `docs/lessons_learned.md`, and relevant
   sub-docs (they carry project-specific pitfalls). Scale depth to the size of the work.
-- For a large/unfamiliar codebase you MAY delegate read-only exploration to a general-purpose
-  subagent to gather findings — but the plan file is still written here, in the main thread.
+- For a large/unfamiliar codebase you MAY delegate read-only exploration to subagents — prefer
+  the project's own research agents (e.g. a repo-researcher) or a cheap-model (sonnet) subagent;
+  reserve the main thread for the design thinking. The plan file is still written here, in the
+  main thread.
 - Do not write anything yet.
 
 ### 3. Write the plan file

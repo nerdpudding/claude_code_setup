@@ -90,9 +90,9 @@ task-api/
 
 ## Agents
 
-| Agent | File | Use proactively when |
-|-------|------|----------------------|
-| doc-keeper | `.claude/agents/doc-keeper.md` | After changes that touch docs/structure, or when asked to audit, clean up, or organize documentation. Verifies docs still reflect reality. |
+| Agent | File | Model | Use proactively when |
+|-------|------|-------|----------------------|
+| doc-keeper | `.claude/agents/doc-keeper.md` | sonnet | After changes that touch docs/structure, or when asked to audit, clean up, or organize documentation. Verifies docs still reflect reality. |
 
 Add project-specific agents (e.g. `db-migrator`, `api-tester`) as needs grow; keep one owner per
 domain and list each here.
@@ -105,18 +105,19 @@ domain and list each here.
 - **Volatile cross-session state** → native auto-memory (`MEMORY.md`), not a hand-kept prose log.
 - One home per fact: README and other docs reference this hierarchy, they don't duplicate it.
 
-## Plan rules (plan → save → rename → build later)
+## Plan rules (plan → review → build later → close)
 
 Plans live in `claude_plans/` (set via `plansDirectory`), are git-committed, and are named after
 the feature or sprint (`PLAN_<topic>.md`).
 
-1. **Save:** use plan mode to draft, then exit via the save-without-implementing option ("don't
-   implement — save plan and return"). The plan is written to `claude_plans/` and nothing runs.
-2. **Rename:** rename the generated `*-ultraplan.md` to `PLAN_<topic>.md`. Safe to rename now —
-   nothing is executing. Then review / edit / commit.
+1. **Plan:** use `/custom_plan <name>` — it researches read-only, writes
+   `claude_plans/PLAN_<name>.md`, and STOPS. Nothing runs. (Avoid native plan mode for
+   build-later planning — approving its plan starts implementation immediately.)
+2. **Review:** read / edit / commit the plan file at leisure.
 3. **Build later, on explicit instruction:** implement only when told to (e.g. "implement
-   PLAN_<name>"). Saving a plan is never a signal to start coding.
-4. **Archive when done:** move to `archive/` with a `YYYY-MM-DD_` prefix.
+   PLAN_<name>"). A written plan is never a signal to start coding.
+4. **Close when delivered:** run `/feature-close` — docs check, leftovers to the backlog, the
+   plan archived to `archive/` with a `YYYY-MM-DD_` prefix.
 
 Track progress in one place — `roadmap.md` for this project. Don't duplicate status across files.
 

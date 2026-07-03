@@ -6,17 +6,34 @@
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "600000"
   },
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
-  "plansDirectory": "./claude_plans",
   "includeCoAuthoredBy": false,
-  "outputStyle": "Personal Voice",
-  "showThinkingSummaries": true,
-  "verbose": true,
-  "skipWorkflowUsageWarning": true,
   "permissions": {
     "deny": [
       "Read(**/sampling_prompts.txt)"
     ]
-  }
+  },
+  "model": "claude-fable-5[1m]",
+  "fallbackModel": [
+    "claude-opus-4-7",
+    "claude-opus-4-6",
+    "claude-sonnet-4-6"
+  ],
+  "enabledPlugins": {
+    "last30days@last30days-skill": true
+  },
+  "extraKnownMarketplaces": {
+    "last30days-skill": {
+      "source": {
+        "source": "github",
+        "repo": "mvanhorn/last30days-skill"
+      }
+    }
+  },
+  "outputStyle": "Personal Voice",
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
+  "plansDirectory": "./claude_plans",
+  "showThinkingSummaries": true,
+  "skipWorkflowUsageWarning": true,
+  "verbose": true
 }

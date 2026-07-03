@@ -48,7 +48,25 @@ adversarial verification; realigned the format. See `claude_plans/PLAN_opus_4_8_
 - [x] Sync `global_config/settings.json` template to the new live defaults (effortLevel high, includeCoAuthoredBy:false, deny example) — done
 - [x] Decide: wire `personal-voice` output style on by default — DONE, `outputStyle` set in settings (tone is single-homed in the style, removed from CLAUDE.md)
 - [x] Initialize git repository / first commit — done (commit `4c20f43`)
-- [ ] Optional plan-rename hook; agent templates for common project types; install script
+- [x] Install script — done in Sprint 5 (`install.sh`)
+- [ ] Optional plan-rename hook; agent templates for common project types
+
+## Sprint 5: Fable 5 / field-test sync (Done — 2026-07-03)
+
+Synced `global_config/` back from the live `~/.claude/` after field use (mainly SmartPrepper) and
+the move to Claude Fable 5. See the v2.1 entry in `README.md` for the full change list.
+
+- [x] Add `/feature-close` skill (post-delivery hygiene — counterpart to `/custom_plan`)
+- [x] Pull field-tested skill refinements (agent model tiering in `project-setup` + `/realign`,
+      tone single-homed in the output style, `custom_plan` research delegation)
+- [x] Make agent token economy explicit everywhere agents are created: tiered model guidance
+      (haiku/sonnet/opus; fable only on explicit user request, never as agent default) as a
+      global `CLAUDE.md` preference, leading `project-setup` Phase 5, a Model column in the
+      generated agents table, and `/realign` check 9
+- [x] Sync `settings.json` (model `claude-fable-5[1m]` + fallback chain, `effortLevel: xhigh`,
+      `last30days` plugin/marketplace) and `CLAUDE.md` (feature-close in the planning workflow)
+- [x] Add `install.sh` (diff / install / pull) for new-machine setup and drift detection
+- [x] Update repo docs (README, AI_INSTRUCTIONS, concept, example_ai_instructions) to match
 
 ## Status
 
@@ -57,4 +75,5 @@ adversarial verification; realigned the format. See `claude_plans/PLAN_opus_4_8_
 | Sprint 1 | Done | Initial project setup |
 | Sprint 2 | Done | UX improvements, folder rename, README expansion |
 | Sprint 3 | Done | Opus 4.8 realignment (format, skills, output style, live + field-test) |
-| Sprint 4 | In progress | Own-docs + first commit done; optional hook/templates/install-script deferred |
+| Sprint 4 | Done | Own-docs + first commit; install script landed in Sprint 5; hook/templates stay backlog |
+| Sprint 5 | Done | Fable 5 / field-test sync: feature-close, skill refinements, settings, install.sh |

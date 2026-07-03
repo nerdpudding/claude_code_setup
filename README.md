@@ -33,6 +33,32 @@ Two deliberate choices:
 
 ## Version history
 
+### v2.1 — Fable 5 / field-test sync (2026-07-03)
+
+Synced `global_config/` back from the live `~/.claude/` after a month of field use (mainly on the
+SmartPrepper project) and the move to Claude Fable 5:
+
+- **New skill `/feature-close`** — post-delivery hygiene: verify docs/roadmap match what was built,
+  carry leftovers to the backlog, graduate lessons to `lessons_learned.md`, archive the plan with a
+  date prefix. The closing counterpart to `/custom_plan`.
+- **Agent token economy made explicit:** every agent pins the cheapest `model:` that does the job
+  (`haiku` mechanical/bulk, `sonnet` research/docs/standard implementation, `opus` only for
+  genuinely hard implementation; `fable` never as an agent default — expensive, reserved for the
+  very hardest tasks on explicit user request. An unpinned agent silently inherits the expensive
+  session model). The rule now lives as a preference in the global `CLAUDE.md`, leads `project-setup`'s
+  agent-creation phase (with a Model column in the generated agents table), and is audit check 9
+  in `/realign` — so it applies the moment agents are created, in new and existing projects alike.
+- **Skill refinements from field use:** `project-setup` references `/custom_plan` +
+  `/feature-close` instead of the old plan-mode save/rename flow; `realign-project` now treats
+  tone as single-homed in the output style; `custom_plan` prefers delegating read-only
+  exploration to cheap-model subagents.
+- **`settings.json` updated for Fable 5:** `model` pinned to `claude-fable-5[1m]` with an
+  Opus/Sonnet `fallbackModel` chain, `effortLevel` raised to `xhigh` (the v2 "high" default was an
+  Opus 4.8 calibration), and the `last30days` plugin + marketplace registered so it auto-installs
+  on a new machine.
+- **`install.sh` added** — `diff` / `install` / `pull` modes to detect drift, apply the repo to
+  `~/.claude/` (with backups), or pull live edits back under version control.
+
 ### v2 — Opus 4.8 alignment (2026-05-30)
 
 **Why v1 needed changing.** v1 was tuned for Claude Opus 4.5/4.6. On 4.7/4.8 the same files felt
@@ -93,17 +119,24 @@ the supporting docs.
 ```bash
 # 1. Clone
 git clone <repo-url> claude-code-setup
+cd claude-code-setup
 
-# 2. (Optional) back up an existing config
-# cp -r ~/.claude/ ~/.claude-backup/
+# 2. See what would change (safe, read-only)
+./install.sh diff
 
-# 3. Copy the global config into ~/.claude/
-#    (CLAUDE.md, settings.json, all skills, and the output style)
-cp -r claude-code-setup/global_config/* ~/.claude/
+# 3. Apply the repo to ~/.claude/ — files it overwrites are backed up
+#    to ~/.claude/backups/ first
+./install.sh install
 
 # 4. Restart Claude Code so it picks up the skills + output style, then in any project run:
 #    /project-setup   (verify global setup, or scaffold a project)
 ```
+
+`install.sh` only touches the files this repo manages (`CLAUDE.md`, `settings.json`,
+`output-styles/`, `skills/`) — machine-local state like `settings.local.json`, memory, history,
+and plugins is left alone. The reverse direction works too: after editing the live config, run
+`./install.sh pull` to bring the changes back into the repo and commit them. (Manual equivalent:
+`cp -r global_config/* ~/.claude/`.)
 
 The Personal Voice output style and the skills take effect on the **next session** after copying.
 
@@ -112,11 +145,12 @@ The Personal Voice output style and the skills take effect on the **next session
 | File | What it does |
 |------|-------------|
 | `CLAUDE.md` | Global instructions — tiered Hard rules / Preferences, project conventions, plan rules. Auto-loaded every session. |
-| `settings.json` | Global settings — telemetry/timeouts, `effortLevel: high`, `includeCoAuthoredBy: false`, `outputStyle: "Personal Voice"`, `plansDirectory`, a `permissions.deny` example. |
+| `settings.json` | Global settings — telemetry/timeouts, `model: claude-fable-5[1m]` + fallback chain, `effortLevel: xhigh`, `includeCoAuthoredBy: false`, `outputStyle: "Personal Voice"`, `plansDirectory`, the `last30days` plugin, a `permissions.deny` example. |
 | `output-styles/personal-voice.md` | Tone/voice output style — the single home for tone rules (no "fair", no hollow validation, neutral voice, no emojis). **On by default** via `outputStyle`; `keep-coding-instructions: true` keeps all standard coding behavior, so it's purely additive. |
 | `skills/project-setup/SKILL.md` | `/project-setup` — scaffold a NEW project. |
 | `skills/realign-project/SKILL.md` | `/realign` — modernize an EXISTING project to the v2 format. |
 | `skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute. |
+| `skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene: docs check, backlog carry-over, archive the plan. |
 
 ```
 claude-code-setup repo              ~/.claude/ (target)
@@ -127,8 +161,9 @@ claude-code-setup repo              ~/.claude/ (target)
     │   └── personal-voice.md       └── skills/
     └── skills/                         ├── project-setup/
         ├── project-setup/             ├── realign-project/
-        ├── realign-project/           └── custom_plan/
-        └── custom_plan/
+        ├── realign-project/           ├── custom_plan/
+        ├── custom_plan/               └── feature-close/
+        └── feature-close/
 ```
 
 ## The skills
@@ -138,6 +173,7 @@ claude-code-setup repo              ~/.claude/ (target)
 | `/project-setup` | Starting a new project, or verifying the global setup on a new PC | Scaffolds structure, docs, agents, workflow — scaled to project size (a small script needs only README + AI_INSTRUCTIONS). |
 | `/realign` | An existing project feels heavy/bureaucratic after a model upgrade | Audits CLAUDE.md / AI_INSTRUCTIONS / agents / settings / memory and modernizes them to the v2 format. Asks before editing. |
 | `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, stops. Build later on "implement PLAN_<name>". |
+| `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, graduates lessons, archives the plan with a date prefix. |
 
 **`/project-setup` vs `/realign`:** `/project-setup` builds structure that isn't there yet;
 `/realign` leaves the structure and updates the *wording, channel, and location* of an existing
@@ -148,6 +184,10 @@ the plan — that's hardcoded and can't be overridden. `/custom_plan` keeps the 
 read-only exploration + a structured design) but makes saving a plan and building it two separate,
 user-controlled steps. The plan file lands in your project's `claude_plans/`, never in a global
 folder.
+
+**The plan lifecycle:** `/custom_plan <name>` opens it (research → plan file), an explicit
+"implement PLAN_<name>" builds it, and `/feature-close` closes it (docs check, backlog carry-over,
+archive with date prefix).
 
 **`/project-setup` vs `/init`:** the built-in `/init` writes a single `CLAUDE.md` by reading
 existing code. `/project-setup` scaffolds a whole environment (structure, docs, agents, workflow).

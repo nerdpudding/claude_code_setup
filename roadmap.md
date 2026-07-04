@@ -76,17 +76,27 @@ in `README.md`.
 
 - [x] Add `/pre-clear-compact` — writes a curated `sessions/SESSION_CARRYOVER.md` (status,
       decisions, conventions, next step; points at persistent docs, doesn't duplicate), then stops
-- [x] Add `/post-clear-compact` — reads the carryover + docs, reports, proposes the next step
+- [x] Add `/post-clear-handover` — reads the carryover + docs, reports, proposes the next step
       without executing, archives the carryover with a date prefix
 - [x] Add the `sessions/` convention to the global `CLAUDE.md` structure and `project-setup`
 - [x] Document the flow in `CLAUDE.md` (Memory & compaction) and sync repo docs (README,
       AI_INSTRUCTIONS, concept)
 - [x] Pin `theme: "auto"` in `global_config/settings.json` so `install.sh` keeps it consistent
       across machines instead of dropping or overriding it
+- [x] Harden the skills into a full `/compact` replacement (no degradation): adaptive depth with a
+      `Work in progress` capture for unfinished work + a no-loss scan in `/pre-clear-compact`
+- [x] Refine the note quality bar (review pass on Fable 5): acceptance test — a fresh session must
+      be able to resume from the note + repo alone; the no-loss scan is an explicit verify step;
+      template prompts are minimums, not caps; the post skill reads the carryover FIRST, then
+      targeted docs only as needed (be reminded, not re-onboarded), trusting carryover + git over
+      stale docs
+- [x] Rename `post-clear-compact` → `/post-clear-handover` — the post side follows the handover,
+      it doesn't compact; its description now states it is not for resuming after a plain built-in
+      `/compact` (that leaves no handover doc)
 
 Deferred (optional — left out to keep the flow simple: two commands, one file):
 - A `SessionStart` hook (matcher `clear`/`compact`) that auto-injects the carryover, so
-  `/post-clear-compact` is not needed after an unplanned auto-compaction.
+  `/post-clear-handover` is not needed after an unplanned auto-compaction.
 - A "Compact Instructions" section in the global `CLAUDE.md` as a fallback for auto-compactions
   that fire before `/pre-clear-compact` runs.
 
@@ -99,4 +109,4 @@ Deferred (optional — left out to keep the flow simple: two commands, one file)
 | Sprint 3 | Done | Opus 4.8 realignment (format, skills, output style, live + field-test) |
 | Sprint 4 | Done | Own-docs + first commit; install script landed in Sprint 5; hook/templates stay backlog |
 | Sprint 5 | Done | Fable 5 / field-test sync: feature-close, skill refinements, settings, install.sh |
-| Sprint 6 | Done | Session carryover skills (pre-/post-clear-compact) + sessions/ convention |
+| Sprint 6 | Done | Session carryover skills (pre-/post-clear-handover) + sessions/ convention |

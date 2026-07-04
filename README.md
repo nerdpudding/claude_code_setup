@@ -38,17 +38,21 @@ Two deliberate choices:
 Two skills to continue in a fresh session without retyping when you free up context at a
 sprint/feature boundary — the personal counterpart to Claude Code's built-in `/compact`:
 
-- **`/pre-clear-compact`** — writes a curated `sessions/SESSION_CARRYOVER.md` (status, key
-  decisions, working conventions, exact next step) that points at the persistent docs instead of
-  duplicating them, then stops so the carryover can be committed and the context cleared.
-- **`/post-clear-compact`** — first command in the new session: reads the carryover plus the
+- **`/pre-clear-compact`** — writes a curated `sessions/SESSION_CARRYOVER.md` that scales to the
+  work: thin (status, decisions, conventions, next step + pointers) at a clean boundary, or a full
+  `Work in progress` capture (half-done files, approaches tried and rejected, exact error/test
+  state, next micro-step) when work is mid-flight — then stops so it can be committed and cleared.
+- **`/post-clear-handover`** — first command in the new session: reads the carryover plus the
   project docs, reports where things stand, proposes the next step without executing it, and
   archives the carryover with a date prefix so an old one never lingers as "still current".
 
-Why this beats leaning on automatic compaction: `/clear` + a curated carryover is cheaper and
-avoids summary drift, while the built-in `/compact` summary is lossy and tends to drop the
-project's specific working conventions and watch-outs. Both skills are generic and skip any
-artifact a project doesn't have; the rolling carryover lives in a new `sessions/` folder.
+Why this replaces automatic compaction rather than supplementing it: `/pre-clear-compact` runs
+before the wipe with the whole session still in context, so it can capture everything `/compact`
+would — but into a durable, curated, git-tracked file instead of a lossy in-context summary. A
+no-loss scan before it finishes is what keeps it degradation-free, and the note's depth scales to
+the work so unfinished, complex sessions are carried in full. `/clear` afterward is cheaper and
+avoids summary drift. Both skills are generic and skip any artifact a project doesn't have; the
+rolling carryover lives in a new `sessions/` folder.
 
 Also in v2.2: `global_config/settings.json` pins `theme: "auto"` so `install.sh` keeps the theme
 consistent across machines instead of dropping or overriding it.
@@ -172,7 +176,7 @@ The Personal Voice output style and the skills take effect on the **next session
 | `skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute. |
 | `skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene: docs check, backlog carry-over, archive the plan. |
 | `skills/pre-clear-compact/SKILL.md` | `/pre-clear-compact` — write a session carryover before freeing up context. |
-| `skills/post-clear-compact/SKILL.md` | `/post-clear-compact` — re-orient in a fresh session, then archive the carryover. |
+| `skills/post-clear-handover/SKILL.md` | `/post-clear-handover` — re-orient in a fresh session, then archive the carryover. |
 
 ```
 claude-code-setup repo              ~/.claude/ (target)
@@ -186,8 +190,8 @@ claude-code-setup repo              ~/.claude/ (target)
         ├── realign-project/           ├── custom_plan/
         ├── custom_plan/               ├── feature-close/
         ├── feature-close/             ├── pre-clear-compact/
-        ├── pre-clear-compact/         └── post-clear-compact/
-        └── post-clear-compact/
+        ├── pre-clear-compact/         └── post-clear-handover/
+        └── post-clear-handover/
 ```
 
 ## The skills
@@ -199,7 +203,7 @@ claude-code-setup repo              ~/.claude/ (target)
 | `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, stops. Build later on "implement PLAN_<name>". |
 | `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, graduates lessons, archives the plan with a date prefix. |
 | `/pre-clear-compact` | You want to free up context and continue in a fresh session | Writes a curated `sessions/SESSION_CARRYOVER.md` (status, decisions, conventions, next step), then stops so you can commit and `/clear`. |
-| `/post-clear-compact` | First command in a new session after clearing | Reads the carryover + project docs, reports where things stand, proposes the next step without doing it, and archives the carryover. |
+| `/post-clear-handover` | First command in a new session after clearing | Reads the carryover + project docs, reports where things stand, proposes the next step without doing it, and archives the carryover. |
 
 **`/project-setup` vs `/realign`:** `/project-setup` builds structure that isn't there yet;
 `/realign` leaves the structure and updates the *wording, channel, and location* of an existing
@@ -217,7 +221,7 @@ archive with date prefix).
 
 **Across sessions:** after closing, if you want to free up context and keep going in a fresh
 session, `/pre-clear-compact` writes a carryover, you commit it and `/clear`, and
-`/post-clear-compact` picks it up on the other side.
+`/post-clear-handover` picks it up on the other side.
 
 **`/project-setup` vs `/init`:** the built-in `/init` writes a single `CLAUDE.md` by reading
 existing code. `/project-setup` scaffolds a whole environment (structure, docs, agents, workflow).

@@ -111,7 +111,7 @@ None. This project contains only configuration files (markdown, JSON). No comput
 | custom_plan skill | `global_config/skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute |
 | feature-close skill | `global_config/skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene (docs check, backlog carry-over, archive the plan) |
 | pre-clear-compact skill | `global_config/skills/pre-clear-compact/SKILL.md` | `/pre-clear-compact` — write a session carryover before freeing up context |
-| post-clear-compact skill | `global_config/skills/post-clear-compact/SKILL.md` | `/post-clear-compact` — re-orient in a fresh session, then archive the carryover |
+| post-clear-handover skill | `global_config/skills/post-clear-handover/SKILL.md` | `/post-clear-handover` — re-orient in a fresh session, then archive the carryover |
 | personal-voice output style | `global_config/output-styles/personal-voice.md` | Tone/voice output style — on by default via `outputStyle` in settings |
 | install script | `install.sh` | `diff` / `install` / `pull` between the repo and `~/.claude/` |
 

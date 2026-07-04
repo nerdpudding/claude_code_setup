@@ -100,7 +100,7 @@ stopping, neutral/impersonal voice, no emojis). Edit tone there, not here.
 - **Continuing in a fresh session** — to free up tokens at a sprint/feature boundary and carry on
   without retyping: `/pre-clear-compact` writes `sessions/SESSION_CARRYOVER.md` (status, key
   decisions, working conventions, next step); commit it, then `/clear` (cheapest) or `/compact`. In
-  the new session, `/post-clear-compact` reads it back, reports status, proposes the next step, and
+  the new session, `/post-clear-handover` reads it back, reports status, proposes the next step, and
   archives the carryover. Both skills scale to what was delivered and skip absent artifacts.
 
 ## CLAUDE.md vs AI_INSTRUCTIONS.md

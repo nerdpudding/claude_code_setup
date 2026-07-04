@@ -454,7 +454,7 @@ After everything is set up, walk the user through how to work in the project:
   `claude_plans/PLAN_<name>.md`, and stops — a persistent, reviewable plan file.
 - **Build later, only on an explicit instruction** (e.g. "implement PLAN_<name>"). Saving or approving a plan is not approval to start coding.
 - **After delivery, run /feature-close** — docs check, leftovers carried to the backlog, the plan archived with a date prefix (e.g. `2026-01-28_PLAN_<topic>.md`).
-- **To continue in a fresh session** after freeing up context: `/pre-clear-compact` writes `sessions/SESSION_CARRYOVER.md` (created on demand), you commit it and `/clear`, and `/post-clear-compact` picks it up on the other side and archives it.
+- **To continue in a fresh session** after freeing up context: `/pre-clear-compact` writes `sessions/SESSION_CARRYOVER.md` (created on demand), you commit it and `/clear`, and `/post-clear-handover` picks it up on the other side and archives it.
 - **Use agents for their domain** — check the agents table before doing specialized work manually. Delegate implementation to pinned-model agents (each pinned to the cheapest tier that does the job — see the agents table) rather than doing it inline on a top-tier session model.
 - **Canonical rules** (one source of truth, archive-never-delete, English-only, no AI attribution) live in the global `CLAUDE.md` — they apply here too.
 
@@ -464,7 +464,7 @@ After everything is set up, walk the user through how to work in the project:
 - `/custom_plan <name>` — plan a feature/sprint to a reviewable file, without auto-building
 - `/feature-close` — post-delivery hygiene (docs check, backlog carry-over, archive the plan)
 - `/pre-clear-compact` — write a session carryover before freeing up context (then commit + `/clear`)
-- `/post-clear-compact` — re-orient in a fresh session, then archive the carryover
+- `/post-clear-handover` — re-orient in a fresh session, then archive the carryover
 - `/agents` — manage agents
 - `/compact` — compress context (re-reads `AI_INSTRUCTIONS.md` after)
 

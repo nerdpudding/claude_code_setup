@@ -33,6 +33,23 @@ Two deliberate choices:
 
 ## Version history
 
+### v2.2 — Session carryover across compaction (2026-07-04)
+
+Two skills to continue in a fresh session without retyping when you free up context at a
+sprint/feature boundary — the personal counterpart to Claude Code's built-in `/compact`:
+
+- **`/pre-clear-compact`** — writes a curated `sessions/SESSION_CARRYOVER.md` (status, key
+  decisions, working conventions, exact next step) that points at the persistent docs instead of
+  duplicating them, then stops so the carryover can be committed and the context cleared.
+- **`/post-clear-compact`** — first command in the new session: reads the carryover plus the
+  project docs, reports where things stand, proposes the next step without executing it, and
+  archives the carryover with a date prefix so an old one never lingers as "still current".
+
+Why this beats leaning on automatic compaction: `/clear` + a curated carryover is cheaper and
+avoids summary drift, while the built-in `/compact` summary is lossy and tends to drop the
+project's specific working conventions and watch-outs. Both skills are generic and skip any
+artifact a project doesn't have; the rolling carryover lives in a new `sessions/` folder.
+
 ### v2.1 — Fable 5 / field-test sync (2026-07-03)
 
 Synced `global_config/` back from the live `~/.claude/` after a month of field use (mainly on the
@@ -151,6 +168,8 @@ The Personal Voice output style and the skills take effect on the **next session
 | `skills/realign-project/SKILL.md` | `/realign` — modernize an EXISTING project to the v2 format. |
 | `skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute. |
 | `skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene: docs check, backlog carry-over, archive the plan. |
+| `skills/pre-clear-compact/SKILL.md` | `/pre-clear-compact` — write a session carryover before freeing up context. |
+| `skills/post-clear-compact/SKILL.md` | `/post-clear-compact` — re-orient in a fresh session, then archive the carryover. |
 
 ```
 claude-code-setup repo              ~/.claude/ (target)
@@ -162,8 +181,10 @@ claude-code-setup repo              ~/.claude/ (target)
     └── skills/                         ├── project-setup/
         ├── project-setup/             ├── realign-project/
         ├── realign-project/           ├── custom_plan/
-        ├── custom_plan/               └── feature-close/
-        └── feature-close/
+        ├── custom_plan/               ├── feature-close/
+        ├── feature-close/             ├── pre-clear-compact/
+        ├── pre-clear-compact/         └── post-clear-compact/
+        └── post-clear-compact/
 ```
 
 ## The skills
@@ -174,6 +195,8 @@ claude-code-setup repo              ~/.claude/ (target)
 | `/realign` | An existing project feels heavy/bureaucratic after a model upgrade | Audits CLAUDE.md / AI_INSTRUCTIONS / agents / settings / memory and modernizes them to the v2 format. Asks before editing. |
 | `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, stops. Build later on "implement PLAN_<name>". |
 | `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, graduates lessons, archives the plan with a date prefix. |
+| `/pre-clear-compact` | You want to free up context and continue in a fresh session | Writes a curated `sessions/SESSION_CARRYOVER.md` (status, decisions, conventions, next step), then stops so you can commit and `/clear`. |
+| `/post-clear-compact` | First command in a new session after clearing | Reads the carryover + project docs, reports where things stand, proposes the next step without doing it, and archives the carryover. |
 
 **`/project-setup` vs `/realign`:** `/project-setup` builds structure that isn't there yet;
 `/realign` leaves the structure and updates the *wording, channel, and location* of an existing
@@ -188,6 +211,10 @@ folder.
 **The plan lifecycle:** `/custom_plan <name>` opens it (research → plan file), an explicit
 "implement PLAN_<name>" builds it, and `/feature-close` closes it (docs check, backlog carry-over,
 archive with date prefix).
+
+**Across sessions:** after closing, if you want to free up context and keep going in a fresh
+session, `/pre-clear-compact` writes a carryover, you commit it and `/clear`, and
+`/post-clear-compact` picks it up on the other side.
 
 **`/project-setup` vs `/init`:** the built-in `/init` writes a single `CLAUDE.md` by reading
 existing code. `/project-setup` scaffolds a whole environment (structure, docs, agents, workflow).

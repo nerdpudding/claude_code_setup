@@ -68,6 +68,20 @@ the move to Claude Fable 5. See the v2.1 entry in `README.md` for the full chang
 - [x] Add `install.sh` (diff / install / pull) for new-machine setup and drift detection
 - [x] Update repo docs (README, AI_INSTRUCTIONS, concept, example_ai_instructions) to match
 
+## Sprint 6: Session carryover across compaction (Done — 2026-07-04)
+
+Two skills to continue in a fresh session without retyping when freeing up context at a
+sprint/feature boundary — the personal counterpart to the built-in `/compact`. See the v2.2 entry
+in `README.md`.
+
+- [x] Add `/pre-clear-compact` — writes a curated `sessions/SESSION_CARRYOVER.md` (status,
+      decisions, conventions, next step; points at persistent docs, doesn't duplicate), then stops
+- [x] Add `/post-clear-compact` — reads the carryover + docs, reports, proposes the next step
+      without executing, archives the carryover with a date prefix
+- [x] Add the `sessions/` convention to the global `CLAUDE.md` structure and `project-setup`
+- [x] Document the flow in `CLAUDE.md` (Memory & compaction) and sync repo docs (README,
+      AI_INSTRUCTIONS, concept)
+
 ## Status
 
 | Sprint | Status | Notes |
@@ -77,3 +91,4 @@ the move to Claude Fable 5. See the v2.1 entry in `README.md` for the full chang
 | Sprint 3 | Done | Opus 4.8 realignment (format, skills, output style, live + field-test) |
 | Sprint 4 | Done | Own-docs + first commit; install script landed in Sprint 5; hook/templates stay backlog |
 | Sprint 5 | Done | Fable 5 / field-test sync: feature-close, skill refinements, settings, install.sh |
+| Sprint 6 | Done | Session carryover skills (pre-/post-clear-compact) + sessions/ convention |

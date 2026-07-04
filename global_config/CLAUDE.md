@@ -53,6 +53,7 @@ project/
 ├── concepts/concept.md         # Concept, diagrams, technical decisions
 ├── docs/                       # Guides, specs; docs/lessons_learned.md = what worked/didn't
 ├── claude_plans/               # Plan files (PLAN_<topic>.md), git-committed
+├── sessions/                   # SESSION_CARRYOVER.md — rolling handover to the next session
 ├── archive/                    # Outdated content (never delete — archive with date prefix)
 └── .claude/
     ├── settings.json           # Project settings (plansDirectory: ./claude_plans)
@@ -96,6 +97,11 @@ stopping, neutral/impersonal voice, no emojis). Edit tone there, not here.
 - **Compaction summary** — keep it short: what's done, what's next, key decisions, watch-outs.
 - **After compaction**, re-read `AI_INSTRUCTIONS.md` and `docs/lessons_learned.md` (if they
   exist), then continue.
+- **Continuing in a fresh session** — to free up tokens at a sprint/feature boundary and carry on
+  without retyping: `/pre-clear-compact` writes `sessions/SESSION_CARRYOVER.md` (status, key
+  decisions, working conventions, next step); commit it, then `/clear` (cheapest) or `/compact`. In
+  the new session, `/post-clear-compact` reads it back, reports status, proposes the next step, and
+  archives the carryover. Both skills scale to what was delivered and skip absent artifacts.
 
 ## CLAUDE.md vs AI_INSTRUCTIONS.md
 

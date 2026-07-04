@@ -44,7 +44,9 @@ claude-code-setup/
 │   │   ├── project-setup/SKILL.md     # /project-setup — scaffold a new project
 │   │   ├── realign-project/SKILL.md   # /realign — realign an existing project to 4.8 format
 │   │   ├── custom_plan/SKILL.md       # /custom_plan — read-only sprint/feature planning, no auto-execute
-│   │   └── feature-close/SKILL.md     # /feature-close — post-delivery hygiene (docs, backlog, archive)
+│   │   ├── feature-close/SKILL.md     # /feature-close — post-delivery hygiene (docs, backlog, archive)
+│   │   ├── pre-clear-compact/SKILL.md # /pre-clear-compact — write session carryover before clearing context
+│   │   └── post-clear-compact/SKILL.md # /post-clear-compact — re-orient in a fresh session, archive the carryover
 │   └── output-styles/
 │       └── personal-voice.md          # Tone/voice output style (on by default via outputStyle)
 ├── claude_plans/                   # Active plans from plan mode
@@ -70,6 +72,8 @@ claude-code-setup/
 | `/realign` | `global_config/skills/realign-project/SKILL.md` | Realign an EXISTING project's docs to the Opus 4.8 format. Counterpart to `/project-setup`. |
 | `/custom_plan` | `global_config/skills/custom_plan/SKILL.md` | Plan a sprint/feature read-only into `claude_plans/PLAN_<name>.md`, then stop. Replaces native plan mode (which auto-executes on approval). Build later on an explicit "implement PLAN_<name>". |
 | `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, graduate lessons, archive the plan with a date prefix. |
+| `/pre-clear-compact` | `global_config/skills/pre-clear-compact/SKILL.md` | Write a session carryover (`sessions/SESSION_CARRYOVER.md`) before freeing up context, then stop. |
+| `/post-clear-compact` | `global_config/skills/post-clear-compact/SKILL.md` | Re-orient in a fresh session: read the carryover + docs, report, propose the next step, archive the carryover. |
 
 ## Plan Rules (plan in-project; build only on explicit request)
 

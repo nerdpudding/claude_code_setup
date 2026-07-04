@@ -50,6 +50,9 @@ avoids summary drift, while the built-in `/compact` summary is lossy and tends t
 project's specific working conventions and watch-outs. Both skills are generic and skip any
 artifact a project doesn't have; the rolling carryover lives in a new `sessions/` folder.
 
+Also in v2.2: `global_config/settings.json` pins `theme: "auto"` so `install.sh` keeps the theme
+consistent across machines instead of dropping or overriding it.
+
 ### v2.1 — Fable 5 / field-test sync (2026-07-03)
 
 Synced `global_config/` back from the live `~/.claude/` after a month of field use (mainly on the

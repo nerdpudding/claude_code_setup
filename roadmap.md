@@ -81,6 +81,14 @@ in `README.md`.
 - [x] Add the `sessions/` convention to the global `CLAUDE.md` structure and `project-setup`
 - [x] Document the flow in `CLAUDE.md` (Memory & compaction) and sync repo docs (README,
       AI_INSTRUCTIONS, concept)
+- [x] Pin `theme: "auto"` in `global_config/settings.json` so `install.sh` keeps it consistent
+      across machines instead of dropping or overriding it
+
+Deferred (optional — left out to keep the flow simple: two commands, one file):
+- A `SessionStart` hook (matcher `clear`/`compact`) that auto-injects the carryover, so
+  `/post-clear-compact` is not needed after an unplanned auto-compaction.
+- A "Compact Instructions" section in the global `CLAUDE.md` as a fallback for auto-compactions
+  that fire before `/pre-clear-compact` runs.
 
 ## Status
 

@@ -14,8 +14,6 @@ Provide a single, version-controlled repository that contains everything needed 
 |    ├── CLAUDE.md           |
 |    ├── settings.json       |
 |    ├── skills/             |
-|    │   ├── project-setup/  |
-|    │   └── realign-project/|
 |    └── output-styles/      |
 +-------------|--------------+
               |
@@ -27,8 +25,6 @@ Provide a single, version-controlled repository that contains everything needed 
 |    ├── CLAUDE.md           |
 |    ├── settings.json       |
 |    ├── skills/             |
-|    │   ├── project-setup/  |
-|    │   └── realign-project/|
 |    └── output-styles/      |
 +----------------------------+
               |

@@ -30,7 +30,7 @@ Read `~/.claude/settings.json`. Do NOT diff against a hardcoded value block — 
 - `$schema` — points at the Claude Code settings schema.
 - `env` — telemetry disabled (`DISABLE_TELEMETRY` / `DISABLE_ERROR_REPORTING`) and Bash timeouts set (`BASH_DEFAULT_TIMEOUT_MS`, `BASH_MAX_TIMEOUT_MS`).
 - `alwaysThinkingEnabled` — present (typically `true`).
-- `effortLevel` — present. `"high"` is the everyday default for 2.1.x; `"xhigh"` is available on demand when more depth is wanted.
+- `effortLevel` — present, matched to the pinned model: `"xhigh"` for Opus 4.8/4.7 coding (Anthropic's recommendation), `"high"` for Fable 5 / Sonnet 5.
 - `plansDirectory` — set (project setups use `./claude_plans`, so plans go in-project, not the hidden `~/.claude/plans/`).
 - `includeCoAuthoredBy` — `false` (this is how no-AI-attribution is enforced; no prose rule needed).
 - `permissions.deny` — present with at least an example (e.g. private files, `**/.env`, `**/secrets/**`).
@@ -61,8 +61,9 @@ Check `~/.claude/plans/` — it should be empty when `plansDirectory` points pla
 ### 0.4 Global skills
 
 Verify the global skill set exists under `~/.claude/skills/`: `project-setup` (this skill), its
-`/realign` counterpart (`realign-project`), `custom_plan` (the planning workflow), and
-`feature-close` (post-delivery hygiene).
+`/realign` counterpart (`realign-project`), `custom_plan` (the planning workflow),
+`feature-close` (post-delivery hygiene), and the session-carryover pair `pre-clear-compact` and
+`post-clear-handover`.
 
 **Report findings and ask before fixing anything. Then continue to Phase 1 (or stop if this was a verify-only run).**
 

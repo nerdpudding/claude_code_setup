@@ -68,7 +68,7 @@ Present a TIERED, prioritized change list:
 
 Then use AskUserQuestion for the open decisions BEFORE editing, e.g.:
 
-- effortLevel `high` vs `xhigh` (default `high`; `xhigh` only for routinely hard work).
+- effortLevel — match to the pinned model per Anthropic's guidance (`xhigh` for Opus 4.8/4.7 coding, `high` for Fable 5 / Sonnet 5); confirm before changing.
 - Delete a specific stale shadow-memory file? (name the exact path).
 - Which daily-tracker / file-naming scheme to standardize on when the docs conflict.
 - Whether to scope-gate a mandatory workflow with a scale-to-task-size escape hatch.

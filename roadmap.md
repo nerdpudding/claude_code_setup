@@ -93,6 +93,12 @@ in `README.md`.
 - [x] Rename `post-clear-compact` → `/post-clear-handover` — the post side follows the handover,
       it doesn't compact; its description now states it is not for resuming after a plain built-in
       `/compact` (that leaves no handover doc)
+- [x] Field-test follow-ups (2026-07-04): first `/post-clear-handover` field test passed (~33.7k
+      tokens after resume); added `pre-clear-compact` + `post-clear-handover` to `project-setup`
+      Phase 0.4's global-skill check; corrected the pinned session `model` back to `opus[1m]`
+      (Opus 4.8 daily driver, Fable 5 on-demand) and grounded `effortLevel: xhigh` in Anthropic's
+      published recommendation for Opus 4.8/4.7 coding (model-dependent — `high` for Fable 5 /
+      Sonnet 5)
 
 Deferred (optional — left out to keep the flow simple: two commands, one file):
 - A `SessionStart` hook (matcher `clear`/`compact`) that auto-injects the carryover, so

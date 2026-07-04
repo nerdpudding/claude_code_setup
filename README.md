@@ -57,6 +57,12 @@ rolling carryover lives in a new `sessions/` folder.
 Also in v2.2: `global_config/settings.json` pins `theme: "auto"` so `install.sh` keeps the theme
 consistent across machines instead of dropping or overriding it.
 
+Also corrected in v2.2: the pinned session `model` moved from `claude-fable-5[1m]` back to
+`opus[1m]` — Opus 4.8 is the daily driver and Fable 5 an on-demand exception for the heaviest
+reasoning (matching how it's actually used), not the always-on default. `effortLevel: xhigh` stays,
+because that is Anthropic's published recommendation for coding on Opus 4.8/4.7; the level is
+model-dependent (Fable 5 and Sonnet 5 default to `high`).
+
 ### v2.1 — Fable 5 / field-test sync (2026-07-03)
 
 Synced `global_config/` back from the live `~/.claude/` after a month of field use (mainly on the
@@ -169,7 +175,7 @@ The Personal Voice output style and the skills take effect on the **next session
 | File | What it does |
 |------|-------------|
 | `CLAUDE.md` | Global instructions — tiered Hard rules / Preferences, project conventions, plan rules. Auto-loaded every session. |
-| `settings.json` | Global settings — telemetry/timeouts, `model: claude-fable-5[1m]` + fallback chain, `effortLevel: xhigh`, `includeCoAuthoredBy: false`, `outputStyle: "Personal Voice"`, `plansDirectory`, the `last30days` plugin, a `permissions.deny` example. |
+| `settings.json` | Global settings — telemetry/timeouts, `model: opus[1m]` (Opus 4.8 daily driver; Fable 5 on demand) + `fallbackModel` chain, `effortLevel: xhigh` (Anthropic's recommendation for Opus 4.8 coding), `includeCoAuthoredBy: false`, `outputStyle: "Personal Voice"`, `plansDirectory`, the `last30days` plugin, a `permissions.deny` example. |
 | `output-styles/personal-voice.md` | Tone/voice output style — the single home for tone rules (no "fair", no hollow validation, neutral voice, no emojis). **On by default** via `outputStyle`; `keep-coding-instructions: true` keeps all standard coding behavior, so it's purely additive. |
 | `skills/project-setup/SKILL.md` | `/project-setup` — scaffold a NEW project. |
 | `skills/realign-project/SKILL.md` | `/realign` — modernize an EXISTING project to the v2 format. |

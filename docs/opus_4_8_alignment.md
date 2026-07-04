@@ -69,9 +69,11 @@ the channel, and the location** of the rules so a literal model reads them the w
    git-tracked in-repo memory mirrors — a literal model trusts a confident, dated, in-repo file even
    when it contradicts current state.
 
-9. **Tune depth at the settings layer.** Use `effortLevel` (e.g. `high` for everyday work, `xhigh`
-   per-session for genuinely hard tasks) instead of prose "always be thorough" mandates. 4.8 already
-   supplies more depth per turn; stacking prose depth-mandates on top fights its improved default.
+9. **Tune depth at the settings layer, not in prose.** Set depth once via `effortLevel` instead of
+   prose "always be thorough" mandates. Anthropic recommends `xhigh` for coding/agentic work on
+   Opus 4.8/4.7 — that is the everyday default here; it is model-dependent (Fable 5 and Sonnet 5
+   default to `high`), so it tracks the pinned model. Depth belongs in this one knob; stacking prose
+   depth-mandates on top only fights the model's already-deeper per-turn default.
 
 10. **Crisp, non-overlapping subagent descriptions.** The description field drives auto-routing on
     4.8, and it routes literally. Lead with concrete keyword triggers; add "Use proactively when..."

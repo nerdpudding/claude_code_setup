@@ -39,7 +39,7 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 - **Session start:** if they exist, read `AI_INSTRUCTIONS.md`, then `README.md`, then the relevant
   active plan, before diving in.
 
-## Complex builds — guard rails (`[user-specified]` 2026-07-18, after the Distillery Sprint-12 review)
+## Complex builds — guard rails (`[user-specified]` 2026-07-18)
 
 For any multi-step or multi-agent build (several packages, shared state, long-running flows).
 Origin: a five-agent build round delivered green per-package suites while the review found 26

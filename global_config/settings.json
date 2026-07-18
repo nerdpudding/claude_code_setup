@@ -8,15 +8,39 @@
   },
   "includeCoAuthoredBy": false,
   "permissions": {
+    "allow": [
+      "Bash(nvidia-smi:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker start:*)",
+      "Bash(docker run:*)",
+      "Bash(docker compose:*)",
+      "Bash(uv run:*)",
+      "Bash(.venv/bin/distillery:*)",
+      "Bash(distillery:*)",
+      "Bash(.venv/bin/python:*)",
+      "Bash(tmux:*)",
+      "Bash(./start.sh:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
     "deny": [
       "Read(**/sampling_prompts.txt)"
-    ]
+    ],
+    "defaultMode": "default"
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5[1m]",
   "fallbackModel": [
+    "claude-opus-4-8",
     "claude-opus-4-7",
     "claude-opus-4-6",
-    "claude-sonnet-4-6"
+    "claude-sonnet-5"
   ],
   "enabledPlugins": {
     "last30days@last30days-skill": true
@@ -34,7 +58,14 @@
   "effortLevel": "xhigh",
   "plansDirectory": "./claude_plans",
   "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "theme": "auto",
-  "verbose": true
+  "verbose": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "This is the user's own single-user development machine and he owns all of its GPUs and Docker. Local GPU training runs, Docker container lifecycle (run/stop/rm/logs), and starting/stopping the local llama-server are authorized routine dev-loop actions and should be allowed without a per-action sentence."
+    ]
+  }
 }

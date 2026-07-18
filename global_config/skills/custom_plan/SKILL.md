@@ -40,6 +40,9 @@ plain). Derive a short kebab/snake plan name from the feature or sprint (e.g. `s
 Explore enough to write a concrete plan, not a vague one:
 - Find the real files involved (Glob/Grep), read the ones that matter, follow existing patterns.
 - Note current behavior, the layers a change touches, constraints, and risks.
+- **Verify premises against the code, not against older docs/plans.** A plan built on a stale
+  claim ("X has no handling for Y") designs the wrong fix; check each load-bearing claim in the
+  actual source and record corrected premises in the plan (they change the design).
 - If the project has them, consult `AI_INSTRUCTIONS.md`, `docs/lessons_learned.md`, and relevant
   sub-docs (they carry project-specific pitfalls). Scale depth to the size of the work.
 - For a large/unfamiliar codebase you MAY delegate read-only exploration to subagents — prefer
@@ -67,17 +70,32 @@ File-by-file: what changes in each (frontend / backend / infra / templates / con
 ## Approach
 The design and the order of work. Interface contracts, data flow, non-trivial decisions + rationale.
 
+## Shared state & seams        <!-- REQUIRED for multi-package/multi-agent work -->
+Every state/file/flag that crosses a package boundary: its ONE owning writer, the ONE shared
+read-predicate every consumer uses, and which integration test covers that seam. (Parallel
+builds fail in the seams, not the packages — see the global "Complex builds" guard rails.)
+
+## Failure & resume semantics  <!-- REQUIRED when any step is long-running or multi-stage -->
+Per long-running step: what happens on mid-run failure, what state is on disk, how a re-run
+resumes. Gating state may only be set on verified success — error paths fail loudly.
+
 ## Risks & open questions
 What could go wrong; anything needing a decision before building.
 
 ## Steps
-An ordered, checkable task list (the build sequence).
+An ordered, checkable task list (the build sequence). For complex/multi-agent work the sequence
+ENDS with: (1) a post-build adversarial review at a higher tier than the builders, seam-focused,
+findings fixed before proceeding; (2) a live end-to-end of the real flow as the closing gate —
+a green suite alone never closes the sprint.
 
 ## Test / verification
-How we'll confirm it works.
+How we'll confirm it works — including the failure paths (a plan that only tests the happy path
+is not done), and the live end-to-end for anything user-facing.
 ```
 
 Keep it concrete (real file paths, real function/endpoint names from step 2), not generic.
+Build agents must be briefed to report deviations + watch items in their final output — those
+feed the review phase.
 
 ### 4. Stop and hand back
 Tell the user:

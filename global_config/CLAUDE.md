@@ -39,6 +39,25 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 - **Session start:** if they exist, read `AI_INSTRUCTIONS.md`, then `README.md`, then the relevant
   active plan, before diving in.
 
+## Complex builds — guard rails (`[user-specified]` 2026-07-18, after the Distillery Sprint-12 review)
+
+For any multi-step or multi-agent build (several packages, shared state, long-running flows).
+Origin: a five-agent build round delivered green per-package suites while the review found 26
+defects, nearly all in the seams BETWEEN packages — these rules make that class structural:
+
+- **The seams are the risk, not the packages.** The plan names every shared state/file/flag with
+  ONE owning writer and ONE shared read-predicate; every consumer reads that predicate, never its
+  own interpretation of the raw state. Cross-package integration tests cover each named seam.
+- **Gating state is a claim.** A status another part gates on may only be set after verified
+  success; an error/partial path fails the stage loudly. "Ran but produced nothing" must never
+  read as done — that is the silent-wrong-result class.
+- **Failure & resume are scope.** Every long-running or multi-stage step specifies its mid-run
+  failure behavior and resume semantics (state on disk, not in memory) in the plan, BEFORE build.
+- **Builders report deviations and watch items** — mandatory in every build agent's final report;
+  the orchestrator feeds them into a **post-build adversarial review at a HIGHER tier than the
+  builders**, focused on the seams, whose findings are fixed before any live gate. A green suite
+  is necessary, never sufficient; a live end-to-end of the real flow closes the loop.
+
 ## Project organization (adapt to size)
 
 Minimal by default; add structure only as a project needs it. A small script may only need
@@ -62,6 +81,31 @@ project/
 
 - **Schedule/Planning** = WHEN to do WHAT (time-bound). **Plan** = HOW + in what ORDER.
 - **Never delete, always archive** — move outdated content to `archive/` with a `YYYY-MM-DD_` prefix.
+
+## The sprint cycle (how all projects run — `[user-specified]` 2026-07-17)
+
+The standing rhythm, made explicit after repeated mid-implementation permission questions
+(he finds them irritating and they misread the rules below):
+
+1. **Concept** — the user's idea; sometimes brainstormed together first. Often a sprint 0
+   turns it into a technical/functional design.
+2. **Roadmap & backlog** — priorities and what groups well into a sprint are set together.
+3. **Plan** — the AI writes `claude_plans/PLAN_<name>.md` (see Planning workflow below).
+4. **Plan approval** — the user approves the plan, or it is adjusted together. THIS is the
+   moment the "plan first, don't build yet" rule protects: approval is review-only; building
+   starts only on an explicit "implement PLAN_<name>".
+5. **Implementation** — from that point the AI implements, tests, and fixes autonomously.
+   Do NOT ask permission for work the approved plan already describes; during implementation
+   only genuinely NEW scope, taste/product questions, and actions with real
+   crash/data-loss/irreversibility risk still go to the user.
+6. **Feature close** — docs updated, leftovers to the backlog, plan archived, commit.
+7. **Roadmap revisited** — outcomes may add or change items; the next sprint is chosen
+   together; the cycle repeats.
+
+**Occasional full-autonomy mode** — only when the user explicitly says so in chat, per
+occasion (e.g. "het is nacht, ga geheel zelfstandig aan de gang, alles is ok"): then the AI
+also writes, approves, and starts the plan itself. Never assume this mode; he grants it in
+so many words when he wants it.
 
 ## Planning workflow (in-project plans; build only on explicit request)
 

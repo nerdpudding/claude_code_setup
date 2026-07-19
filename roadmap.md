@@ -111,7 +111,7 @@ Deferred (optional — left out to keep the flow simple: two commands, one file)
 Implemented exactly the recommended points from the 2026-07-19 dynamic-workflows advisory
 (external report, kept outside this repo; sections Q3/Q4/Verdict) — nothing more. See the v2.3
 entry in `README.md` for the full list.
-Plan: `claude_plans/PLAN_workflow_adoption.md` (to be archived at feature close).
+Plan: `archive/2026-07-19_PLAN_workflow_adoption.md`.
 
 - [x] `/doc-sweep` skill + saved workflow `global_config/workflows/doc-sweep.js` (capped fleet:
       4–7 cluster readers + 1 verifier + 1 merger; "+300k" hard ceiling; only merged findings

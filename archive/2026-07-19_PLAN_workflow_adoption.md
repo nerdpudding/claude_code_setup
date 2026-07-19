@@ -1,5 +1,11 @@
 # PLAN — Workflow adoption (doc sweep + milestone review, per the 2026-07-19 advisory)
 
+> **STATUS (closed 2026-07-19):** delivered in full and committed as `46e8b2d` (Sprint 7 /
+> v2.3), including both optional items (this repo's doc-keeper note; the live smoke, which
+> passed: 4 agents, 0 errors, findings fixed). No leftovers. One conscious deferral, recorded
+> in Test/verification below: the milestone-review workflow gets its live validation at its
+> first real milestone use. Real token totals: `roadmap.md`, Sprint 7 entry.
+
 > Source of scope: the dynamic-workflows advisory report of 2026-07-19 (external to this repo;
 > sections Q3, Q4, Verdict). This plan implements EXACTLY the recommended points, nothing more.
 > Explicitly excluded (per Q2/Verdict): workflows for build waves, live probes, GPU/lease work,

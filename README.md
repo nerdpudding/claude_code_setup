@@ -1,8 +1,8 @@
 # claude-code-setup
 
 A version-controlled home for a personal Claude Code environment: the global `CLAUDE.md`,
-`settings.json`, an output style, and a set of skills. Clone it, copy `global_config/*` into
-`~/.claude/`, and any machine works the same way.
+`settings.json`, an output style, a set of skills, and saved workflows. Clone it, copy
+`global_config/*` into `~/.claude/`, and any machine works the same way.
 
 ## Table of Contents
 
@@ -11,6 +11,7 @@ A version-controlled home for a personal Claude Code environment: the global `CL
 - [Quick start](#quick-start)
 - [What's in `global_config/`](#whats-in-global_config)
 - [The skills](#the-skills)
+- [Saved workflows](#saved-workflows)
 - [Opus 4.8 alignment — why the format looks like this](#opus-48-alignment--why-the-format-looks-like-this)
 - [Global vs project-level config](#global-vs-project-level-config)
 - [Project structure & docs](#project-structure--docs)
@@ -19,7 +20,7 @@ A version-controlled home for a personal Claude Code environment: the global `CL
 
 One repo that holds everything needed to reproduce a consistent Claude Code setup on any machine.
 The `global_config/` folder mirrors `~/.claude/` — copy it across and you have the same CLAUDE.md,
-settings, output style, and skills everywhere.
+settings, output style, skills, and saved workflows everywhere.
 
 It reflects a **personal** workflow (rapid PoC-style development with light structure), not a
 universal best practice. The development cycle it encourages: **setup → concept → plan → implement →
@@ -32,6 +33,38 @@ Two deliberate choices:
   is self-contained — easy to move, share, commit, or revisit. Plans never live in a global folder.
 
 ## Version history
+
+### v2.3 — Workflow adoption + Opus 4.8 default (2026-07-19)
+
+Adopted the two fan-out-shaped fleets from the dynamic-workflows advisory of 2026-07-19 — and
+nothing else from it (build waves, probes, and planning stay Task-tool/main-thread work; no
+ultracode):
+
+- **New skill `/doc-sweep` + saved workflow `workflows/doc-sweep.js`** — the end-of-sprint /
+  periodic doc-consistency sweep as a capped fleet: 4–7 cheap cluster readers (fresh context
+  each) + 1 sonnet verifier + 1 sonnet merger; only the merged findings list reaches the main
+  thread. `/feature-close` step 2 now routes substantial doc trees to it.
+- **Saved workflow `workflows/milestone-review.js`** — whole-codebase review at milestones
+  (every ~3–4 sprints): 5 opus dimension-finders + 2 opus refuters per dimension (a finding
+  dies when both refute it) + 1 synthesis writing prioritized findings into a plan file.
+  Invoked by hand; caps live in the script header.
+- **Fleet-mode note on findings-producing agents** — when run inside a workflow fleet with a
+  structured-output schema, return ONLY the structured findings list. Added to the
+  `project-setup` doc-keeper template and agent spec, as `/realign` audit check 11 (so existing
+  projects pick it up), and to this repo's own doc-keeper.
+- **Token recording at sprint close** — `/feature-close` gained a fixed step: record the
+  round's real token totals (session + fleet totals) in the roadmap entry. Until now no real
+  figures were recorded anywhere.
+- **`install.sh` now also syncs `workflows/`** — `~/.claude/workflows/` is the documented
+  user-level home for saved workflows (available in every project).
+- **Model default back to `opus[1m]`** — Fable 5 left preview and is separately billed since
+  2026-07-19. The default hierarchy tops out at Opus 4.8; Fable stays an easy explicit
+  override (per session `/model`, per review run `synthesisModel: 'fable'`, per agent an
+  explicit pin on request). `effortLevel: xhigh` stays — the documented recommendation for
+  Opus 4.8 coding.
+- **Version-sensitivity note:** the workflow `agentType` option and the `budget` hard ceiling
+  ("+300k"/"+500k" turn directives) are installation-verified (2026-07-19) but not in the
+  public docs — the skill and both script headers carry a re-check note.
 
 ### v2.2 — Session carryover across compaction (2026-07-04)
 
@@ -163,7 +196,7 @@ cd claude-code-setup
 ```
 
 `install.sh` only touches the files this repo manages (`CLAUDE.md`, `settings.json`,
-`output-styles/`, `skills/`) — machine-local state like `settings.local.json`, memory, history,
+`output-styles/`, `skills/`, `workflows/`) — machine-local state like `settings.local.json`, memory, history,
 and plugins is left alone. The reverse direction works too: after editing the live config, run
 `./install.sh pull` to bring the changes back into the repo and commit them. (Manual equivalent:
 `cp -r global_config/* ~/.claude/`.)
@@ -180,9 +213,12 @@ The Personal Voice output style and the skills take effect on the **next session
 | `skills/project-setup/SKILL.md` | `/project-setup` — scaffold a NEW project. |
 | `skills/realign-project/SKILL.md` | `/realign` — modernize an EXISTING project to the v2 format. |
 | `skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute. |
-| `skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene: docs check, backlog carry-over, archive the plan. |
+| `skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene: docs check, backlog carry-over, token recording, archive the plan. |
+| `skills/doc-sweep/SKILL.md` | `/doc-sweep` — the doc-consistency sweep as a capped workflow fleet. |
 | `skills/pre-clear-compact/SKILL.md` | `/pre-clear-compact` — write a session carryover before freeing up context. |
 | `skills/post-clear-handover/SKILL.md` | `/post-clear-handover` — re-orient in a fresh session, then archive the carryover. |
+| `workflows/doc-sweep.js` | Saved workflow behind `/doc-sweep` — parallel doc-consistency sweep (readers + verifier + merger). |
+| `workflows/milestone-review.js` | Saved workflow for the milestone whole-codebase review (finders + refuters + synthesis into a plan file). |
 
 ```
 claude-code-setup repo              ~/.claude/ (target)
@@ -190,14 +226,18 @@ claude-code-setup repo              ~/.claude/ (target)
     ├── CLAUDE.md                    ├── settings.json
     ├── settings.json               ├── output-styles/
     ├── output-styles/              │   └── personal-voice.md
-    │   └── personal-voice.md       └── skills/
-    └── skills/                         ├── project-setup/
-        ├── project-setup/             ├── realign-project/
-        ├── realign-project/           ├── custom_plan/
-        ├── custom_plan/               ├── feature-close/
-        ├── feature-close/             ├── pre-clear-compact/
-        ├── pre-clear-compact/         └── post-clear-handover/
-        └── post-clear-handover/
+    │   └── personal-voice.md       ├── skills/
+    ├── skills/                     │   ├── project-setup/
+    │   ├── project-setup/          │   ├── realign-project/
+    │   ├── realign-project/        │   ├── custom_plan/
+    │   ├── custom_plan/            │   ├── feature-close/
+    │   ├── feature-close/          │   ├── doc-sweep/
+    │   ├── doc-sweep/              │   ├── pre-clear-compact/
+    │   ├── pre-clear-compact/      │   └── post-clear-handover/
+    │   └── post-clear-handover/    └── workflows/
+    └── workflows/                      ├── doc-sweep.js
+        ├── doc-sweep.js                └── milestone-review.js
+        └── milestone-review.js
 ```
 
 ## The skills
@@ -205,9 +245,10 @@ claude-code-setup repo              ~/.claude/ (target)
 | Skill | Use it when… | What it does |
 |-------|--------------|--------------|
 | `/project-setup` | Starting a new project, or verifying the global setup on a new PC | Scaffolds structure, docs, agents, workflow — scaled to project size (a small script needs only README + AI_INSTRUCTIONS). |
-| `/realign` | An existing project feels heavy/bureaucratic after a model upgrade | Audits CLAUDE.md / AI_INSTRUCTIONS / agents / settings / memory and modernizes them to the v2 format. Asks before editing. |
+| `/realign` | An existing project feels heavy/bureaucratic after a model upgrade | Audits CLAUDE.md / AI_INSTRUCTIONS / agents / skills / settings / memory and modernizes them to the v2 format. Asks before editing. |
 | `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, stops. Build later on "implement PLAN_<name>". |
-| `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, graduates lessons, archives the plan with a date prefix. |
+| `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, records the round's real token totals, graduates lessons, archives the plan with a date prefix. |
+| `/doc-sweep` | Sprint close or periodic maintenance on a project with a substantial doc tree | Runs the doc-consistency sweep as a capped workflow fleet (4–7 cluster readers + verifier + merger); only the merged findings return to the session. Small projects: single doc-keeper pass instead. |
 | `/pre-clear-compact` | You want to free up context and continue in a fresh session | Writes a curated `sessions/SESSION_CARRYOVER.md` (status, decisions, conventions, next step), then stops so you can commit and `/clear`. |
 | `/post-clear-handover` | First command in a new session after clearing | Reads the carryover + project docs, reports where things stand, proposes the next step without doing it, and archives the carryover. |
 
@@ -231,6 +272,23 @@ session, `/pre-clear-compact` writes a carryover, you commit it and `/clear`, an
 
 **`/project-setup` vs `/init`:** the built-in `/init` writes a single `CLAUDE.md` by reading
 existing code. `/project-setup` scaffolds a whole environment (structure, docs, agents, workflow).
+
+## Saved workflows
+
+Two workflow recipes ship in `global_config/workflows/` and land in `~/.claude/workflows/` —
+the documented user-level home for saved workflows, available in every project:
+
+| Workflow | Invoked | Fleet & caps |
+|----------|---------|--------------|
+| `doc-sweep` | via `/doc-sweep` (sprint close, or periodic) | 4–7 cheap cluster readers + 1 sonnet verifier + 1 sonnet merger (6–10 agents); state **"+300k"** in the invoking turn (hard ceiling). |
+| `milestone-review` | by hand, at milestones (every ~3–4 sprints) | 5 opus dimension-finders + 2 opus refuters per dimension + 1 synthesis (~16 agents; opus default, `synthesisModel: 'fable'` as explicit opt-in); state **"+500k"**. Writes the findings section into a plan file. |
+
+Both fleets are read-only (the milestone review's single sanctioned write is the findings
+section of the plan file), so a failed run is simply re-run or resumed via `resumeFromRunId`.
+Keep the `/config` workflow size guideline at `medium`; ultracode stays off — deliberate
+scoping and approval gates replace default-maximal thoroughness. The workflow `agentType`
+option and the `budget` hard ceiling are installation-verified (2026-07-19) but not yet in the
+public docs — re-check after harness updates before relying on them elsewhere.
 
 ## Opus 4.8 alignment — why the format looks like this
 

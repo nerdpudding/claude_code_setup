@@ -106,6 +106,35 @@ Deferred (optional — left out to keep the flow simple: two commands, one file)
 - A "Compact Instructions" section in the global `CLAUDE.md` as a fallback for auto-compactions
   that fire before `/pre-clear-compact` runs.
 
+## Sprint 7: Workflow adoption + Opus 4.8 default (Done — 2026-07-19)
+
+Implemented exactly the recommended points from the 2026-07-19 dynamic-workflows advisory
+(external report, kept outside this repo; sections Q3/Q4/Verdict) — nothing more. See the v2.3
+entry in `README.md` for the full list.
+Plan: `claude_plans/PLAN_workflow_adoption.md` (to be archived at feature close).
+
+- [x] `/doc-sweep` skill + saved workflow `global_config/workflows/doc-sweep.js` (capped fleet:
+      4–7 cluster readers + 1 verifier + 1 merger; "+300k" hard ceiling; only merged findings
+      reach the main thread)
+- [x] Saved workflow `global_config/workflows/milestone-review.js` (5 opus dimension-finders +
+      2 opus refuters per dimension + 1 synthesis into a plan file; opus default with
+      `synthesisModel: 'fable'` as explicit opt-in; "+500k"; invoked by hand at milestones)
+- [x] `/feature-close`: substantial doc trees routed to the doc-sweep workflow; new fixed step 4
+      "Record real token totals" at sprint close
+- [x] Fleet-mode return-format note: `project-setup` doc-keeper template + agent spec,
+      `/realign` audit check 11 + apply step, and this repo's own doc-keeper
+- [x] `install.sh` syncs `workflows/`; `project-setup` Phase 0.4 verifies skills + workflows on
+      a new machine
+- [x] `settings.json` model default back to `opus[1m]` (Fable 5 separately billed since
+      2026-07-19; overrides stay easy: `/model` per session, `synthesisModel` per review run,
+      explicit `model:` pin per agent)
+- [x] Docs synced (README v2.3, AI_INSTRUCTIONS hierarchy + skills/workflows tables, roadmap)
+
+Token totals (this round, per the new recording step): doc-sweep live smoke fleet **173,953**
+subagent tokens (4 agents: 2 readers — one via `agentType: doc-keeper` — + 1 verifier +
+1 merger; ~6 min wall-clock; 4 verified findings returned); docs-verification subagent
+**47,703**; closing doc-keeper pass **91,615**. Main-session total: check `/usage` at close.
+
 ## Status
 
 | Sprint | Status | Notes |
@@ -116,3 +145,4 @@ Deferred (optional — left out to keep the flow simple: two commands, one file)
 | Sprint 4 | Done | Own-docs + first commit; install script landed in Sprint 5; hook/templates stay backlog |
 | Sprint 5 | Done | Fable 5 / field-test sync: feature-close, skill refinements, settings, install.sh |
 | Sprint 6 | Done | Session carryover skills (pre-/post-clear-handover) + sessions/ convention |
+| Sprint 7 | Done | Workflow adoption (doc-sweep + milestone-review), fleet-mode notes, token recording, opus[1m] default |

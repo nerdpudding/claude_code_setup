@@ -14,6 +14,7 @@ Provide a single, version-controlled repository that contains everything needed 
 |    ├── CLAUDE.md           |
 |    ├── settings.json       |
 |    ├── skills/             |
+|    ├── workflows/          |
 |    └── output-styles/      |
 +-------------|--------------+
               |
@@ -25,6 +26,7 @@ Provide a single, version-controlled repository that contains everything needed 
 |    ├── CLAUDE.md           |
 |    ├── settings.json       |
 |    ├── skills/             |
+|    ├── workflows/          |
 |    └── output-styles/      |
 +----------------------------+
               |
@@ -66,8 +68,9 @@ Provide a single, version-controlled repository that contains everything needed 
 |  |                     |   |  AI_INSTRUCTIONS.md  |  |
 |  |  ├── CLAUDE.md      |   |  README.md           |  |
 |  |  ├── settings.json  |   |  roadmap.md          |  |
-|  |  └── skills/        |   |  concepts/           |  |
-|  |                     |   |  docs/               |  |
+|  |  ├── skills/        |   |  concepts/           |  |
+|  |  ├── workflows/     |   |  docs/               |  |
+|  |  └── output-styles/ |   |                      |  |
 |  +---------------------+   +----------------------+  |
 |         |                                             |
 |    (copied to ~/.claude/)                             |
@@ -83,7 +86,7 @@ Provide a single, version-controlled repository that contains everything needed 
 
 | Phase | Input | Output |
 |-------|-------|--------|
-| **MVP (now)** | Git clone of this repo | Configured `~/.claude/` with CLAUDE.md, settings.json, skills/ |
+| **MVP (now)** | Git clone of this repo | Configured `~/.claude/` with CLAUDE.md, settings.json, skills/, output-styles/, workflows/ |
 | **Later** | Additional skills, agents, settings tweaks | Updated global config files, new skill definitions |
 
 ## Key Technical Decisions
@@ -109,10 +112,13 @@ None. This project contains only configuration files (markdown, JSON). No comput
 | project-setup skill | `global_config/skills/project-setup/SKILL.md` | `/project-setup` — scaffold a new project |
 | realign-project skill | `global_config/skills/realign-project/SKILL.md` | `/realign` — realign an existing project to the Opus 4.8 format |
 | custom_plan skill | `global_config/skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute |
-| feature-close skill | `global_config/skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene (docs check, backlog carry-over, archive the plan) |
+| feature-close skill | `global_config/skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene (docs check, backlog carry-over, token recording, archive the plan) |
+| doc-sweep skill | `global_config/skills/doc-sweep/SKILL.md` | `/doc-sweep` — doc-consistency sweep as a capped workflow fleet |
 | pre-clear-compact skill | `global_config/skills/pre-clear-compact/SKILL.md` | `/pre-clear-compact` — write a session carryover before freeing up context |
 | post-clear-handover skill | `global_config/skills/post-clear-handover/SKILL.md` | `/post-clear-handover` — re-orient in a fresh session, then archive the carryover |
 | personal-voice output style | `global_config/output-styles/personal-voice.md` | Tone/voice output style — on by default via `outputStyle` in settings |
+| doc-sweep workflow | `global_config/workflows/doc-sweep.js` | Saved workflow behind `/doc-sweep` (readers + verifier + merger) |
+| milestone-review workflow | `global_config/workflows/milestone-review.js` | Saved workflow for the whole-codebase review at milestones |
 | install script | `install.sh` | `diff` / `install` / `pull` between the repo and `~/.claude/` |
 
 ## Use Cases

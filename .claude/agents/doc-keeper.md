@@ -56,6 +56,8 @@ When documents disagree, resolve in this order:
 - **Inconsistencies found** — the specific issue, file/section reference, and the correct value.
 - **Recommended actions** — numbered: what to do, which file(s), priority.
 - **Missing documentation** — gaps where docs should exist but don't.
+- **Fleet mode** — when run inside a Workflow fleet with a structured-output schema, return ONLY
+  the structured findings list (no prose report sections).
 
 ## Inviolable rules
 

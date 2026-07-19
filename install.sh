@@ -7,7 +7,7 @@
 #   ./install.sh pull      # ~/.claude -> repo (bring live edits under version control)
 #
 # Scope: only the files this repo manages — CLAUDE.md, settings.json,
-# output-styles/, and skills/. Machine-local state (settings.local.json,
+# output-styles/, skills/, and workflows/. Machine-local state (settings.local.json,
 # memory, history, plugins, credentials) is never touched.
 set -euo pipefail
 
@@ -20,7 +20,7 @@ tracked_paths() {
   {
     (cd "$REPO_DIR" && find . -type f)
     if [ -d "$CLAUDE_DIR" ]; then
-      (cd "$CLAUDE_DIR" && find ./CLAUDE.md ./settings.json ./output-styles ./skills -type f 2>/dev/null || true)
+      (cd "$CLAUDE_DIR" && find ./CLAUDE.md ./settings.json ./output-styles ./skills ./workflows -type f 2>/dev/null || true)
     fi
   } | sed 's|^\./||' | sort -u
 }
@@ -62,7 +62,7 @@ case "$MODE" in
       echo "nothing to do: $CLAUDE_DIR already matches the repo"
     else
       [ -d "$backup_dir" ] && echo "overwritten files backed up to: $backup_dir"
-      echo "restart Claude Code to pick up skills and the output style"
+      echo "restart Claude Code to pick up skills, workflows and the output style"
     fi
     ;;
 

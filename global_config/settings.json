@@ -35,7 +35,7 @@
     ],
     "defaultMode": "default"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus[1m]",
   "fallbackModel": [
     "claude-opus-4-8",
     "claude-opus-4-7",

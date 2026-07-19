@@ -45,11 +45,16 @@ claude-code-setup/
 │   │   ├── realign-project/SKILL.md   # /realign — realign an existing project to 4.8 format
 │   │   ├── custom_plan/SKILL.md       # /custom_plan — read-only sprint/feature planning, no auto-execute
 │   │   ├── feature-close/SKILL.md     # /feature-close — post-delivery hygiene (docs, backlog, archive)
+│   │   ├── doc-sweep/SKILL.md         # /doc-sweep — doc-consistency sweep as a capped workflow fleet
 │   │   ├── pre-clear-compact/SKILL.md # /pre-clear-compact — write session carryover before clearing context
 │   │   └── post-clear-handover/SKILL.md # /post-clear-handover — re-orient in a fresh session, archive the carryover
+│   ├── workflows/
+│   │   ├── doc-sweep.js               # Saved workflow: parallel doc sweep (invoked via /doc-sweep)
+│   │   └── milestone-review.js        # Saved workflow: whole-codebase review at milestones (by hand)
 │   └── output-styles/
 │       └── personal-voice.md          # Tone/voice output style (on by default via outputStyle)
 ├── claude_plans/                   # Active plans from plan mode
+├── sessions/                       # SESSION_CARRYOVER.md — rolling handover (created by /pre-clear-compact, archived after handover)
 ├── archive/                        # Archived plans, schedules, outdated docs
 ├── .claude/
 │   ├── settings.json               # Project-level Claude settings
@@ -71,9 +76,20 @@ claude-code-setup/
 | `/project-setup` | `global_config/skills/project-setup/SKILL.md` | Scaffold a NEW project with the preferred structure, docs, agents, workflow. |
 | `/realign` | `global_config/skills/realign-project/SKILL.md` | Realign an EXISTING project's docs to the Opus 4.8 format. Counterpart to `/project-setup`. |
 | `/custom_plan` | `global_config/skills/custom_plan/SKILL.md` | Plan a sprint/feature read-only into `claude_plans/PLAN_<name>.md`, then stop. Replaces native plan mode (which auto-executes on approval). Build later on an explicit "implement PLAN_<name>". |
-| `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, graduate lessons, archive the plan with a date prefix. |
+| `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, record real token totals, graduate lessons, archive the plan with a date prefix. |
+| `/doc-sweep` | `global_config/skills/doc-sweep/SKILL.md` | Run the doc-consistency sweep as a capped saved workflow (4–7 cluster readers + verifier + merger); small projects keep the single doc-keeper pass. |
 | `/pre-clear-compact` | `global_config/skills/pre-clear-compact/SKILL.md` | Write a session carryover (`sessions/SESSION_CARRYOVER.md`) before freeing up context, then stop. |
 | `/post-clear-handover` | `global_config/skills/post-clear-handover/SKILL.md` | Re-orient in a fresh session: read the carryover + docs, report, propose the next step, archive the carryover. |
+
+## Saved workflows (distributed via `global_config/workflows/`)
+
+| Workflow | File | What it does |
+|----------|------|-------------|
+| `doc-sweep` | `global_config/workflows/doc-sweep.js` | Read-only doc-consistency sweep: 4–7 cluster readers + 1 verifier + 1 merger. Invoked via `/doc-sweep`; state "+300k" in the invoking turn. |
+| `milestone-review` | `global_config/workflows/milestone-review.js` | Whole-codebase review at milestones: 5 opus dimension-finders + 2 refuters per dimension + 1 synthesis (opus default; `synthesisModel: 'fable'` as explicit opt-in) into a plan file. Invoked by hand; state "+500k". |
+
+Caps and invocation details live in each script's header comment (single home); `/doc-sweep`
+restates the sweep's caps because it is that workflow's invocation point.
 
 ## Plan Rules (plan in-project; build only on explicit request)
 

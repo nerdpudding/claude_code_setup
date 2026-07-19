@@ -34,26 +34,37 @@ the project's **doc-keeper agent** if it has one; otherwise a **sonnet** general
 inline for a trivially small project. The agent reports drift; fixes are applied in the main
 thread.
 
+For a project with a substantial doc tree, run the sweep as the saved **doc-sweep workflow**
+instead — see `/doc-sweep` for the recipe and caps (parallel cluster readers + one verifier +
+one merger; only the merged findings list returns to this session). Small projects keep the
+single-agent path above.
+
 ### 3. Update status + carry leftovers
 - Update the roadmap/status line (roadmap.md, README "status", or wherever this project keeps it)
   to reflect the delivery, with the date.
 - Move every open/deferred item from the plan to the project's backlog location, worded so it is
   actionable later without re-reading the archived plan.
 
-### 4. Graduate durable lessons
+### 4. Record real token totals
+Record the round's actual token figures in the roadmap sprint entry (or wherever this project
+keeps sprint status): the session total, plus per-fleet totals when a workflow ran (`/usage`,
+`/workflows`, the run journal). Cost decisions need real figures — before this step existed,
+none were recorded anywhere and every estimate was guesswork.
+
+### 5. Graduate durable lessons
 Anything learned that outlives this feature (a pitfall, a pattern that worked, a hard-won
 constraint) goes into `docs/lessons_learned.md` (if the project keeps one) — concise, with the
 rule to follow going forward. Session-only details stay out.
 
-### 5. Archive the plan
+### 6. Archive the plan
 Prepend a short status note to the plan file (delivered what/when; where the leftovers went), then
 move it to `archive/YYYY-MM-DD_PLAN_<name>.md`. Fix any references that pointed at the old path.
 
-### 6. Memory
+### 7. Memory
 If auto-memory is active and the project's cross-session state changed (e.g. an ongoing goal is
 now done), update it — don't leave memory pointing at closed work.
 
-### 7. Report and hand back
+### 8. Report and hand back
 Summarize: what was verified/updated, where the leftovers landed, what was archived, anything
 that contradicted expectations (surface it, don't silently "fix" it). Offer — but don't perform —
 the commit.

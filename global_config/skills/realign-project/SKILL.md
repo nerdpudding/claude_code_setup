@@ -45,6 +45,10 @@ Detect and cite exact files + line numbers for each:
    when the session runs on a top-tier model; the project's agent table (AI_INSTRUCTIONS) records
    the tiers so the policy survives sessions. Flag any agent pinned to `fable` as a finding.
 10. **Response-calibration register.** Over-ceremony is not only in workflow prose — it is also a response habit (padding a small ask with unrequested checks, rollbacks, caveats; or the opposite, half-baked answers the user must drag the rest out of). Check that the tone/register channel — the Personal Voice output style, or the project's own tone instructions — carries a *response calibration* rule: match answer size to request, neither padded nor half-baked. If absent, flag it.
+11. **Fleet-mode return format.** Findings-producing agents (doc auditors, reviewers) should
+    carry a short fleet-mode note: when run inside a Workflow fleet with a structured-output
+    schema, return ONLY the structured findings list (no prose report sections). Flag
+    findings-producing agents that lack it.
 
 **Corroborate every prose rule against deterministic state.** For each "always/never" prose rule, check whether `settings.json` / `settings.local.json` / `.gitignore` / agent frontmatter already enforces it. If so, the prose is redundant — downgrade it to a one-line pointer rather than a restated rule. This single step surfaces most duplication findings; do it explicitly, not incidentally.
 
@@ -87,6 +91,8 @@ Get explicit confirmation before any write.
 - **Ensure a response-calibration register exists.** If the tone channel lacks it, add a short "match the answer to the request — neither padded ceremony nor half-baked minimalism" rule, single-homed in the output style (not restated across files).
 - **Slim oversized files** to a lean two-tier core ("Hard rules" + "Preferences") plus on-demand sub-docs that are referenced, not inlined.
 - **Fix drift and self-contradictions**; standardize naming; relocate mis-placed plans.
+- **Add the fleet-mode note** to findings-producing agents flagged in check 11 — one line in
+  their report-format section.
 - **Delete approved stale shadow memory** and add its path to `.gitignore`. Delete only files the user approved.
 - Surface anything that contradicts how the user described it rather than silently "fixing" it.
 

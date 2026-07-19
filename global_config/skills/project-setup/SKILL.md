@@ -62,8 +62,11 @@ Check `~/.claude/plans/` — it should be empty when `plansDirectory` points pla
 
 Verify the global skill set exists under `~/.claude/skills/`: `project-setup` (this skill), its
 `/realign` counterpart (`realign-project`), `custom_plan` (the planning workflow),
-`feature-close` (post-delivery hygiene), and the session-carryover pair `pre-clear-compact` and
-`post-clear-handover`.
+`feature-close` (post-delivery hygiene), `doc-sweep` (the doc-consistency sweep as a capped
+workflow), and the session-carryover pair `pre-clear-compact` and `post-clear-handover`.
+
+Also verify `~/.claude/workflows/` holds the saved workflows distributed with the setup:
+`doc-sweep.js` and `milestone-review.js`.
 
 **Report findings and ask before fixing anything. Then continue to Phase 1 (or stop if this was a verify-only run).**
 
@@ -367,6 +370,9 @@ Numbered list: what to do, which file(s), priority.
 ### Missing Documentation
 Gaps where documentation should exist but doesn't.
 
+**Fleet mode:** when run inside a Workflow fleet with a structured-output schema, return ONLY
+the structured findings list (no prose report sections).
+
 ## Constraints
 - All docs in English; neutral, impersonal writing style.
 - One source of truth — flag duplicates as problems; link, do not duplicate.
@@ -398,7 +404,10 @@ Write the agent definition with:
 - **Startup procedure:** the targeted files this agent needs to read
 - **Source of truth hierarchy:** when documents disagree, what wins
 - **Core capabilities:** numbered sections with descriptions
-- **Report format:** structured output template
+- **Report format:** structured output template. For findings-producing agents (auditors,
+  reviewers) include a fleet-mode note — when the agent runs inside a Workflow fleet with a
+  structured-output schema, it returns ONLY the structured findings list — and keep
+  deviations/watch-items as explicit fields (they map 1:1 onto fleet schemas)
 - **Constraints:** hard limits (English-only, read before changing, present findings before fixing, scale effort to task size)
 - **Scope boundaries:** what's in/out of scope, with referrals to other agents
 

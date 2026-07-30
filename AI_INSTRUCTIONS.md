@@ -16,11 +16,13 @@ This is a template repository for setting up and managing global Claude Code con
 
 ## Workflow
 
-1. **Plan** — Use plan mode for any non-trivial changes
-2. **Ask approval** — Confirm approach before making changes
-3. **Implement** — Make the changes
-4. **Verify** — Run doc-keeper or manually check consistency
-5. **Clean up** — Archive completed plans, update trackers
+The full cycle lives in the global `CLAUDE.md`. In this project it runs as:
+
+1. **Plan** — `/custom_plan` researches read-only, writes `claude_plans/PLAN_<name>.md`, and stops.
+2. **Approval** — the user reviews. Building starts only on an explicit "implement PLAN_<name>".
+3. **Build** — implement and test to the depth the plan set, no further.
+4. **Close** — `/feature-close`: docs brought up to date, leftovers to the backlog, the plan archived, and doc-keeper run last (files have moved by then, so an earlier check cannot see the references those moves broke).
+5. **Next** — roadmap revisited, the next sprint chosen together.
 
 ## Project Hierarchy
 

@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Node (if ever needed)
+node_modules/
+
+# Archived plans and old trackers - kept locally, not published
+archive/

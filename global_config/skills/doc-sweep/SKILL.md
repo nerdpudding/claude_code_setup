@@ -13,7 +13,7 @@ intermediate reading never touches the session; total tokens are similar (this i
 coverage-win, not a total-cost win).
 
 **When NOT to use:** a small project with a handful of docs. Delegate a single doc-keeper (or
-sonnet) pass as `/feature-close` step 2 describes, and stop — no fleet for 3 files.
+sonnet) pass as `/feature-close` step 9 describes, and stop — no fleet for 3 files.
 
 ## Operating caps (fixed — from the 2026-07-19 advisory, Q4)
 

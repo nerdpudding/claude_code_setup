@@ -45,6 +45,32 @@ Two deliberate choices:
 
 ## Version history
 
+### v2.5 — Communication rules (2026-07-30)
+
+Same evening as v2.4, and caused by it. Over one long session the user had to correct *how* things
+were being said to him roughly fifteen times: referring to things by position instead of by name,
+summarising where the actual lines were the answer, several questions in one message, and Dutch
+that had become hard to read. The failures, the evidence, and an honest split between documented
+model behaviour and ordinary sloppiness are in
+[docs/opus_5_communication_friction.md](docs/opus_5_communication_friction.md).
+
+- **Five rules into the Personal Voice output style** (60 → 65 lines): show the lines instead of
+  describing them; each message stands on its own rather than pointing back at an earlier turn;
+  one decision at a time, with the others named so they are not silently dropped; when the user
+  says he does not follow, rewrite in a different shape rather than explaining at greater length;
+  and short sentences in Dutch.
+- **Reviewed before shipping** by a new project agent (below), which confirmed the rules would
+  bind, corrected the reasoning behind them, and found the two the proposal had missed.
+- **New project agent `opus5-prompt-expert`** — judges whether an instruction change will actually
+  bind before it ships, reading the official docs rather than answering from memory. Pinned to
+  `fable`, deliberately not distributed, and meant to be deleted once this repo is settled.
+- **`/realign` check 10 widened** to all eight register rules, so another project is measured
+  against the current set rather than the old three.
+
+Recorded as unsolved: the user's own sharper diagnosis, that the problem is not only compression
+but that much of what gets written did not need to exist. No rule was written for it, because
+"write less that is unnecessary" cannot be self-checked the way the other rules can.
+
 ### v2.4 — Opus 5 realignment (2026-07-30)
 
 Opus 5 verifies its own work, guards its own scope, and limits its own correction narration — so
@@ -78,7 +104,7 @@ ultracode):
 - **New skill `/doc-sweep` + saved workflow `workflows/doc-sweep-fleet.js`** — the end-of-sprint /
   periodic doc-consistency sweep as a capped fleet: 4–7 cheap cluster readers (fresh context
   each) + 1 sonnet verifier + 1 sonnet merger; only the merged findings list reaches the main
-  thread. `/feature-close` step 2 now routes substantial doc trees to it.
+  thread. `/feature-close` routes substantial doc trees to it (step 9 since the 2026-07-30 reorder).
 - **Saved workflow `workflows/milestone-review.js`** — whole-codebase review at milestones
   (every ~3–4 sprints): 5 opus dimension-finders + 2 opus refuters per dimension (a finding
   dies when both refute it) + 1 synthesis writing prioritized findings into a dated review doc.
@@ -371,6 +397,7 @@ This repo's own structure and rules live in [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIO
 |----------|---------|
 | [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) | This repo's rules, hierarchy, agents, skills (source of truth) |
 | [docs/opus_5_alignment.md](docs/opus_5_alignment.md) | Current model guidance — effort levels per kind of work, what to delete, what the harness already ships |
+| [docs/opus_5_communication_friction.md](docs/opus_5_communication_friction.md) | Why conversation with Opus 5 goes wrong, observed over one session — and which rules were written for it |
 | [docs/opus_4_8_alignment.md](docs/opus_4_8_alignment.md) | Origin story of the format — the ten principles (superseded for current models by the above) |
 | [docs/example_ai_instructions.md](docs/example_ai_instructions.md) | Reference example of a generated AI_INSTRUCTIONS.md (v2 format) |
 | [concepts/concept.md](concepts/concept.md) | Concept and design |

@@ -113,13 +113,13 @@ Implemented exactly the recommended points from the 2026-07-19 dynamic-workflows
 entry in `README.md` for the full list.
 Plan: `archive/2026-07-19_PLAN_workflow_adoption.md`.
 
-- [x] `/doc-sweep` skill + saved workflow `global_config/workflows/doc-sweep.js` (capped fleet:
+- [x] `/doc-sweep` skill + saved workflow `global_config/workflows/doc-sweep-fleet.js` (capped fleet:
       4–7 cluster readers + 1 verifier + 1 merger; "+300k" hard ceiling; only merged findings
       reach the main thread)
 - [x] Saved workflow `global_config/workflows/milestone-review.js` (5 opus dimension-finders +
-      2 opus refuters per dimension + 1 synthesis into a plan file; opus default with
+      2 opus refuters per dimension + 1 synthesis into a dated review doc (`docs/Review_<date>.md`), not a plan file; opus default with
       `synthesisModel: 'fable'` as explicit opt-in; "+500k"; invoked by hand at milestones)
-- [x] `/feature-close`: substantial doc trees routed to the doc-sweep workflow; new fixed step 4
+- [x] `/feature-close`: substantial doc trees routed to the doc-sweep workflow; new fixed step
       "Record real token totals" at sprint close
 - [x] Fleet-mode return-format note: `project-setup` doc-keeper template + agent spec,
       `/realign` audit check 11 + apply step, and this repo's own doc-keeper
@@ -197,6 +197,39 @@ instructions now cause over-verification; a mature prompt library is part of the
 Full brief, with the field evidence and the traps:
 `archive/2026-07-30_1919_SESSION_CARRYOVER.md` (archived once the handover was picked up).
 
+## Sprint 9: communication rules (Done — 2026-07-30)
+
+Same evening as Sprint 8, and caused by it: over one long session the user had to correct *how*
+things were said to him roughly fifteen times. The failures and the evidence are in
+`docs/opus_5_communication_friction.md`; this sprint is the small set of rules that followed.
+
+- [x] `docs/opus_5_communication_friction.md` — what went wrong, with the user's own words; the
+      single pattern underneath; what worked once he insisted on it; an honest split between
+      documented model behaviour, ordinary sloppiness, and a change in how he now works. Includes
+      a section on Dutch: quality has fallen with every release since 4.6, nothing about a Dutch
+      regression is documented anywhere, but the complex-sentence habit that causes it is.
+- [x] **Five rules into the Personal Voice output style** (60 → 65 lines): show the lines instead
+      of describing them; each message stands on its own rather than pointing back at an earlier
+      turn; one decision at a time with the others named so they are not dropped; when he says he
+      does not follow, rewrite in a different shape instead of explaining at greater length; and
+      short sentences in Dutch.
+- [x] **Independent review before shipping**, by a new project agent (below). It confirmed the
+      rules would bind, corrected the reasoning behind them — mid-conversation corrections and
+      system-prompt rules are different channels with different persistence, so five failed
+      complaints do not predict a failed rule — and found the two the proposal had missed.
+- [x] New project agent `opus5-prompt-expert`, pinned to `fable`, deliberately **not** distributed.
+      Judges whether an instruction change will bind before it ships, reading the official docs
+      rather than answering from memory. Temporary: delete it when this repository is settled.
+
+**Recorded as unsolved.** Late in the session the user rejected the document's own framing: the
+problem is not only compression, it is that much of what gets written did not need to exist. No
+rule was written for it, because "write less that is unnecessary" cannot be self-checked the way
+the other five can. It stands as an open problem rather than a closed one.
+
+Nothing structural was added. The `Stop`-hook idea was considered and rejected: it fires after the
+fact and cannot judge whether the length was warranted. The test is a week of use — if the same
+corrections recur, that is the evidence that rules are not the mechanism.
+
 ## Status
 
 | Sprint | Status | Notes |
@@ -209,3 +242,4 @@ Full brief, with the field evidence and the traps:
 | Sprint 6 | Done | Session carryover skills (pre-/post-clear-handover) + sessions/ convention |
 | Sprint 7 | Done | Workflow adoption (doc-sweep + milestone-review), fleet-mode notes, token recording, opus[1m] default |
 | Sprint 8 | Done | Opus 5 realignment — deletions, length/plain-words rules, effort `high`, home path out of the public repo |
+| Sprint 9 | Done | Communication rules — friction doc, five rules into the output style, `opus5-prompt-expert` agent |

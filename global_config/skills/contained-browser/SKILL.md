@@ -16,9 +16,15 @@ is logged into. There is an incident behind this rule. This container is the onl
 
 ## Where it lives
 
-**`BROWSER_ROOT=~/vibe_claude_kilo_cli_exp/Penpot-Self-Host`** — the one line to change if the checkout
-moves. The browser is a standalone block inside that repository: `compose.browser.yaml`, deliberately
-runnable on its own.
+**`BROWSER_ROOT=__HOME__/vibe_claude_kilo_cli_exp/Penpot-Self-Host`** — the one line to change if the
+checkout moves. The browser is a standalone block inside that repository: `compose.browser.yaml`,
+deliberately runnable on its own.
+
+`__HOME__` is a placeholder that exists only in the public repository; `install.sh` expands it to this
+machine's real home directory, so your installed copy of this file carries the full absolute path. Use
+it as it appears there, spelled out — not `~` or `$HOME`. A permission rule matches the command as
+literal text, so `~/…/compose.browser.yaml` and `/home/…/compose.browser.yaml` are two different
+commands to it, and a project that allowed one would still be interrupted by the other.
 
 **If that directory does not exist:** say *"the contained browser is not installed on this machine"* and
 either ask how the user wants the task done, or use a plain HTTP fetch if the job does not actually need

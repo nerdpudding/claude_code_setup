@@ -44,7 +44,15 @@ Detect and cite exact files + line numbers for each:
    explicit user request); implementation work is delegated to agents rather than done inline
    when the session runs on a top-tier model; the project's agent table (AI_INSTRUCTIONS) records
    the tiers so the policy survives sessions. Flag any agent pinned to `fable` as a finding.
-10. **Register: calibration AND plain words.** Over-ceremony is not only in workflow prose — it is also a response habit (padding a small ask with unrequested checks, rollbacks, caveats; or the opposite, half-baked answers the user must drag the rest out of). Check that the tone channel — the Personal Voice output style, or the project's own tone instructions — carries: a *response calibration* rule (match answer size to request); a *document length* rule (files written to disk are not exempt from brevity); and *plain words* (name things instead of internal labels like plan IDs or priority codes, don't assume a term is known, and when asking for a decision say what will happen, where, and how). Flag whichever is absent.
+10. **Register: calibration, plain words, and readability.** Over-ceremony is not only in workflow prose — it is also a response habit. Check that the tone channel — the Personal Voice output style, or the project's own tone instructions — carries all of the following, and flag whichever is absent. Every one of them was written after an observed failure; see `docs/opus_5_communication_friction.md`.
+    - *Response calibration* — match answer size to request, neither padded nor half-baked.
+    - *Document length* — files written to disk are not exempt from the brevity that applies in conversation.
+    - *Plain words* — name things instead of internal labels like plan IDs or priority codes, and don't assume a tool, file or term is known.
+    - *Self-contained messages* — name the thing again rather than pointing back at an earlier turn ("that list", "option b"). The reader is not holding the thread.
+    - *Show, don't describe* — when pointing at something wrong, paste the few lines it concerns rather than summarising them.
+    - *One decision at a time* — with any others named in a line so they are not silently dropped.
+    - *Rewrite on "I don't follow"* — a different shape, shorter or as a table, rather than the same explanation at greater length.
+    - *Short sentences in the user's own language* when that is not English — long constructions come out as literal translations rather than as the language itself.
 11. **Fleet-mode return format.** Findings-producing agents (doc auditors, reviewers) should
     carry a short fleet-mode note: when run inside a Workflow fleet with a structured-output
     schema, return ONLY the structured findings list (no prose report sections). Flag

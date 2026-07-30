@@ -39,7 +39,8 @@ claude-code-setup/
 ├── docs/                              # Guides, detailed documentation, specs
 │   ├── example_ai_instructions.md     # Reference example of a generated AI_INSTRUCTIONS.md
 │   ├── opus_4_8_alignment.md          # Origin story of the format (the 10 principles)
-│   └── opus_5_alignment.md            # Current model guidance: what to delete, effort levels
+│   ├── opus_5_alignment.md            # Current model guidance: what to delete, effort levels
+│   └── opus_5_communication_friction.md  # Why conversation goes wrong, and the rules written for it
 ├── global_config/                     # Files to copy to ~/.claude/ (mirrors layout)
 │   ├── CLAUDE.md                      # Global CLAUDE.md
 │   ├── settings.json                  # Global settings
@@ -64,15 +65,24 @@ claude-code-setup/
 ├── .claude/
 │   ├── settings.json               # Project-level Claude settings
 │   └── agents/
-│       └── doc-keeper.md           # Documentation audit agent
+│       ├── doc-keeper.md           # Documentation audit agent
+│       └── opus5-prompt-expert.md  # Judges instruction changes before they ship (temporary)
 └── todo_<date>.md                  # Daily task tracker (temp, archive when done)
 ```
 
 ## Agents
 
-| Agent | File | When to use |
-|-------|------|-------------|
-| doc-keeper | `.claude/agents/doc-keeper.md` | After making changes — to verify docs still reflect reality. When asked to clean up, audit, or organize documentation. |
+| Agent | Model | File | When to use |
+|-------|-------|------|-------------|
+| doc-keeper | `sonnet` | `.claude/agents/doc-keeper.md` | After making changes — to verify docs still reflect reality. When asked to clean up, audit, or organize documentation. |
+| opus5-prompt-expert | `fable` | `.claude/agents/opus5-prompt-expert.md` | Before adding, rewording or deleting a rule in CLAUDE.md, an output style, a skill or an agent — judges whether it will bind, whether the wording is right, and whether the channel is right. Reads the official docs first; reports only. |
+
+**Two deliberate exceptions on `opus5-prompt-expert`, so a later audit does not "fix" them:**
+it is pinned to `fable` rather than `opus`, because getting the register of this setup right has
+proved hard and reasoning quality is the whole point of the agent; and it is deliberately **not**
+distributed — it lives only here, is not in `global_config/`, and `/project-setup` does not
+generate it. It is useful while this repository is being tuned and is meant to be deleted when
+that work is done, not carried into other projects as a template.
 
 ## Skills (distributed via `global_config/skills/`)
 

@@ -101,6 +101,21 @@ Practical consequence: **keep Dutch sentences short.** One idea per sentence. Th
 preference here, it is the difference between readable and not. Everything written to a file is
 English anyway, by standing rule, so this applies to conversation only.
 
+**Short sentences are necessary and not sufficient (observed 2026-08-21).** In a later session the
+sentences were short and he still stopped twice — both times on a single word, not on a
+construction. First *mappenboom*, an invented Dutch compound for *tree structure*: "dit is precies
+het soort anglicisme wat niet zou moeten gebeuren". Then *zeg het woord*, a word-for-word rendering
+of *say the word*: "dat is geen normale Nederlandse uitdrukking". Neither is a nested sentence, so
+the length rule caught neither.
+
+The failure is lexical as well as syntactic, in two distinct forms. An English **idiom** was
+carried across intact, which no rule covered. And a Dutch **word was coined** for a term that
+should have stayed English, which the existing terms rule already forbade — it says a term the
+field says in English stays English "whether or not it appears here". That rule was violated
+anyway, which suggests it reads as a list to look things up in rather than a test to apply. It
+needed restating as the test: if the Dutch word has to be invented, the term was supposed to stay
+English.
+
 ## What to do about it
 
 **Already in place** (Personal Voice output style, unless noted): keep replies brief; match a
@@ -121,6 +136,15 @@ against the official guidance:
 - *When he says he does not follow, rewrite in a different shape* — shorter, or as a table —
   rather than explaining the same thing again at greater length.
 - *In Dutch, keep sentences short.* One idea per sentence.
+
+**Added on 2026-08-21**, after the two corrections described above, both in one session:
+
+- *Never translate an English idiom word for word.* Use what a Dutch speaker actually says, or
+  drop the figure of speech and state the plain thing.
+- *Do not coin a Dutch compound for a term the field says in English.* If the Dutch word has to be
+  invented, the term was supposed to stay English. Not a new rule — the existing terms rule
+  restated as a test, because as a list it was being read as permission to translate anything the
+  list omits.
 
 **What none of them addresses, and the user's own sharper diagnosis.** Late in the session he
 rejected the framing above. The pattern is not only compression, he said: *most of what you write

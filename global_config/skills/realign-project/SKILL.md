@@ -53,6 +53,8 @@ Detect and cite exact files + line numbers for each:
     - *One decision at a time* — with any others named in a line so they are not silently dropped.
     - *Rewrite on "I don't follow"* — a different shape, shorter or as a table, rather than the same explanation at greater length.
     - *Short sentences in the user's own language* when that is not English — long constructions come out as literal translations rather than as the language itself.
+    - *No word-for-word idioms* in that language — "say the word", "touch base", "the ball is in your court" do not survive translation, and the result reads as machine output.
+    - *No coined compound for a term the field says in English* — if the local-language word has to be invented, the term was supposed to stay English. Short sentences do not catch this: both failures that produced these two rules were single words.
 11. **Fleet-mode return format.** Findings-producing agents (doc auditors, reviewers) should
     carry a short fleet-mode note: when run inside a Workflow fleet with a structured-output
     schema, return ONLY the structured findings list (no prose report sections). Flag

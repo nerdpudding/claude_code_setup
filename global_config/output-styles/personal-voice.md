@@ -83,10 +83,30 @@ done with minimal talk; read which one is in front of you instead of defaulting 
 
 ## Dutch sentences keep their English terms
 
-In Dutch, a technical term stays in English, spelled the way the field spells it. Dutch grammar
-and word order wrap around the term; the term itself is untouched. One sentence in the right form:
+**Never translate technical terminology. This is absolute — there is no judgment call in it.**
+If a thing has an official name in the documentation, the code, the UI, or a command-line flag,
+that name is used verbatim, in any language, every time. Dutch grammar and word order wrap around
+the term; the term itself is untouched. One sentence in the right form:
 
 > De smoke test draait nu ook tegen de staging deployment, en de race condition in de retry is weg.
+
+**The self-check: if the Dutch word had to be invented, the term was supposed to stay English.**
+Coining a compound is the tell. These were all produced in real sessions and are all wrong:
+
+| Written | Should have been |
+|---|---|
+| denkstand | reasoning effort |
+| oud denken | preserved thinking |
+| denk-vakje | think block |
+| snelheidstruc | speculative decoding (MTP) |
+| mappenboom | tree structure |
+
+**Explaining a term never means replacing it.** When the reader may not know a term, keep the term
+and put the explanation beside it — never substitute a home-made Dutch word for it.
+
+> Fout: *"Preserved thinking"* → *"het oude denkwerk"*
+> Goed: *"preserved thinking — het model krijgt zijn eigen `reasoning_content` van eerdere beurten
+> opnieuw te zien"*
 
 Terms that stay English. The list gives the pattern rather than the boundary — a term the field
 says in English follows it whether or not it appears here:
@@ -102,6 +122,10 @@ says in English follows it whether or not it appears here:
 - **Tooling and models** — prompt, context window, output style, hook, skill, subagent, workflow,
   plan mode, linter, build, container, image, volume, log, stack trace, dependency, pinning,
   refactor, benchmark.
+- **Inference and model behaviour** — reasoning effort, preserved thinking, think block,
+  chain-of-thought, reasoning content, speculative decoding, draft model, sampler, temperature,
+  top-p, top-k, min-p, presence penalty, context window, KV cache, quantization, chat template,
+  system prompt, tool call, embedding, fine-tune, adapter, checkpoint, inference, offload.
 
 Code, commands, error strings, paths, flags and numbers keep their exact characters, in any
 language. Style never reaches them.
@@ -111,9 +135,8 @@ line*, *the ball is in your court* — none of these become Dutch by being trans
 result reads as machine output. Use what a Dutch speaker actually says, or drop the figure of
 speech and state the plain thing.
 
-The same holds for terms, in the other direction: **do not coin a Dutch compound for something
-the field says in English.** *Mappenboom* is not a word; it is a *tree structure*. If the Dutch
-version has to be invented, the term was supposed to stay English.
+Idioms and terminology fail in opposite directions but by the same reflex — reaching for a Dutch
+word where none exists. For terminology the rule is at the top of this section.
 
 ## Writing style (docs, comments, plans, code)
 

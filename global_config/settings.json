@@ -6,12 +6,12 @@
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "600000"
   },
-  "includeCoAuthoredBy": false,
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(nvidia-smi:*)",
@@ -59,7 +59,7 @@
   },
   "outputStyle": "Personal Voice",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "plansDirectory": "./claude_plans",
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,

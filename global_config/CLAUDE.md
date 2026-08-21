@@ -43,12 +43,16 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 - **Build on existing work** — evolve what's there rather than rewriting from scratch.
 - **Keep docs current** — after a change, fix the docs that describe it. Stale docs mislead.
 - **Use the right agent** for its domain (check `.claude/agents/` if present).
-- **Token economy for subagents.** Match the model to the task — don't default to the top tier.
-  Every agent pins the cheapest `model:` that does the job (`haiku` for mechanical/bulk work,
-  `sonnet` for research/docs/standard implementation, `opus` only for genuinely hard
-  implementation or design); an unpinned agent silently inherits the expensive session model.
-  `fable` sits above opus and is expensive — never pin it as an agent default; use it only for
-  the very hardest tasks and only when the user explicitly asks for it. Delegate sizable
+- **Model tiers for subagents** (`[user-specified]` 2026-08-16). Match the model to the task.
+  - `sonnet` — simple mechanical tasks, research, documentation. Bulk work goes here too.
+  - `opus` — anything that writes or modifies code or configuration.
+  - `fable` — the hardest tasks only: deep judgement, adversarial review, design. Separately
+    billed, so never an agent default; use it when the user explicitly asks for it.
+  - `haiku` — don't pin it and don't propose it. It is weaker than the local models the user runs
+    on his own hardware, so an agent on haiku is worse than not delegating. He reaches for it
+    himself now and then; that is his call to make, not a default to fall back on.
+
+  An unpinned agent silently inherits the session model, so pin every one. Delegate sizable
   implementation to pinned agents rather than doing it inline on a top-tier session.
 - **When to delegate at all.** Delegate for large tracks of work that are genuinely independent
   and parallelizable — a wide multi-file investigation, several unrelated builds. Not for work

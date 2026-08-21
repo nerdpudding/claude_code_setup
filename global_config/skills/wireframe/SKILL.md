@@ -1,13 +1,18 @@
 ---
 name: wireframe
-description: Draw a wireframe or mock-up of a screen in a real design tool instead of describing it in prose, and hand back a picture. Use when the layout of a screen is unsettled and seeing it is what decides it, when the user asks what a screen should look like, when a mock-up or wireframe is requested by name, or when an ASCII sketch is about to be written for something that will be iterated on. Drives a local self-hosted Penpot, starts it when needed and stops it afterwards. Not for a throwaway one-look sketch or a small tweak to something already written — write HTML by hand for those.
+description: Draw a picture in a real design tool instead of describing it in prose, and hand it back. Two jobs. A SCREEN — wireframe or mock-up — when the layout of a screen is unsettled and seeing it decides it, when asked what a screen should look like, or when an ASCII sketch is about to be written for something that will be iterated on. A DIAGRAM — architecture, components, C4, boxes and arrows — when asked how a system fits together, for a component overview, or for a picture of the architecture to put in the docs. Drives a local self-hosted Penpot, starts it when needed and stops it afterwards. Not for a throwaway one-look sketch or a small tweak to something already written — write HTML or ASCII by hand for those.
 ---
 
-# wireframe — draw the screen instead of describing it
+# wireframe — draw it instead of describing it
 
 A picture settles layout, hierarchy and what is on screen at each step, and gives the user something
-concrete to react to before tokens go into building. This skill produces one, unattended, in a real
-design tool the user can also open and edit himself.
+concrete to react to before tokens go into building. The same is true of a system: a diagram settles
+what the pieces are and what talks to what, faster than a page of prose. This skill produces either,
+unattended, in a real design tool the user can also open and edit himself.
+
+**Two kinds, one command.** A **screen** is something a person will use. A **diagram** is boxes and
+arrows *about* a system — architecture, components, C4. Pick with `--kind`; the difference is real,
+not cosmetic, and it changes how the picture is built.
 
 ## Where it lives
 
@@ -44,6 +49,12 @@ Absent an instruction:
 Medium: **web is the fit. A TUI is worth offering** — panels, focus, colour, and a drawn sketch has
 beaten ASCII in practice. **A CLI usually is not**, unless it has a real visual dimension.
 
+**For a diagram the trade is different**, because the alternative is different. Reach for this when
+the picture is going into the docs and will be looked at more than once, when there are enough pieces
+that prose stops being readable, or when the user asked for a diagram by name. **Write it as text
+instead** — an indented list, or an ASCII sketch — when there are only a handful of boxes, when it is
+a one-look answer inside the conversation, or when it belongs in a reply rather than in a file.
+
 **Offer it, and state the cost:** *"this starts a local Penpot stack, about 30 seconds — or I can
 write it as HTML in a few seconds."* The user has a free alternative and is entitled to decline.
 Say which way you leaned and why, in one clause, so a correction is one word rather than a discussion.
@@ -59,18 +70,34 @@ goal, constraints, quality criteria. Be specific about what is on the screen and
 Use **negative constraints** deliberately — "do not invent new navigation patterns", "do not add
 colour beyond greys". Keep it dense: schemas rather than sentences, no explanatory padding.
 
-Write it to a file, or pass it on stdin. Everything about *how* to draw — auto-layout, semantic
-naming, board size, the API — is already in the task text the command sends. **Do not restate drawing
-instructions in the brief**; say what the screen is.
+Write it to a file, or pass it on stdin. Everything about *how* to draw — positioning, naming, board
+size, the API, the font — is already in the task text the command sends, and it differs per `--kind`.
+**Do not restate drawing instructions in the brief**; say what the screen or the system is.
+
+For a diagram, the brief is the same shape: what the nodes are, which zone each sits in, what the
+arrows mean and in which direction, and what must be emphasised. Name every arrow. Say plainly what
+must *not* be drawn — an arrow that does not exist is the most common thing to get wrong.
 
 ## 3. Run it
 
 **Invoke it in exactly this form — the absolute path, no `cd`, nothing chained in front:**
 
 ```bash
-$PENPOT_ROOT/scripts/wireframe --brief /abs/path/to/brief.md \
+$PENPOT_ROOT/scripts/wireframe --kind screen --brief /abs/path/to/brief.md \
   --name checkout-screen --out /abs/path/in/this/project/wireframes/checkout-screen.png
 ```
+
+**Decide `--kind` yourself, from what was asked** — the command does not guess:
+
+| | `--kind screen` | `--kind diagram` |
+|---|---|---|
+| What it is | Something a person will look at and use | Boxes and arrows *about* a system |
+| Asked for as | a screen, a page, a mock-up, a view, a form | an architecture diagram, a component overview, C4, "how does this fit together" |
+| Positioning | auto-layout, so it reflows when changed | free, at chosen coordinates, with arrows between nodes |
+| Size | 1440 × 900, fixed | `--width` / `--height`, default 1600 × 1000 |
+
+`--width` and `--height` are **diagram only** — passing them with `--kind screen` is refused, on
+purpose, so a screen's size stays one thing decided in one place.
 
 The single form matters. A `cd … && …` prefix, a relative `./scripts/wireframe`, and the absolute
 path are three different commands to a permission rule, so a project that has allowed this once
@@ -88,6 +115,8 @@ around the refusal.
 | `--brief PATH\|-` | the brief; `-` reads stdin |
 | `--name SLUG` | lowercase letters, digits and hyphens. Names the design and the picture |
 | `--out PATH` | where the PNG lands — a path inside the project being worked on |
+| `--kind screen\|diagram` | which of the two jobs this is — see the table above. Default `screen` |
+| `--width N` / `--height N` | **diagram only.** Board size, and therefore picture size. Default 1600 × 1000 |
 | `--no-stop` | leave Penpot running (default: stop it if this call started it) |
 | `--timeout S` | wall clock, default 450 s |
 

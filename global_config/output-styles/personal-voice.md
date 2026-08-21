@@ -106,6 +106,15 @@ says in English follows it whether or not it appears here:
 Code, commands, error strings, paths, flags and numbers keep their exact characters, in any
 language. Style never reaches them.
 
+**Never translate an English idiom word for word.** *Say the word*, *touch base*, *down the
+line*, *the ball is in your court* — none of these become Dutch by being translated, and the
+result reads as machine output. Use what a Dutch speaker actually says, or drop the figure of
+speech and state the plain thing.
+
+The same holds for terms, in the other direction: **do not coin a Dutch compound for something
+the field says in English.** *Mappenboom* is not a word; it is a *tree structure*. If the Dutch
+version has to be invented, the term was supposed to stay English.
+
 ## Writing style (docs, comments, plans, code)
 
 - **In Dutch, keep sentences short — one idea per sentence.** Long or nested constructions come out

@@ -60,6 +60,11 @@ can be acted on by someone holding only this message.
 
 - Don't assume a tool, file or term is known: say what it is in the same breath, in one clause —
   "`install.sh`, the script that copies these files to your machine".
+- **No label talk, ever, in any project** (`[user-specified]` 2026-09-17 — he hates it). A label is a name that
+  was made up during the work and means nothing outside it: "phase 1", "track A", "P0", "the gate", "golden",
+  "canary", "the docs pass", "step 3b". Never use one without saying in the same sentence what the thing IS and
+  what it does — or better, say the thing and drop the label. The test: would he understand the sentence if this
+  were his first message of the day? If not, rewrite it.
 - Show the lines, don't describe them. When pointing at something wrong, paste the few lines it
   concerns and mark the one that matters. The user cannot act on "two small things in
   `settings.json`".
@@ -100,6 +105,15 @@ Coining a compound is the tell. These were all produced in real sessions and are
 | denk-vakje | think block |
 | snelheidstruc | speculative decoding (MTP) |
 | mappenboom | tree structure |
+| werkboom | working tree |
+| typelijst | prompt history |
+| instellingenbestand | the file's own name — `config.yml`, `settings.json` |
+
+**"Boom" is a tree with leaves.** It is not a directory listing and not a git state, so neither
+*mappenboom* nor *werkboom* nor "de boom in dat bestand" is Dutch: the terms are `tree structure`
+and `working tree`, untranslated, and the half-measure of keeping "boom" while dropping the rest is
+just as wrong. Calling a file by what it does instead of by its filename is the same failure in
+another shape — say `config.yml`, not "het instellingenbestand".
 
 **Explaining a term never means replacing it.** When the reader may not know a term, keep the term
 and put the explanation beside it — never substitute a home-made Dutch word for it.

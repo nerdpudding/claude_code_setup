@@ -104,6 +104,11 @@ Before asking any questions, determine WHERE the project will live:
 6. **Hardware/constraints** — relevant hardware, deployment target, VRAM limits?
 7. **Development approach** — PoC/iterative/production? Sprint-based?
 
+8. **Comparable projects of the user's** — which earlier project is this one most like? Read the
+   structure and process entries of its `docs/lessons_learned.md` before proposing a layout, and
+   say which of them shape this set-up. (`[user-specified]` 2026-09-19: a project was laid out with
+   a flat `docs/` while a larger sibling had already recorded what that turns into.)
+
 **Do NOT create any files yet.** Confirm understanding with the user before proceeding.
 
 ---
@@ -115,6 +120,15 @@ Scale the structure to the project size from Phase 1.2:
 - **Small (script/tool):** just the project root — `README.md`, `AI_INSTRUCTIONS.md`, maybe a `docs/` folder.
 - **Medium (app):** add `roadmap.md`, `concepts/`, `docs/`, `claude_plans/`, `archive/`.
 - **Large (platform):** full structure with `phase{N}/` folders and `.claude/agents/`.
+
+**`docs/` gets category folders from the first day** (medium/large) — never a flat folder that is
+sorted out later, because every later move rewrites references across the project. Propose the
+categories this project will need, for example `docs/install/`, `docs/architecture/` (with its
+`diagrams/`), `docs/evaluation/` or `docs/measurements/`, `docs/research/`, `docs/usage/`,
+`docs/design/`. Only `docs/lessons_learned.md` sits in the root of `docs/`, because the global
+skills read it there. A requirements document lives in `concepts/` next to the concept, and is
+marked approved and frozen once the roadmap is built on it — new requirements go into the roadmap
+and the sprint plans, not back into that file.
 
 Show the proposed tree and confirm before creating anything. Behavior also depends on the mode detected in Phase 1.0:
 
@@ -209,6 +223,10 @@ The most important file — it tells any AI tool how to work in the project, and
 - <testing expectation: e.g. tests required for core logic; manual elsewhere>
 
 ## Workflow
+- The cycle is the one in the global CLAUDE.md ("The sprint cycle"): /custom_plan writes the plan;
+  an agent that did not write it reviews it and the findings go into the plan file; the user
+  approves; building starts on "implement PLAN_<name>"; test; /feature-close; then the next sprint,
+  or a handover with /pre-clear-compact. Nothing grows beside it without the user's word.
 - Use /custom_plan for non-trivial features; plans live in claude_plans/ (see Planning below).
 - Code review for substantial or risky changes — not mandatory on every trivial edit.
 - <branching / CI / release notes as the project needs>
@@ -222,16 +240,15 @@ The most important file — it tells any AI tool how to work in the project, and
   archive the plan with a date prefix.
 
 ## Project hierarchy (single source of truth — nowhere else)
+This tree is the only place that says where things live. Other files point at a document by its
+path from the project root (docs/install/install.md, never install.md or ../x.md) and do not
+repeat the tree. A new document goes into an existing category folder of docs/.
 - <full file tree with short descriptions>
 
 ## Agents
 | Agent | Model | When to use |
 |-------|-------|-------------|
 | <filled in Phase 5> | | |
-
-## Sub-docs (detail lives here, not above)
-- docs/<...>.md — <what>
-- docs/lessons_learned.md — ongoing log of what worked / didn't
 ```
 
 ### 3.4 docs/lessons_learned.md (medium/large)
@@ -307,9 +324,9 @@ Explain that `plansDirectory` keeps plans in the project repo (not the hidden `~
 
 Subagents **do** receive the full `CLAUDE.md` hierarchy (only the built-in `Explore` and `Plan` agents skip it), so do NOT restate CLAUDE.md rules in an agent definition — that is duplication. What they do not get is the output style, the main conversation's auto memory, or its history. Give each agent a self-contained prompt covering what only it needs, plus a targeted set of files to read (not a blanket "read everything first").
 
-**Token economy first.** Every agent pins the cheapest `model:` that does the job: `haiku` for
-mechanical/bulk work (renames, formatting, simple lookups), `sonnet` for research, docs, and
-standard implementation, `opus` only for genuinely hard implementation or design work. `fable`
+**Token economy first.** Every agent pins a `model:` by the tiers in the global `CLAUDE.md`:
+`sonnet` for mechanical, bulk, research and documentation work, `opus` for anything that writes or
+modifies code or configuration. `haiku` is neither pinned nor proposed. `fable`
 (above opus) is never an agent default — it is expensive and reserved for the very hardest tasks,
 only when the user explicitly asks for it. Never omit `model:` — an unpinned agent silently
 inherits the (expensive) session model. Record each agent's tier in the AI_INSTRUCTIONS agents
@@ -352,8 +369,9 @@ When documents disagree, resolve using this priority order:
 2. **Detect stale content** — cross-reference data across documents for mismatches
 3. **Suggest consolidation or archiving** — find redundant, superseded, or misplaced docs
 4. **Update cross-references** — find and fix all references when files move
-5. **Maintain hierarchy** — the project hierarchy lives in AI_INSTRUCTIONS.md only; README references it but does not duplicate it
-6. **Verify completeness after changes** — check all docs are updated after project changes
+5. **Maintain hierarchy** — the project hierarchy lives in AI_INSTRUCTIONS.md only; README references it but does not duplicate it. Flag any other list that says what lives where, any file loose in the root of `docs/` other than `lessons_learned.md`, and any document path not written from the project root. If the project has a test for document paths, run it first and report its output.
+6. **Relevance, not only correctness** — for every document ask whether it is still read to do the next work; a correct document nobody needs is a finding, to be archived. Flag agent brief files, agent report files and plan-review documents (a milestone review's dated document is the exception): the cycle in the global CLAUDE.md produces none.
+7. **Verify completeness after changes** — check all docs are updated after project changes
 
 ## Report Format
 

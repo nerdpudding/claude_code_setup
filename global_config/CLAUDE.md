@@ -76,8 +76,10 @@ defects, nearly all in the seams BETWEEN packages — these rules make that clas
   read as done — that is the silent-wrong-result class.
 - **Failure & resume are scope.** Every long-running or multi-stage step specifies its mid-run
   failure behavior and resume semantics (state on disk, not in memory) in the plan, BEFORE build.
-- **Builders report deviations and watch items** — mandatory in every build agent's final report.
-  A green suite is necessary, never sufficient; a live end-to-end of the real flow closes the loop.
+- **Builders report deviations and watch items** — mandatory in every build agent's final report,
+  and written into the plan file under "Deviations as built" before the close, so they are archived
+  with the plan and a later review can read them. A green suite is necessary, never sufficient; a
+  live end-to-end of the real flow closes the loop.
 - **Two reviews, at different moments, both by an agent that did not write the thing**
   (`[user-specified]` 2026-07-30):
   - *Before building*, when the plan is complex or must run seamlessly across parallel agents:
@@ -102,8 +104,9 @@ project/
 ├── README.md                   # Overview + status
 ├── roadmap.md                  # Sprint plan and status (larger projects)
 ├── todo_<date>.md              # Daily task tracker (temp → archive/)
-├── concepts/concept.md         # Concept, diagrams, technical decisions
-├── docs/                       # Guides, specs; docs/lessons_learned.md = what worked/didn't
+├── concepts/                   # concept.md; requirements.md — frozen once the roadmap is built on it
+├── docs/                       # Category folders (install/, architecture/, ...) from the first day;
+│                               #   only lessons_learned.md (what worked/didn't) sits in its root
 ├── claude_plans/               # Plan files (PLAN_<topic>.md), git-committed
 ├── sessions/                   # SESSION_CARRYOVER.md — rolling handover to the next session
 ├── archive/                    # Outdated content (never delete — archive with date prefix)
@@ -114,6 +117,12 @@ project/
 
 - **Schedule/Planning** = WHEN to do WHAT (time-bound). **Plan** = HOW + in what ORDER.
 - **Never delete, always archive** — move outdated content to `archive/` with a `YYYY-MM-DD_` prefix.
+  That is not "never move": a document nobody reads to do the next work any more is archived too.
+- **One tree, and pointers that cannot rot** (`[user-specified]` 2026-09-19). The hierarchy in
+  `AI_INSTRUCTIONS.md` is the only place that says where things live; other files point at a
+  document by its path from the project root and never repeat the tree. Where the project has a
+  test suite, one test fails on a document path that does not exist. Paths in code come from
+  configuration. Origin: a flat `docs/` that needed 130 references rewritten before Sprint 2.
 
 ## The sprint cycle (how all projects run — `[user-specified]` 2026-07-17)
 
@@ -147,6 +156,15 @@ The standing rhythm, made explicit after repeated mid-implementation permission 
 
 A full adversarial review of what was built is separate from all of this and happens at
 **milestones**, often several sprints apart — see the guard rails above.
+
+**Nothing grows beside this cycle** (`[user-specified]` 2026-09-19). An agent's brief goes in its
+prompt and its report comes back in the conversation — neither becomes a file. A plan review goes
+into the plan, never into a document of its own (the milestone review is the one that writes a
+dated review document). The docs check is the doc-keeper half of
+`/feature-close`, not a step beside it. Project rules live in `AI_INSTRUCTIONS.md`, not in
+auto-memory. A new step or a new kind of file needs the user's word: the burden of proof is on
+adding, never on leaving out. Origin: a project where building took under a third of the tokens
+and the rest went to paper about paper.
 
 **Occasional full-autonomy mode** — only when the user explicitly says so in chat, per
 occasion (e.g. "het is nacht, ga geheel zelfstandig aan de gang, alles is ok"): then the AI

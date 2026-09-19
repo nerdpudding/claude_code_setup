@@ -38,9 +38,9 @@ Detect and cite exact files + line numbers for each:
 8. **Doc self-contradictions.** Two sections describing different file layouts; inconsistent file-naming schemes (e.g. `todo_<date>.md` vs another tracker); mis-located or partially-done plans; settings-check blocks that mis-report the current config as drift.
 9. **Model tiering (token economy).** The main thread's model is the expensive tier; agents
    without a `model:` frontmatter key silently inherit it. Check: every project agent pins the
-   cheapest model that does the job (`haiku` for mechanical/bulk work, `sonnet` for
-   research/docs/standard implementation, `opus` only for genuinely hard implementation or
-   design; `fable` never as an agent default — expensive, reserved for the very hardest tasks on
+   model the global `CLAUDE.md` names for the job (`sonnet` for mechanical, bulk, research and
+   documentation work; `opus` for anything that writes or modifies code or configuration; `haiku`
+   is neither pinned nor proposed; `fable` never as an agent default — expensive, reserved for the very hardest tasks on
    explicit user request); implementation work is delegated to agents rather than done inline
    when the session runs on a top-tier model; the project's agent table (AI_INSTRUCTIONS) records
    the tiers so the policy survives sessions. Flag any agent pinned to `fable` as a finding.
@@ -88,6 +88,18 @@ Detect and cite exact files + line numbers for each:
     — the last is explicitly counter-productive on current models. A doc audit or an independent
     review of someone else's output is not self-verification and stays.
 
+16. **Document structure drift** (`[user-specified]` 2026-09-19). Compare the project with
+    "Project organization" in the global `CLAUDE.md`:
+    - files loose in the root of `docs/` other than `lessons_learned.md`, instead of category folders;
+    - the hierarchy described in more than one place — a "Sub-docs" or "Documentation" list that
+      repeats the tree in `AI_INSTRUCTIONS.md` or `README.md`;
+    - document paths written relative (`install.md`, `../roadmap.md`) instead of from the project root;
+    - a requirements or concept document still marked "draft" after the roadmap was built on it;
+    - documents nobody reads to do the next work any more: dated reports, plan-review documents, agent
+      brief and report files (a milestone review's dated document is legitimate). Count them; a large number is the finding.
+    - files the cycle never asked for — see "Nothing grows beside this cycle" in the global `CLAUDE.md`.
+    Where the project has a test suite and no test for document paths, propose one.
+
 **Corroborate every prose rule against deterministic state.** For each "always/never" prose rule, check whether `settings.json` / `settings.local.json` / `.gitignore` / agent frontmatter already enforces it. If so, the prose is redundant — downgrade it to a one-line pointer rather than a restated rule. This single step surfaces most duplication findings; do it explicitly, not incidentally.
 
 Do not conclude until every discovered file has actually been read — a finding drafted before reads return is provisional and must be superseded by the full-evidence version.
@@ -107,6 +119,9 @@ Present a TIERED, prioritized change list:
 - **P1 — correctness / consequence:** drift between contradicting copies, dead references, deterministic-rule gaps (no `includeCoAuthoredBy`/`deny`), shadow memory contradicting native memory.
 - **P2 — high leverage per minute:** tiering a flat file, slimming an oversized always-loaded file to a lean core, single-homing a duplicated rule.
 - **P3 — hygiene:** naming consistency, plan relocation, minor description tidy-ups.
+
+Document moves from check 16 are one proposal with the target tree shown, never piecemeal: every
+move rewrites references, so it is done once, with `git mv`, and the references checked afterwards.
 
 Then use AskUserQuestion for the open decisions BEFORE editing, e.g.:
 

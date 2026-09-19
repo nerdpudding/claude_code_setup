@@ -40,20 +40,21 @@
     ],
     "defaultMode": "default"
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5-1[1m]",
   "fallbackModel": [
     "claude-opus-4-8",
     "claude-opus-4-7",
     "claude-sonnet-5"
   ],
   "enabledPlugins": {
-    "last30days@last30days-skill": true
+    "diagram-design@diagram-design": true,
+    "gopls-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
-    "last30days-skill": {
+    "diagram-design": {
       "source": {
         "source": "github",
-        "repo": "mvanhorn/last30days-skill"
+        "repo": "cathrynlavery/diagram-design"
       }
     }
   },
@@ -61,6 +62,7 @@
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
   "plansDirectory": "./claude_plans",
+  "tui": "fullscreen",
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,

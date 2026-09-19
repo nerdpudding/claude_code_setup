@@ -110,6 +110,14 @@ approval for a path outside the project should not arrive as a surprise. If it i
 plainly and offer to write the wireframe as HTML instead; do not try variations of the command to get
 around the refusal.
 
+**Run it in the background.** This command prints `[1/5]`…`[5/5]` as it goes, but a running
+command's output does not reach the user's screen, so from where he sits nothing is happening at
+all — for minutes, because step 4 launches a second Claude session that draws the shapes one at a
+time, up to 25 turns and 450 seconds. Held in the foreground, his only way to ask whether it is
+alive is to kill it, and on 2026-08-29 that is exactly what happened. So: background, then one line
+saying what it is doing and that he can carry on. If he asks how far along it is, read the output
+file rather than guessing — the progress lines are in there, and they name the phase.
+
 | Flag | |
 |---|---|
 | `--brief PATH\|-` | the brief; `-` reads stdin |

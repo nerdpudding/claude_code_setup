@@ -37,6 +37,13 @@ cross-references to files that moved or were renamed, tables listing files or co
 this; you know what changed. Do not delegate this and do not defer it to the audit in step 9 —
 that audit exists to catch what you could NOT have known, not to hand you your own to-do list back.
 
+Two questions belong to this step (`[user-specified]` 2026-09-19 — one project's `docs/` reached 84
+files because the close asked only whether documents were correct):
+- **Is each document still read to do the next work?** One that is correct but no longer needed
+  moves to `archive/`. "Never delete, always archive" does not mean "never move".
+- **Does every new document sit in a category folder of `docs/` and in the hierarchy of
+  `AI_INSTRUCTIONS.md`?** If the project has a test for document paths, run it.
+
 ### 3. Update status + carry leftovers
 - Update the roadmap/status line (roadmap.md, README "status", or wherever this project keeps it)
   to reflect the delivery, with the date.
@@ -67,8 +74,10 @@ constraint) goes into `docs/lessons_learned.md` (if the project keeps one) — c
 rule to follow going forward. Session-only details stay out.
 
 ### 7. Archive the plan
-Prepend a short status note to the plan file (delivered what/when; where the leftovers went), then
-move it to `archive/YYYY-MM-DD_PLAN_<name>.md`. Fix any references that pointed at the old path.
+Prepend a short status note to the plan file (delivered what/when; where the leftovers went). If
+build agents worked on it, their deviations from the plan and their watch items go into the plan
+under "Deviations as built" — a report that lives only in the chat is gone when a later review
+needs it. Then move the plan to `archive/YYYY-MM-DD_PLAN_<name>.md`. Fix any references that pointed at the old path.
 
 ### 8. Memory
 If auto-memory is active and the project's cross-session state changed (e.g. an ongoing goal is

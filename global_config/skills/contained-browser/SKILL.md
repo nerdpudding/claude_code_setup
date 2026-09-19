@@ -1,9 +1,23 @@
 ---
 name: contained-browser
-description: Drive a headless Chromium in a container over MCP, for any purpose — open a page, fill a form, screenshot it, scrape a value, test a local web app. Use when a task needs a real browser and the user's own browser must not be touched. Isolated profile, loopback-only endpoint, nothing of the user's in it. Not for Penpot work; use the wireframe skill for that.
+description: The browser that belongs to the Penpot checkout — a headless Chromium held open over MCP so a client can drive it across many steps. Use it for interactive work against Penpot, or when a page must be navigated, filled in and inspected over a whole session. NOT for taking a picture of a local HTML file — its allowed-origins list and its single exchange mount make that fail; use __HOME__/vibe_claude_kilo_cli_exp/playwright-shot/shot.sh instead.
 ---
 
 # contained-browser — a browser an agent may drive
+
+> **Scope, learned the hard way on 2026-08-29.** This container lives inside the Penpot
+> checkout and is configured for it: `--allowed-origins http://penpot-frontend:8080`, and only
+> `$BROWSER_ROOT/exchange` mounted. Pointing it at anything else costs a round of failures —
+> `file:` is blocked outright, and any other origin returns `ERR_BLOCKED_BY_CLIENT`. Widening
+> either means editing another project's configuration.
+>
+> **For a screenshot of a local HTML file, do not use this.** Use
+> `__HOME__/vibe_claude_kilo_cli_exp/playwright-shot/shot.sh <file.html>`: the official
+> Playwright image, one throwaway container, the file's own directory mounted, a PNG in about two
+> seconds and nothing left running.
+>
+> What this skill is still right for: driving Penpot, and any job where one page must be held open
+> across several steps rather than rendered once.
 
 A headless Chromium with an MCP endpoint, in its own container. One job: **hold a page open and let a
 client drive it over MCP.** It is not the user's browser, it holds nothing of the user's, and it can be

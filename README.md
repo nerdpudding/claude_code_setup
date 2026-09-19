@@ -45,6 +45,31 @@ Two deliberate choices:
 
 ## Version history
 
+### v2.6 — Structure that does not drift (2026-09-19)
+
+Found in a new project, one day before its second sprint: a flat `docs/` folder, requirements
+still marked "draft" after the roadmap was built on them, and the file tree described in three
+places. Sorting it out rewrote about 130 path references in 21 files. A larger sibling project
+had already recorded where that road ends — 84 files in `docs/`, and building under a
+third of the tokens.
+
+- **Global `CLAUDE.md`:** `docs/` gets category folders from the first day; the hierarchy in
+  `AI_INSTRUCTIONS.md` is the only tree and paths are written from the project root, with a test
+  failing on a dead one where a project has tests; builders' deviations are written into the plan
+  file; and "Nothing grows beside this cycle" — no agent brief files, report files or separate
+  review documents, and a new step needs the user's word.
+- **`/project-setup`:** asks which earlier project the new one resembles and reads that project's
+  lessons before proposing a layout; proposes category folders; puts requirements in `concepts/`;
+  the generated `AI_INSTRUCTIONS.md` names the cycle and no longer has a "Sub-docs" list that
+  repeated the tree; the doc-keeper template checks structure and relevance.
+- **`/feature-close`:** asks of every document whether it is still read to do the next work, and
+  writes the builders' deviations into the plan before archiving it.
+- **`/realign`:** new check 16, document structure drift.
+- **`haiku` removed** from `/project-setup`, `/realign` check 9 and the doc sweep (skill and
+  workflow): the global `CLAUDE.md` has ruled it out since 2026-08-16 and these had not followed.
+- **Brought under version control** with `./install.sh pull`: four live files edited since
+  2026-08-21 (the output style's no-labels rule, `settings.json`, `/wireframe`, `/contained-browser`).
+
 ### v2.5 — Communication rules (2026-07-30)
 
 Same evening as v2.4, and caused by it. Over one long session the user had to correct *how* things

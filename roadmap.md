@@ -242,6 +242,8 @@ corrections recur, that is the evidence that rules are not the mechanism.
 | Sprint 6 | Done | Session carryover skills (pre-/post-clear-handover) + sessions/ convention |
 | Sprint 7 | Done | Workflow adoption (doc-sweep + milestone-review), fleet-mode notes, token recording, opus[1m] default |
 | Sprint 8 | Done | Opus 5 realignment — deletions, length/plain-words rules, effort `high`, home path out of the public repo |
+| 2026-09-19 | Done | Structure that does not drift (README v2.6): category folders in `docs/`, one tree, deviations into the plan, nothing beside the cycle, `/realign` check 16, `haiku` removed, live files pulled |
+
 ## Sprint 10: Telemetry, feature-gating and what "off" actually costs (OPEN — raised 2026-08-05)
 
 **THE USER'S VERDICT, 2026-08-05 — the sprint starts here and does not re-open it:** *"het is

@@ -20,7 +20,7 @@ sonnet) pass as `/feature-close` step 9 describes, and stop — no fleet for 3 f
 | Knob | Value |
 |---|---|
 | Fleet size | 6–10 agents: 4–7 readers + 1 sonnet verifier + 1 sonnet merger |
-| Reader models | `haiku` for pure staleness checks; `sonnet` for judgment-bearing clusters; the project's own doc-keeper via `agentType` (its pinned model applies) |
+| Reader models | `sonnet`; the project's own doc-keeper via `agentType` (its pinned model applies). `haiku` is not used — the global `CLAUDE.md` rules it out |
 | Reader depth | `effort: 'low'` (this installation has no `maxTurns` knob on `agent()`) |
 | Token target | The invoking turn states **"+300k"** — enforced as a hard ceiling here; without it the workflow logs a warning and runs uncapped |
 | `/config` size guideline | `medium` |
@@ -47,8 +47,8 @@ item for the user to take to that project; it is never fixed from here.
 
 Per cluster set:
 - `name` and `paths` (real file paths);
-- `judgment: true` for clusters needing real judgment (design docs, cross-referenced status) —
-  they get sonnet; plain staleness clusters get haiku;
+- `judgment: true` marks clusters needing real judgment (design docs, cross-referenced status);
+  every reader runs on sonnet either way;
 - `agentType: 'doc-keeper'` (or the project's equivalent) for the clusters where the project
   agent's source-of-truth rules matter — the fleet then runs that agent as-is.
 

@@ -2,7 +2,7 @@ export const meta = {
   name: 'doc-sweep-fleet',
   description: 'Read-only doc-consistency sweep: parallel cluster readers, one verifier, one merger — only merged findings reach the main thread',
   phases: [
-    { title: 'Read', detail: 'one reader per doc cluster (haiku/sonnet, effort low)' },
+    { title: 'Read', detail: 'one reader per doc cluster (sonnet, effort low)' },
     { title: 'Verify', detail: 'one sonnet verifier checks findings against the actual files' },
     { title: 'Merge', detail: 'one sonnet merger dedupes and ranks' },
   ],
@@ -10,9 +10,8 @@ export const meta = {
 // Saved workflow for the end-of-sprint / periodic doc-consistency sweep.
 // Normally invoked by the /doc-sweep skill, which derives the clusters inline first.
 //
-// Caps (advisory 2026-07-19, Q4): fleet 6-10 agents total = 4-7 readers (haiku for pure
-// staleness, sonnet for judgment-bearing clusters, or the project's own doc-keeper via
-// agentType) + 1 sonnet verifier + 1 sonnet merger. State a token target in the invoking
+// Caps (advisory 2026-07-19, Q4): fleet 6-10 agents total = 4-7 readers (sonnet, or the project's own
+// doc-keeper via agentType) + 1 sonnet verifier + 1 sonnet merger. State a token target in the invoking
 // turn ("+300k") — enforced as a hard ceiling in this installation. Readers run at
 // effort 'low' (this installation has no maxTurns knob on agent()). Keep the /config
 // workflow size guideline at "medium". No ultracode.
@@ -142,8 +141,8 @@ const perCluster = await parallel(
         schema: FINDINGS_SCHEMA,
         effort: 'low',
         // agentType runs the project's own doc-keeper (its pinned model applies);
-        // otherwise: sonnet for judgment-bearing clusters, haiku for staleness greps.
-        ...(c.agentType ? { agentType: c.agentType } : { model: c.judgment ? 'sonnet' : 'haiku' }),
+        // otherwise sonnet: the global CLAUDE.md rules haiku out (2026-08-16).
+        ...(c.agentType ? { agentType: c.agentType } : { model: 'sonnet' }),
       },
     ),
   ),

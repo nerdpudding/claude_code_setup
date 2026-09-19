@@ -40,7 +40,8 @@ claude-code-setup/
 │   ├── example_ai_instructions.md     # Reference example of a generated AI_INSTRUCTIONS.md
 │   ├── opus_4_8_alignment.md          # Origin story of the format (the 10 principles)
 │   ├── opus_5_alignment.md            # Current model guidance: what to delete, effort levels
-│   └── opus_5_communication_friction.md  # Why conversation goes wrong, and the rules written for it
+│   ├── opus_5_communication_friction.md  # Why conversation goes wrong, and the rules written for it
+│   └── prompting_guides/              # Anthropic's prompting guides — downloaded snapshots; `url:` and `fetched:` in each header
 ├── global_config/                     # Files to copy to ~/.claude/ (mirrors layout)
 │   ├── CLAUDE.md                      # Global CLAUDE.md
 │   ├── settings.json                  # Global settings

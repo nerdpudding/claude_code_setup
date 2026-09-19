@@ -55,8 +55,8 @@ Living status docs — `roadmap.md` first, but any doc that accumulates history 
 scannable: backlog and planned work in front, history compact. At every close, move out whatever
 is not needed to choose or do the next work: delivered detail, backlog items that are settled or
 dropped, status narrative. Parked items stay, one line each. What moves goes **verbatim** to the
-project's history doc — `docs/roadmap_history.md`
-(create on first use; newest at the top) — leaving one status line per delivered item in the
+project's history doc — `roadmap_history.md` in a category folder of `docs/`, for example
+`docs/history/` (create on first use; newest at the top) — leaving one status line per delivered item in the
 roadmap with a pointer to the history doc. This is a move, never a deletion, and `archive/`
 is NOT the place for it: that is for dead/superseded content, while delivered-sprint history
 is still-consulted reference. (`[user-specified]` 2026-07-23 — a 1500-line roadmap of mostly

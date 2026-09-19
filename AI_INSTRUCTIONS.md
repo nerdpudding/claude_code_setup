@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a template repository for setting up and managing global Claude Code configuration. It contains the files (CLAUDE.md, settings.json, skills) that should be copied to `~/.claude/` on any machine. The repository itself is mostly static and serves as version-controlled source of truth for global Claude Code setup.
+This is a template repository for setting up and managing global Claude Code configuration. It contains the files that `install.sh` copies to `~/.claude/` on any machine — they are listed under `global_config/` in the hierarchy below. The repository itself is mostly static and serves as version-controlled source of truth for global Claude Code setup.
 
 ## Rules of this project
 
@@ -43,8 +43,8 @@ claude-code-setup/
 │   │   └── version_history.md      # What changed per version, newest first — a dated record; README.md points here
 │   ├── model_alignment/            # Why the format looks the way it does, per model generation
 │   │   ├── opus_4_8_alignment.md   # Origin story of the format — the ten principles
-│   │   ├── opus_5_alignment.md     # Current model guidance: what to delete, effort levels — cited from outside this repo by /project-setup and /realign
-│   │   └── opus_5_communication_friction.md  # Why conversation goes wrong, and the rules written for it — cited from outside this repo by /realign
+│   │   ├── opus_5_alignment.md     # Current model guidance: what to delete, effort levels — cited from outside this repo by /project-setup
+│   │   └── opus_5_communication_friction.md  # Why conversation goes wrong, and the rules written for it
 │   └── prompting_guides/           # Dated snapshots of Anthropic's prompting guides; `url:` and `fetched:` in each header
 ├── global_config/                  # The files install.sh copies to ~/.claude/ (mirrors its layout)
 │   ├── CLAUDE.md                   # Global CLAUDE.md, loaded every session
@@ -82,7 +82,7 @@ that work is done, not carried into other projects as a template.
 | Skill | File | What it does |
 |-------|------|-------------|
 | `/project-setup` | `global_config/skills/project-setup/SKILL.md` | Scaffold a NEW project with the preferred structure, docs, agents, workflow. |
-| `/realign-project` | `global_config/skills/realign-project/SKILL.md` | Realign an EXISTING project's docs to the current format (see `docs/model_alignment/opus_5_alignment.md`). Counterpart to `/project-setup`. |
+| `/realign-project` | `global_config/skills/realign-project/SKILL.md` | Bring an EXISTING project in line with the global `CLAUDE.md`: repairs what is out of line itself, asks almost nothing, reports in a few sentences, commits nothing. Counterpart to `/project-setup`. |
 | `/custom_plan` | `global_config/skills/custom_plan/SKILL.md` | Plan a sprint/feature read-only into `claude_plans/PLAN_<name>.md`, then stop. Replaces native plan mode (which auto-executes on approval). Build later on an explicit "implement PLAN_<name>". |
 | `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, record real token totals, graduate lessons, archive the plan with a date prefix. |
 | `/doc-sweep` | `global_config/skills/doc-sweep/SKILL.md` | Run the doc-consistency sweep as a capped saved workflow (4–7 cluster readers + verifier + merger); small projects keep the single doc-keeper pass. |

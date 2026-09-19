@@ -196,7 +196,6 @@ The global CLAUDE.md holds the rules that apply in every project. These hold onl
 ## Preferences (use judgment; override when the task is better served)
 - <what this project prefers and why — a framework idiom, a naming scheme, a deployment habit>
 - <testing expectation: e.g. tests required for core logic; manual elsewhere>
-- When an approach fails or wastes effort, note it in docs/lessons_learned.md (if present).
 
 ## Workflow
 The sprint cycle and the planning rules are in the global CLAUDE.md. What is specific here:
@@ -235,7 +234,7 @@ Ongoing log of what worked and what didn't during development. Primarily intende
 ---
 ```
 
-Reference this file in AI_INSTRUCTIONS.md (Preferences).
+List this file in the tree of AI_INSTRUCTIONS.md; the global `CLAUDE.md` already says when to write in it.
 
 ### 3.5 roadmap.md (medium/large)
 

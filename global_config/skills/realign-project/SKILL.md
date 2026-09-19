@@ -42,9 +42,18 @@ weighed: a rule the global `CLAUDE.md` carries does not stay in a project file "
 **What the format is.** The global `CLAUDE.md` this session has loaded, and this skill. Do not open
 the `claude_code_setup` repo: it is where these files are maintained, not something to compare with.
 
+**Repair, do not polish.** A realign repairs what breaks a rule of the global `CLAUDE.md` or of this
+skill. A sentence that complies is left exactly as it is, even where it could be worded better;
+a value, a number or a measured figure in a document is never rewritten.
+
 **What stays per project.** A line goes when it could sit unchanged in any project: it is a copy of
 a global rule, current or stale. A line stays when it names something that exists only here — a
 path, a component, a command — says why this project differs, or carries `[user-specified]`.
+
+**What a realign edits.** Instruction files, agent and skill files, documents, and a comment that
+points at a document. Never code or configuration that runs, and never a file a setup step or a
+person copies from — `.env.example`, a compose file, a script — apart from a `permissions` entry
+in `.claude/settings.json`.
 
 **Tests.** A realign runs no test and never suggests or builds one. Tests are for code; documents
 are guarded by the pointer repair after a move and by the doc audit at a sprint close.
@@ -54,10 +63,12 @@ failure stops the run.
 
 ### The closing report
 
-Three to five plain sentences: what was cleaned up, in ordinary words; how many files changed; that
-nothing is committed and `git diff` shows every edit; any file in a sibling project that was
-repaired, uncommitted there. For this command this shape replaces the longer closing-report example
-in the output style. Example:
+ONE paragraph of three to five plain sentences — no headings, no lists, no account per file: what
+was cleaned up, in ordinary words; how many files changed; that nothing is committed and `git diff`
+shows every edit; any file in a sibling project that was repaired, uncommitted there. A large run
+is not a reason for a longer report: name the two or three biggest changes by kind and let the
+file count cover the rest. For this command this shape replaces the longer closing-report example
+in the output style, and the rule there to name every file. Example:
 
 > Realigned. The copies of global rules came out of `AI_INSTRUCTIONS.md`, two agents now read that
 > file first, and three memory notes moved to the files that own them. Seven files changed and
@@ -72,9 +83,9 @@ point to an error message, a path, or a prescribed repair with no edit behind it
 out: a choice you made, something you weighed, something that was fine, something that could be
 done next.
 
-Before sending the report, read it for any sentence that puts a question, holds out an extra, gives
-advice for later, or leaves something for him. For each: look it up or decide it, do it, delete the
-sentence.
+Before sending the report, count its sentences and cut it back to five plus one per failure. Then
+read it for any sentence that puts a question, holds out an extra, gives advice for later, or
+leaves something for him. For each: look it up or decide it, do it, delete the sentence.
 
 ---
 
@@ -146,9 +157,11 @@ untracked `settings.local.json` is intentional; a partially-done plan stays in `
 13. **Testing and review.** A mandate for exhaustive suites or long runs gets a scale-to-the-project
     clause. A project that describes one review gets the two the global `CLAUDE.md` describes: the
     plan before building, the build at milestones.
-14. **Machine-specific values in tracked files** — a username, a home path, a hostname, an internal
-    IP. Where the project has a setup step that can expand a placeholder, replace the value with
-    one; never break a path that has to be literal, since permission rules match command text.
+14. **Machine-specific values in a repo with a public remote** (github.com, gitlab.com — look it
+    up with `git remote -v`; a private or home server is not this). A username, a home path, a
+    hostname or an internal IP in a document or an instruction file becomes a placeholder the
+    project's setup step expands; never break a path that has to be literal, since permission
+    rules match command text.
 15. **Delegation prose** that hands out work finishable in a handful of tool calls, spawns several
     agents where one does, or uses a subagent to verify the session's own work. Bring it in line
     with "When to delegate at all" in the global `CLAUDE.md`.
@@ -167,6 +180,9 @@ untracked `settings.local.json` is intentional; a partially-done plan stays in `
       and report files — move to `archive/`; a milestone review's dated document stays;
     - a pointer into another project that carries a folder path or a line number is rewritten the
       way "Pointers across projects" asks.
+    - a test that checks documentation — document paths, pointers — moves out of the test suite to
+      `archive/`, its entry leaves the script that runs the tests (the one edit to a script a
+      realign makes), and the documents that describe it are corrected.
     A move is `git mv`, followed by the pointer repair that section describes. A pointer in a
     sibling project — another project under the same parent folder — is repaired too when the new
     target is known.

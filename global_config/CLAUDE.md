@@ -42,6 +42,8 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 - **One source of truth.** Each fact lives in one place; reference it elsewhere, don't duplicate.
 - **Build on existing work** — evolve what's there rather than rewriting from scratch.
 - **Keep docs current** — after a change, fix the docs that describe it. Stale docs mislead.
+- **Learn from what failed** — when an approach fails or wastes effort, note it in the project's
+  `docs/lessons_learned.md`, where it keeps one.
 - **Test in proportion, and only what the change can affect** (`[user-specified]` 2026-07-30 and
   2026-09-19 — he hates needless testing). Cover the real paths including the failure ones, then
   stop; an exhaustive edge-case suite or an hours-long run needs its reason stated in the plan.

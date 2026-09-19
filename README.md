@@ -94,7 +94,7 @@ belongs".
 
 ## Version history
 
-Current version: **v2.7 — One home for every fact** (2026-09-19). What changed in each version,
+Current version: **v2.8 — A realign finishes the job** (2026-09-19). What changed in each version,
 newest first: [docs/history/version_history.md](docs/history/version_history.md).
 
 ## Quick start
@@ -131,7 +131,7 @@ The Personal Voice output style and the skills take effect on the **next session
 | Skill | Use it when… | What it does |
 |-------|--------------|--------------|
 | `/project-setup` | Starting a new project, or verifying the global setup on a new PC | Scaffolds structure, docs, agents, workflow — scaled to project size (a small script needs only README + AI_INSTRUCTIONS). |
-| `/realign-project` | An existing project feels heavy/bureaucratic after a model upgrade | Audits CLAUDE.md / AI_INSTRUCTIONS / agents / skills / settings / memory and modernizes them to the v2 format. Asks before editing. |
+| `/realign-project` | An existing project needs bringing in line — after a model upgrade, after this setup changed, or when its docs have drifted | Audits `AI_INSTRUCTIONS.md`, a stray `CLAUDE.md`, agents, skills, settings, auto-memory and the document structure, repairs what is out of line itself, and reports in a few sentences. Asks only for a step git cannot undo or a preference no file records — before the first edit. Commits nothing. |
 | `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, stops. Build later on "implement PLAN_<name>". |
 | `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, records the round's real token totals, graduates lessons, archives the plan with a date prefix. |
 | `/doc-sweep` | Sprint close or periodic maintenance on a project with a substantial doc tree | Runs the doc-consistency sweep as a capped workflow fleet (4–7 cluster readers + verifier + merger); only the merged findings return to the session. Small projects: single doc-keeper pass instead. |

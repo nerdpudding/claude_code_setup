@@ -76,28 +76,24 @@ control actually lies.
 
 ## Backlog
 
-- **`global_config/CLAUDE.md` is 244 lines against the 200-line target.** The next candidates for
+- **`global_config/CLAUDE.md` is 251 lines against the 200-line target.** The next candidates for
   a cut are the SOLID sub-bullets and the cross-project pointer rule. Both are `[user-specified]`,
   so this needs the user's word.
-- **Field test of `/realign-project` as changed twice on 2026-09-19.** On the next real run, check that a
-  finding with one sensible fix is applied and reported in one line, that questions come one per
-  turn and only in the cases Phase 2 names, that a project-level `CLAUDE.md` with rules is found
-  and its rules moved into `AI_INSTRUCTIONS.md` (check 17), and that the session does not open
-  this repo.
-- **Three preferences of the user live only in one project's auto-memory**, so no other project
-  sees them: never block the chat with a long-running job, no time estimates, announce a
-  background helper before it starts. They are cross-project, so their home is the global
-  `CLAUDE.md` or the output style. Needs his wording and his word.
-- **`/feature-close` step 4 names `docs/roadmap_history.md`**, a file loose in the root of `docs/`,
-  while "Project organization" in the global `CLAUDE.md` allows only `lessons_learned.md` there.
-  Pick one: a category folder in the skill, or an exception in the rule. This repo used
-  `docs/history/`.
+- **A realign does not converge to "nothing to change".** Measured in Sprint 12 on one project:
+  the first run changed fourteen files, a second run minutes later four, a third one six — small,
+  real leftovers each time, because a model does not find everything in one pass, and once a
+  repair of an earlier pass's damage. The skill now says "repair, do not polish". Run it when the
+  setup changed, not repeatedly; if runs on a settled project keep growing, fix the sentence in
+  the skill that makes them look.
 - Parked: an optional plan-rename hook; agent templates for common project types (from Sprint 4).
 - Parked: a `SessionStart` hook that auto-injects the carryover after an unplanned compaction
   (from Sprint 6).
 - Parked: a "Compact Instructions" section in the global `CLAUDE.md` (from Sprint 6). Note from
   Sprint 11: the Claude Code docs document steering the summary only through
   `/compact <instructions>`.
+- Parked: Claude Code loads a project's `AGENTS.md` by itself when the project has no `CLAUDE.md`,
+  which would replace the prose that tells a session to read `AI_INSTRUCTIONS.md` first. It is
+  unavailable while telemetry is disabled, so nothing is done with it (found in the Sprint 12 review).
 - Open problem, no rule written: much of what gets written did not need to exist (recorded in
   Sprint 9).
 
@@ -117,3 +113,4 @@ control actually lies.
 | 2026-09-19 | Done | Structure that does not drift (README v2.6): category folders in `docs/`, one tree, deviations into the plan, nothing beside the cycle, `/realign-project` check 16, `haiku` removed, live files pulled |
 | Sprint 10 | Open | Telemetry, feature-gating and what "off" actually costs — raised 2026-08-05 |
 | Sprint 11 | Done | One home for every fact (README v2.7): skills point at `CLAUDE.md`, `/realign-project` finds copied facts and rules in auto-memory, config snapshot out of the git history |
+| Sprint 12 | Done | A realign finishes the job (README v2.8): fixed repairs and almost no questions, memory as an inbox, the document-path test gone, six living projects realigned with the bare command |

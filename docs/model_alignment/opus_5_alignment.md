@@ -35,8 +35,7 @@ literal model raises a rule's apparent weight and is exactly the disease.
    main conversation's **auto memory**. So: never restate CLAUDE.md rules in an agent definition;
    do restate anything that lives in the output style or in memory.
 2. **Any Claude Code release can rewrite that default prompt** and silently remove the coverage the
-   deletions here depend on. Verified against Claude Code as shipped on **2026-07-30**. Re-check
-   before assuming it still holds; `/realign` carries a check for this.
+   deletions here depend on. Verified against Claude Code as shipped on **2026-07-30**. Re-check before assuming it still holds.
 
 ## Effort — the single source for which level to use
 

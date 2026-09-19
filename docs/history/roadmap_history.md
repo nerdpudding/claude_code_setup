@@ -5,6 +5,35 @@ front. Newest first. This is a dated record: names and paths are as they were wr
 and are not updated when files move. The version entries these sprints refer to as "in `README.md`"
 moved to [docs/history/version_history.md](version_history.md) on 2026-09-19.
 
+## Sprint 12: A realign finishes the job (Done — 2026-09-19)
+
+Same day as Sprint 11. Realign runs on living projects ended in questions the user could not judge,
+an offer to build a test, and reports of forty lines; every one traced back to a sentence that told
+the session to ask, propose or hold back. See the v2.8 entry in
+[docs/history/version_history.md](version_history.md). Plan, with the review by the `prompt-expert`
+agent and the decisions taken with the user: `archive/2026-09-19_PLAN_realign_asks_nothing.md`
+(local only).
+
+- [x] `/realign-project` rewritten with the run rules first: fixed repairs, almost no questions, a
+      closing report of one short paragraph that states failures and never doubts
+- [x] Memory as an inbox a realign empties after checking the project's documents; the
+      document-path test retired everywhere
+- [x] Global `CLAUDE.md`, output style and the `/project-setup` templates cleared of the sentences
+      that invited questions; seven preferences moved out of single projects' memories
+- [x] Six living projects realigned with `claude -p "/realign-project"`, each committed and pushed;
+      two findings from those runs went back into the skill (a realign must not touch a
+      configuration example; a documentation test found in a second project)
+- [x] Installed to `~/.claude/` and confirmed in sync
+
+Line budget: the skill went from 241 to 213 lines; `global_config/CLAUDE.md` from 244 to 251.
+
+Token and cost totals: plan review on `fable` **191,612** subagent tokens (34 tool calls, ~11 min).
+The realign sessions on `opus`, as reported by Claude Code (the trial project,
+first, second and third run: $3.43, $1.68, $1.91), $2.45, $2.78, $5.15, $6.02 and $4.54 — 3 to 9
+minutes each. Closing
+doc-keeper pass on `sonnet` **186,595** (39 tool calls, ~7 min). Main-session total is not visible from inside the
+session: read `/usage`.
+
 ## Sprint 11: One home for every fact (Done — 2026-09-19)
 
 Audit of the setup against one goal: every fact has one home, everything else points at it. See

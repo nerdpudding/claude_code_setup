@@ -6,7 +6,7 @@
 > the origin story of the format; the current guidance lives in the successor.
 
 This document is the canonical rationale for the format used across this repo (the tiered
-`CLAUDE.md`, the lean `AI_INSTRUCTIONS.md`, the `/realign` skill, the deterministic settings). The
+`CLAUDE.md`, the lean `AI_INSTRUCTIONS.md`, the `/realign-project` skill, the deterministic settings). The
 `README.md` carries a short summary of the principles; the depth and the *why* live here.
 
 ## The problem this solves
@@ -112,10 +112,10 @@ project, not the hidden global `~/.claude/plans/`.
 | 1, 2, 6 | `global_config/CLAUDE.md` (tiered, lean) and the `AI_INSTRUCTIONS.md` the skills generate |
 | 3 | `global_config/output-styles/personal-voice.md` (tone), `CLAUDE.md` (process), native memory (state) |
 | 4 | `global_config/settings.json` (`includeCoAuthoredBy: false`, `permissions.deny`) |
-| 5, 8 | the `/realign` audit (drift, duplication, shadow memory) |
+| 5, 8 | the `/realign-project` audit (drift, duplication, shadow memory) |
 | 7 | `project-setup` skill (scale-to-size, no "do not skip phases") |
 | 9 | `effortLevel` in the settings template (`high` at the time of this alignment; `xhigh` since the Fable 5 sync) |
-| 10 | `doc-keeper.md` description style; `/realign` description-hygiene checks |
+| 10 | `doc-keeper.md` description style; `/realign-project` description-hygiene checks |
 
 ## How this was derived
 
@@ -123,5 +123,5 @@ The diagnosis came from a multi-agent research pass (parallel readers over the r
 the global setup, and a real project, plus web research on current Claude Code best practices and
 the 4.6->4.8 behavior shift), followed by an adversarial verification pass that tried to refute each
 proposed friction point. Only friction points that survived both a skeptic and a practical-impact
-check were kept. The skills (`/project-setup` for new projects, `/realign` for existing ones, and
+check were kept. The skills (`/project-setup` for new projects, `/realign-project` for existing ones, and
 `/custom_plan` for build-it-later planning) are how the surviving principles get applied in practice.

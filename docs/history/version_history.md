@@ -4,6 +4,45 @@ What changed in each version of this setup, newest first. Moved here verbatim fr
 2026-09-19, so the README keeps to what a reader needs first. This is a dated record: names and
 paths are as they were written at the time. New versions are added at the top.
 
+## v2.8 — A realign finishes the job (2026-09-19)
+
+Same day as v2.7. The realign skill was run on a handful of living projects and every run ended in
+questions the user could not judge, an offer to build a test nobody needed, and a report of forty
+lines. Each of those traced back to a sentence in the skill or in the global `CLAUDE.md` that told
+the session to ask, propose or hold back; current models follow such sentences to the letter. The
+plan was reviewed by the `prompt-expert` agent against the four prompting guides before building.
+
+- **`/realign-project` rewritten, and shorter** (241 to 213 lines). The run rules come first:
+  what a rule settles is never asked, a doubt is settled from the files, other tools are no
+  factor, nothing is committed, no test is run. A real question exists only for a step git cannot
+  undo or a preference no file records — before the first edit, one per message, with options and
+  a recommendation. The closing report is one paragraph of three to five plain sentences that
+  states what failed but never a doubt, an offer or advice. A realign edits instructions and
+  documents, never code or a configuration file.
+- **Memory is an inbox, not a home.** A realign empties it: it first checks that what a note says
+  is in the project's documents, adds it where it is missing, then deletes the note. A preference
+  of the user that the global files do not carry is the one kind that stays.
+- **The document-path test is gone everywhere.** To the user a test is technical. A documentation
+  check inside a test suite made sessions talk about tests and run suites for documentation work,
+  and it caught nothing the `git grep` after a move and the doc-keeper audit at the close do not.
+- **Global `CLAUDE.md`:** "ask when conventions are unclear" became "settle a doubt from the
+  files"; a change to documents runs no test; a pointer in a sibling project is repaired when its
+  new target is known; "tool-agnostic" is dropped; the state of the work lives in `roadmap.md`.
+  Seven preferences that sat in single projects' memories now hold in every project: never say
+  "calm down", no time estimates, never block the chat, announce a background helper, results go
+  into the project, a how-to question gets an answer and not an action, note what failed in
+  `docs/lessons_learned.md`. The file is 251 lines.
+- **Output style:** a closing report holds no doubt, no offer and nothing left to decide.
+- **`/project-setup`:** the generated `AI_INSTRUCTIONS.md` keeps one skeleton for every project and
+  holds project content only, so a fresh project passes a realign unchanged; the agent templates
+  no longer restate global rules or tell an agent to ask.
+- **Tested for real:** six living projects were realigned with `claude -p "/realign-project"`, the
+  command and nothing else. No run asked a question; every report was one paragraph. Two findings
+  from those runs went back into the skill the same day: a realign had replaced a LAN address in
+  an `.env.example`, and a realigned project does not settle at once — a second run still changed
+  four files and a third one six, all small and real. The skill now says to repair what breaks a
+  rule and to leave alone what complies.
+
 ## v2.7 — One home for every fact (2026-09-19)
 
 Same day as v2.6, and its consequence. The setup was audited against one goal — every fact has one

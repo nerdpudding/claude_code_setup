@@ -77,7 +77,7 @@ were being said to him roughly fifteen times: referring to things by position in
 summarising where the actual lines were the answer, several questions in one message, and Dutch
 that had become hard to read. The failures, the evidence, and an honest split between documented
 model behaviour and ordinary sloppiness are in
-[docs/opus_5_communication_friction.md](docs/opus_5_communication_friction.md).
+[docs/model_alignment/opus_5_communication_friction.md](docs/model_alignment/opus_5_communication_friction.md).
 
 - **Five rules into the Personal Voice output style** (60 → 65 lines): show the lines instead of
   describing them; each message stands on its own rather than pointing back at an earlier turn;
@@ -101,7 +101,7 @@ but that much of what gets written did not need to exist. No rule was written fo
 Opus 5 verifies its own work, guards its own scope, and limits its own correction narration — so
 instructions telling it to do those things now cost tokens for nothing. Anthropic
 [documented this](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5)
-and says to delete. Rationale and the effort table: [docs/opus_5_alignment.md](docs/opus_5_alignment.md).
+and says to delete. Rationale and the effort table: [docs/model_alignment/opus_5_alignment.md](docs/model_alignment/opus_5_alignment.md).
 
 - **Deleted** two self-verification steps: `pre-clear-compact`'s no-loss re-read and
   `project-setup`'s post-scaffold consistency phase.
@@ -217,7 +217,7 @@ phases") became mandatory ceremony on trivial tasks, duplicated rules became amp
 pressure, and stale in-repo files got trusted as ground truth.
 
 **What v2 changes to fix it** (full rationale + the ten principles in
-[`docs/opus_4_8_alignment.md`](docs/opus_4_8_alignment.md)):
+[`docs/model_alignment/opus_4_8_alignment.md`](docs/model_alignment/opus_4_8_alignment.md)):
 - `CLAUDE.md` rewritten from a flat ALWAYS/NEVER wall into a tiered **Hard rules / Preferences**
   format — the model can now tell load-bearing invariants from soft defaults.
 - Tone/voice moved into a dedicated **output style** (system-prompt channel, reliably honored)
@@ -294,41 +294,10 @@ The Personal Voice output style and the skills take effect on the **next session
 | File | What it does |
 |------|-------------|
 | `CLAUDE.md` | Global instructions — tiered Hard rules / Preferences, project conventions, plan rules. Auto-loaded every session. |
-| `settings.json` | Global settings — telemetry/timeouts, `model: opus[1m]` + `fallbackModel` chain, `effortLevel: high` (the Opus 5 default; `xhigh` is a per-session step-up — see [docs/opus_5_alignment.md](docs/opus_5_alignment.md)), `includeCoAuthoredBy: false`, `outputStyle: "Personal Voice"`, `plansDirectory`, the `last30days` plugin, a `permissions.deny` example. |
+| `settings.json` | Global settings applied to every session — model and fallback chain, effort level, output style, plans directory, telemetry and timeouts, plugins, permissions. The values live in the file; read them there. |
 | `output-styles/personal-voice.md` | Tone/voice output style — the single home for tone rules (no "fair", no hollow validation, neutral voice, no emojis). **On by default** via `outputStyle`; `keep-coding-instructions: true` keeps all standard coding behavior, so it's purely additive. |
-| `skills/project-setup/SKILL.md` | `/project-setup` — scaffold a NEW project. |
-| `skills/realign-project/SKILL.md` | `/realign` — modernize an EXISTING project to the v2 format. |
-| `skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute. |
-| `skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene: docs check, backlog carry-over, token recording, archive the plan. |
-| `skills/doc-sweep/SKILL.md` | `/doc-sweep` — the doc-consistency sweep as a capped workflow fleet. |
-| `skills/pre-clear-compact/SKILL.md` | `/pre-clear-compact` — write a session carryover before freeing up context. |
-| `skills/post-clear-handover/SKILL.md` | `/post-clear-handover` — re-orient in a fresh session, then archive the carryover. |
-| `skills/wireframe/SKILL.md` | `/wireframe` — draw a screen in a local self-hosted Penpot and hand back a picture. |
-| `skills/contained-browser/SKILL.md` | `/contained-browser` — drive a headless Chromium in a container, never the user's own browser. |
-| `workflows/doc-sweep-fleet.js` | Saved workflow behind `/doc-sweep` — parallel doc-consistency sweep (readers + verifier + merger). |
-| `workflows/milestone-review.js` | Saved workflow for the milestone whole-codebase review (finders + refuters + synthesis into a dated review doc). |
-
-```
-claude-code-setup repo              ~/.claude/ (target)
-└── global_config/          →       ├── CLAUDE.md
-    ├── CLAUDE.md                    ├── settings.json
-    ├── settings.json               ├── output-styles/
-    ├── output-styles/              │   └── personal-voice.md
-    │   └── personal-voice.md       ├── skills/
-    ├── skills/                     │   ├── project-setup/
-    │   ├── project-setup/          │   ├── realign-project/
-    │   ├── realign-project/        │   ├── custom_plan/
-    │   ├── custom_plan/            │   ├── feature-close/
-    │   ├── feature-close/          │   ├── doc-sweep/
-    │   ├── doc-sweep/              │   ├── pre-clear-compact/
-    │   ├── pre-clear-compact/      │   ├── post-clear-handover/
-    │   ├── post-clear-handover/    │   ├── wireframe/
-    │   ├── wireframe/              │   └── contained-browser/
-    │   └── contained-browser/      └── workflows/
-    └── workflows/                      ├── doc-sweep-fleet.js
-        ├── doc-sweep-fleet.js          └── milestone-review.js
-        └── milestone-review.js
-```
+| `skills/` | The skills — see [The skills](#the-skills). |
+| `workflows/` | The saved workflows — see [Saved workflows](#saved-workflows). |
 
 ## The skills
 
@@ -376,7 +345,7 @@ the documented user-level home for saved workflows, available in every project:
 | `milestone-review` | by hand, at milestones (every ~3–4 sprints) | 5 opus dimension-finders + 2 opus refuters per dimension + 1 synthesis (~16 agents; opus default, `synthesisModel: 'fable'` as explicit opt-in); state **"+500k"**. Writes the findings into a dated review doc (`docs/Review_<date>.md`), not a plan file. |
 
 Both fleets are read-only (the milestone review's single sanctioned write is the findings
-section of the plan file), so a failed run is simply re-run or resumed via `resumeFromRunId`.
+section of that review doc), so a failed run is simply re-run or resumed via `resumeFromRunId`.
 Keep the `/config` workflow size guideline at `medium`; ultracode stays off — deliberate
 scoping and approval gates replace default-maximal thoroughness. The workflow `agentType`
 option and the `budget` hard ceiling are installation-verified (2026-07-19) but not yet in the
@@ -384,7 +353,7 @@ public docs — re-check after harness updates before relying on them elsewhere.
 
 ## Model alignment — why the format looks like this
 
-The short version of [`docs/opus_4_8_alignment.md`](docs/opus_4_8_alignment.md) — ten principles,
+The short version of [`docs/model_alignment/opus_4_8_alignment.md`](docs/model_alignment/opus_4_8_alignment.md) — ten principles,
 still the backbone of the format:
 
 1. **Tier emphasis** — a small Hard-rules block + a Preferences block; absolutes only for real invariants.
@@ -398,7 +367,7 @@ still the backbone of the format:
 9. **Tune depth at the settings layer** (`effortLevel`), not via prose "be thorough".
 10. **Crisp, non-overlapping subagent descriptions** — keyword-led, one owner per domain.
 
-**For current models, read [`docs/opus_5_alignment.md`](docs/opus_5_alignment.md) instead.** It
+**For current models, read [`docs/model_alignment/opus_5_alignment.md`](docs/model_alignment/opus_5_alignment.md) instead.** It
 carries what changed on Opus 5 — principle 9's `xhigh` recommendation flips to `high`, the effort
 table per kind of work, which instructions to DELETE because the model now does them unprompted,
 and which parts Claude Code's own system prompt already ships so the setup must not duplicate them.
@@ -416,14 +385,11 @@ Skills can be global (`~/.claude/skills/`, available everywhere) or project-spec
 
 ## Project structure & docs
 
-This repo's own structure and rules live in [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md).
+This repo's own structure and rules live in [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md); the tree
+there says where every other file is. Start here:
 
-| Document | Purpose |
-|----------|---------|
-| [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) | This repo's rules, hierarchy, agents, skills (source of truth) |
-| [docs/opus_5_alignment.md](docs/opus_5_alignment.md) | Current model guidance — effort levels per kind of work, what to delete, what the harness already ships |
-| [docs/opus_5_communication_friction.md](docs/opus_5_communication_friction.md) | Why conversation with Opus 5 goes wrong, observed over one session — and which rules were written for it |
-| [docs/opus_4_8_alignment.md](docs/opus_4_8_alignment.md) | Origin story of the format — the ten principles (superseded for current models by the above) |
-| [docs/example_ai_instructions.md](docs/example_ai_instructions.md) | Reference example of a generated AI_INSTRUCTIONS.md (v2 format) |
-| [concepts/concept.md](concepts/concept.md) | Concept and design |
-| [roadmap.md](roadmap.md) | Sprint plan and status |
+- [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) — this repo's rules, hierarchy, agents and skills.
+- [docs/model_alignment/opus_5_alignment.md](docs/model_alignment/opus_5_alignment.md) — current
+  model guidance: effort levels, what to delete, what the harness already ships.
+- [concepts/concept.md](concepts/concept.md) — concept and design.
+- [roadmap.md](roadmap.md) — sprint plan and status.

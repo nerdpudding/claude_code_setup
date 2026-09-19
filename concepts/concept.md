@@ -109,18 +109,8 @@ None. This project contains only configuration files (markdown, JSON). No comput
 |----------|----------|---------|
 | Global CLAUDE.md | `global_config/CLAUDE.md` | Global workflow rules and conventions |
 | Global settings.json | `global_config/settings.json` | Claude Code global settings |
-| project-setup skill | `global_config/skills/project-setup/SKILL.md` | `/project-setup` — scaffold a new project |
-| realign-project skill | `global_config/skills/realign-project/SKILL.md` | `/realign` — realign an existing project to the current format (see `docs/opus_5_alignment.md`) |
-| custom_plan skill | `global_config/skills/custom_plan/SKILL.md` | `/custom_plan` — read-only sprint/feature planning into `claude_plans/PLAN_<name>.md`, no auto-execute |
-| feature-close skill | `global_config/skills/feature-close/SKILL.md` | `/feature-close` — post-delivery hygiene (docs check, backlog carry-over, token recording, archive the plan) |
-| doc-sweep skill | `global_config/skills/doc-sweep/SKILL.md` | `/doc-sweep` — doc-consistency sweep as a capped workflow fleet |
-| pre-clear-compact skill | `global_config/skills/pre-clear-compact/SKILL.md` | `/pre-clear-compact` — write a session carryover before freeing up context |
-| post-clear-handover skill | `global_config/skills/post-clear-handover/SKILL.md` | `/post-clear-handover` — re-orient in a fresh session, then archive the carryover |
-| wireframe skill | `global_config/skills/wireframe/SKILL.md` | `/wireframe` — draw a screen in the local self-hosted Penpot and hand back a picture |
-| contained-browser skill | `global_config/skills/contained-browser/SKILL.md` | `/contained-browser` — drive a headless Chromium in a container, never the user's own browser |
+| Skills and saved workflows | `global_config/skills/`, `global_config/workflows/` | Listed in the Skills and Saved-workflows tables of `AI_INSTRUCTIONS.md` |
 | personal-voice output style | `global_config/output-styles/personal-voice.md` | Tone/voice output style — on by default via `outputStyle` in settings |
-| doc-sweep workflow | `global_config/workflows/doc-sweep-fleet.js` | Saved workflow behind `/doc-sweep` (readers + verifier + merger) |
-| milestone-review workflow | `global_config/workflows/milestone-review.js` | Saved workflow for the whole-codebase review at milestones |
 | install script | `install.sh` | `diff` / `install` / `pull` between the repo and `~/.claude/` |
 
 ## Use Cases

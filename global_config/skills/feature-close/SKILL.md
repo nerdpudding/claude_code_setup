@@ -52,10 +52,10 @@ files because the close asked only whether documents were correct):
 
 ### 4. History diet — keep living status docs readable
 Living status docs — `roadmap.md` first, but any doc that accumulates history — must stay
-scannable: backlog and planned work in front, history compact. At every close, check the
-roadmap's shape; when delivered-work detail starts to dominate (rule of thumb: the live
-content — backlog, next sprints — no longer stands out in a quick scan), move the full
-delivered sections **verbatim** to the project's history doc — `docs/roadmap_history.md`
+scannable: backlog and planned work in front, history compact. At every close, move out whatever
+is not needed to choose or do the next work: delivered detail, backlog items that are settled or
+dropped, status narrative. Parked items stay, one line each. What moves goes **verbatim** to the
+project's history doc — `docs/roadmap_history.md`
 (create on first use; newest at the top) — leaving one status line per delivered item in the
 roadmap with a pointer to the history doc. This is a move, never a deletion, and `archive/`
 is NOT the place for it: that is for dead/superseded content, while delivered-sprint history
@@ -77,7 +77,7 @@ rule to follow going forward. Session-only details stay out.
 Prepend a short status note to the plan file (delivered what/when; where the leftovers went). If
 build agents worked on it, their deviations from the plan and their watch items go into the plan
 under "Deviations as built" — a report that lives only in the chat is gone when a later review
-needs it. Then move the plan to `archive/YYYY-MM-DD_PLAN_<name>.md`. Fix any references that pointed at the old path.
+needs it. Then move the plan to `archive/YYYY-MM-DD_PLAN_<name>.md` and repair the pointers the way "One tree, and pointers that cannot rot" in the global `CLAUDE.md` says: `git grep` the file name across the whole project and rewrite every hit.
 
 ### 8. Memory
 If auto-memory is active and the project's cross-session state changed (e.g. an ongoing goal is
@@ -85,8 +85,9 @@ now done), update it — don't leave memory pointing at closed work.
 
 ### 9. Alignment audit — LAST, once everything else has moved
 Only now delegate the doc audit, to the project's **doc-keeper agent** if it has one, otherwise a
-**sonnet** general agent. Run it inline only for a trivially small project; for a substantial doc
-tree run the saved **doc-sweep workflow** instead (`/doc-sweep` has the recipe and caps).
+general agent on the tier "Model tiers for subagents" in the global `CLAUDE.md` names for
+documentation work. Run it inline only for a trivially small project; for a substantial doc tree
+run the saved **doc-sweep workflow** instead (`/doc-sweep` has the recipe and caps).
 
 Three rules, each learned the hard way (`[user-specified]` 2026-07-30):
 

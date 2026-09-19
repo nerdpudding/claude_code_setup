@@ -46,9 +46,9 @@ Explore enough to write a concrete plan, not a vague one:
 - If the project has them, consult `AI_INSTRUCTIONS.md`, `docs/lessons_learned.md`, and relevant
   sub-docs (they carry project-specific pitfalls). Scale depth to the size of the work.
 - For a large/unfamiliar codebase you MAY delegate read-only exploration to subagents — prefer
-  the project's own research agents (e.g. a repo-researcher) or a cheap-model (sonnet) subagent;
-  reserve the main thread for the design thinking. The plan file is still written here, in the
-  main thread.
+  the project's own research agents (e.g. a repo-researcher), otherwise a subagent on the tier
+  "Model tiers for subagents" in the global `CLAUDE.md` names for research; reserve the main
+  thread for the design thinking. The plan file is still written here, in the main thread.
 - Do not write anything yet.
 
 ### 3. Write the plan file
@@ -83,9 +83,11 @@ resumes. Gating state may only be set on verified success — error paths fail l
 What could go wrong; anything needing a decision before building.
 
 ## Steps
-An ordered, checkable task list (the build sequence). It ENDS with a live end-to-end of the real
-flow as the closing gate — a green suite alone never closes the sprint. A full adversarial review
-belongs at milestones (the `milestone-review` workflow), not at the end of every sprint.
+An ordered, checkable task list (the build sequence). Where the plan changes something that runs,
+it ENDS with a live end-to-end of the real flow as the closing gate — a green suite alone never
+closes the sprint. A documents-only plan has no such flow; its check is the doc audit in
+`/feature-close`. A full adversarial review belongs at milestones (the `milestone-review`
+workflow), not at the end of every sprint.
 
 ## Test / verification
 How we'll confirm it works — the real paths including the failure ones, and the live end-to-end
@@ -99,8 +101,9 @@ feed the milestone review when one comes.
 
 ### 4. Offer an independent review of the plan
 When the plan is complex, or must run seamlessly across parallel agents each with their own task,
-offer to have it reviewed by **an agent that did not write it** (`opus`; `fable` only if the user
-asks) before anything is built. Feed the findings back into the plan file. This is the routine
+offer to have it reviewed by **an agent that did not write it** — for which model, see "Model
+tiers for subagents" in the global `CLAUDE.md` — before anything is built. Feed the findings back
+into the plan file. This is the routine
 check for that kind of plan — the user often has no time to read a plan in full and relies on it.
 Skip it for a small, single-agent plan.
 

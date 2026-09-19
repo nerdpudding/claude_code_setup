@@ -11,6 +11,7 @@ This is a template repository for setting up and managing global Claude Code con
 - **Never delete, always archive** — Move outdated content to `archive/` with date prefix
 - **English only** — All files, comments, and commit messages
 - **Neutral tone in docs** — Avoid "we", "our", "us" in documentation. Keep it general and impersonal unless the user explicitly asks for personal or team-oriented language
+- **Other projects stay unnamed** — this repository is public. Another project of the user is referred to by what it is ("a larger sibling project", "another project"), never by its name — not in docs, not in plans, not in commit messages. The one exception is a functional path a skill needs to work, which keeps its real value behind the `__HOME__` placeholder `install.sh` expands
 - **Build on existing work** — Evolve settings and skills, don't rewrite from scratch
 - **Use agents** — Check `.claude/agents/` for specialized help before starting tasks
 
@@ -26,49 +27,41 @@ The full cycle lives in the global `CLAUDE.md`. In this project it runs as:
 
 ## Project Hierarchy
 
-This is the single source of truth for the project file structure:
+This is the single source of truth for the project file structure. It lists every folder with its
+purpose, the core files, and the files another document or an agent points at by name — never
+status, counts or dates. Every other file points at a document by its path from the project root
+and never repeats this tree.
 
 ```
 claude-code-setup/
-├── AI_INSTRUCTIONS.md              # This file — project rules, hierarchy, agents
-├── README.md                       # Overview, quick start, documentation links
+├── AI_INSTRUCTIONS.md              # This file — project rules, hierarchy, agents, skills
+├── README.md                       # Overview, quick start, version history
+├── roadmap.md                      # Sprint plan and status
 ├── install.sh                      # Sync script: diff / install / pull between repo and ~/.claude/
-├── roadmap.md                      # Sprint plan and status tracking
-├── concepts/
-│   └── concept.md                  # Detailed concept, diagrams, technical decisions
-├── docs/                              # Guides, detailed documentation, specs
-│   ├── example_ai_instructions.md     # Reference example of a generated AI_INSTRUCTIONS.md
-│   ├── opus_4_8_alignment.md          # Origin story of the format (the 10 principles)
-│   ├── opus_5_alignment.md            # Current model guidance: what to delete, effort levels
-│   ├── opus_5_communication_friction.md  # Why conversation goes wrong, and the rules written for it
-│   └── prompting_guides/              # Anthropic's prompting guides — downloaded snapshots; `url:` and `fetched:` in each header
-├── global_config/                     # Files to copy to ~/.claude/ (mirrors layout)
-│   ├── CLAUDE.md                      # Global CLAUDE.md
-│   ├── settings.json                  # Global settings
-│   ├── skills/
-│   │   ├── project-setup/SKILL.md     # /project-setup — scaffold a new project
-│   │   ├── realign-project/SKILL.md   # /realign — realign an existing project to the current format
-│   │   ├── custom_plan/SKILL.md       # /custom_plan — read-only sprint/feature planning, no auto-execute
-│   │   ├── feature-close/SKILL.md     # /feature-close — post-delivery hygiene (docs, backlog, archive)
-│   │   ├── doc-sweep/SKILL.md         # /doc-sweep — doc-consistency sweep as a capped workflow fleet
-│   │   ├── pre-clear-compact/SKILL.md # /pre-clear-compact — write session carryover before clearing context
-│   │   ├── post-clear-handover/SKILL.md # /post-clear-handover — re-orient in a fresh session, archive the carryover
-│   │   ├── wireframe/SKILL.md         # /wireframe — draw a screen in the local Penpot
-│   │   └── contained-browser/SKILL.md # /contained-browser — headless Chromium in a container
-│   ├── workflows/
-│   │   ├── doc-sweep-fleet.js         # Saved workflow: parallel doc sweep (invoked via /doc-sweep)
-│   │   └── milestone-review.js        # Saved workflow: whole-codebase review at milestones (by hand)
-│   └── output-styles/
-│       └── personal-voice.md          # Tone/voice output style (on by default via outputStyle)
-├── claude_plans/                   # Active plans from plan mode
-├── sessions/                       # SESSION_CARRYOVER.md — rolling handover (created by /pre-clear-compact, archived after handover)
-├── archive/                        # Archived plans, schedules, outdated docs
-├── .claude/
-│   ├── settings.json               # Project-level Claude settings
-│   └── agents/
-│       ├── doc-keeper.md           # Documentation audit agent
-│       └── opus5-prompt-expert.md  # Judges instruction changes before they ship (temporary)
-└── todo_<date>.md                  # Daily task tracker (temp, archive when done)
+├── .gitignore                      # Ignores archive/, so archived files stay out of the public repo
+├── concepts/                       # Concept and early design thinking
+│   └── concept.md                  # Concept, diagrams, technical decisions
+├── docs/                           # Category folders only — nothing loose in its root
+│   ├── model_alignment/            # Why the format looks the way it does, per model generation
+│   │   ├── opus_4_8_alignment.md   # Origin story of the format — the ten principles
+│   │   ├── opus_5_alignment.md     # Current model guidance: what to delete, effort levels — cited from outside this repo by /project-setup and /realign
+│   │   └── opus_5_communication_friction.md  # Why conversation goes wrong, and the rules written for it — cited from outside this repo by /realign
+│   └── prompting_guides/           # Dated snapshots of Anthropic's prompting guides; `url:` and `fetched:` in each header
+├── global_config/                  # The files install.sh copies to ~/.claude/ (mirrors its layout)
+│   ├── CLAUDE.md                   # Global CLAUDE.md, loaded every session
+│   ├── settings.json               # Global settings
+│   ├── output-styles/
+│   │   └── personal-voice.md       # Tone/voice output style (on by default via outputStyle)
+│   ├── skills/                     # One folder per skill — the Skills table below is the list
+│   └── workflows/                  # Saved workflows — the Saved-workflows table below is the list
+├── claude_plans/                   # Plan files (PLAN_<topic>.md), git-committed
+├── sessions/                       # SESSION_CARRYOVER.md — rolling handover, created on demand
+├── archive/                        # Outdated content with a date prefix; git-ignored, so local only
+└── .claude/
+    ├── settings.json               # Project-level Claude settings (plansDirectory: ./claude_plans)
+    └── agents/
+        ├── doc-keeper.md           # Documentation audit agent
+        └── prompt-expert.md        # Judges instruction changes before they ship (temporary)
 ```
 
 ## Agents
@@ -76,9 +69,9 @@ claude-code-setup/
 | Agent | Model | File | When to use |
 |-------|-------|------|-------------|
 | doc-keeper | `sonnet` | `.claude/agents/doc-keeper.md` | After making changes — to verify docs still reflect reality. When asked to clean up, audit, or organize documentation. |
-| opus5-prompt-expert | `fable` | `.claude/agents/opus5-prompt-expert.md` | Before adding, rewording or deleting a rule in CLAUDE.md, an output style, a skill or an agent — judges whether it will bind, whether the wording is right, and whether the channel is right. Reads the official docs first; reports only. |
+| prompt-expert | `fable` | `.claude/agents/prompt-expert.md` | Before adding, rewording or deleting a rule in CLAUDE.md, an output style, a skill or an agent — judges whether it will bind, whether the wording is right, and whether the channel is right. Reads the official docs first; reports only. |
 
-**Two deliberate exceptions on `opus5-prompt-expert`, so a later audit does not "fix" them:**
+**Two deliberate exceptions on `prompt-expert`, so a later audit does not "fix" them:**
 it is pinned to `fable` rather than `opus`, because getting the register of this setup right has
 proved hard and reasoning quality is the whole point of the agent; and it is deliberately **not**
 distributed — it lives only here, is not in `global_config/`, and `/project-setup` does not
@@ -90,7 +83,7 @@ that work is done, not carried into other projects as a template.
 | Skill | File | What it does |
 |-------|------|-------------|
 | `/project-setup` | `global_config/skills/project-setup/SKILL.md` | Scaffold a NEW project with the preferred structure, docs, agents, workflow. |
-| `/realign` | `global_config/skills/realign-project/SKILL.md` | Realign an EXISTING project's docs to the current format (see `docs/opus_5_alignment.md`). Counterpart to `/project-setup`. |
+| `/realign` | `global_config/skills/realign-project/SKILL.md` | Realign an EXISTING project's docs to the current format (see `docs/model_alignment/opus_5_alignment.md`). Counterpart to `/project-setup`. |
 | `/custom_plan` | `global_config/skills/custom_plan/SKILL.md` | Plan a sprint/feature read-only into `claude_plans/PLAN_<name>.md`, then stop. Replaces native plan mode (which auto-executes on approval). Build later on an explicit "implement PLAN_<name>". |
 | `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, record real token totals, graduate lessons, archive the plan with a date prefix. |
 | `/doc-sweep` | `global_config/skills/doc-sweep/SKILL.md` | Run the doc-consistency sweep as a capped saved workflow (4–7 cluster readers + verifier + merger); small projects keep the single doc-keeper pass. |
@@ -116,7 +109,7 @@ restates the sweep's caps because it is that workflow's invocation point.
 - To plan without auto-building: use the `/custom_plan` skill (researches read-only, writes the plan file,
   stops), or ask for the plan written to `claude_plans/PLAN_<topic>.md` with "don't implement yet".
   Native plan mode starts implementing on approval and can't be overridden by prose — so use `/custom_plan`
-  or the file-first flow instead of toggling plan mode. See `docs/opus_5_alignment.md`.
+  or the file-first flow instead of toggling plan mode. See `docs/model_alignment/opus_5_alignment.md`.
 - Build later only on an explicit instruction (e.g. "implement PLAN_<name>") — saving ≠ approval.
 - Archive completed plans to `archive/` with date prefix.
 - Update progress in `roadmap.md` (single tracker for this project).
@@ -138,7 +131,7 @@ Move to `archive/` with date prefix (`YYYY-MM-DD_filename.md`):
 
 Read order:
 1. This file (`AI_INSTRUCTIONS.md`)
-2. Active task tracker (`todo_<date>.md`)
+2. Active task tracker (`todo_<date>.md` in the root), if one exists
 3. Active plans in `claude_plans/`
 4. `concepts/concept.md`
 5. Continue with the task

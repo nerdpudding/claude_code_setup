@@ -327,17 +327,17 @@ condition that the behaviour stays.
 
 ## Steps
 
-- [ ] A. Snapshot out of the published repo and its history (main thread; the user runs the push)
-- [ ] B. `global_config/CLAUDE.md` — tree and pointer rule, cross-project example, compaction
+- [x] A. Snapshot out of the published repo and its history (main thread; the user runs the push)
+- [x] B. `global_config/CLAUDE.md` — tree and pointer rule, cross-project example, compaction
       line, three passages cut to one line each
-- [ ] C. Output style — three additions
-- [ ] D. `realign-project` — pointers, checks 3, 7, 9, 16, Phase 2, Phase 3
-- [ ] E. `project-setup` — pointers, Phase 0, Phase 2, template, Phase 5, Phase 7
-- [ ] F. `feature-close`, `custom_plan`, `doc-sweep`, `milestone-review.js`
-- [ ] G. This repo — `README.md`, the example out, the three docs moved, `concepts/concept.md`,
+- [x] C. Output style — three additions
+- [x] D. `realign-project` — pointers, checks 3, 7, 9, 16, Phase 2, Phase 3
+- [x] E. `project-setup` — pointers, Phase 0, Phase 2, template, Phase 5, Phase 7
+- [x] F. `feature-close`, `custom_plan`, `doc-sweep`, `milestone-review.js`
+- [x] G. This repo — `README.md`, the example out, the three docs moved, `concepts/concept.md`,
       both agents, `AI_INSTRUCTIONS.md`; auto-memory in the main thread
-- [ ] H. Install, and "in sync" confirmed
-- [ ] Builder reports deviations and watch items; they go into this file under "Deviations as built"
+- [x] H. Install, and "in sync" confirmed
+- [x] Builder reports deviations and watch items; they go into this file under "Deviations as built"
 
 This plan changes instructions and documents, not code that runs, so by its own section F it has
 no live end-to-end step. The doc audit belongs to `/feature-close`.
@@ -380,3 +380,42 @@ changed in this plan:
 - The seam check by grep could not pass; replaced by a builder report item.
 - The auto-memory change moved to the main thread, and the one reason worth keeping from the
   deleted memory is rehoused.
+
+## Deviations as built (2026-09-19)
+
+**Section A**
+- `git filter-branch` rewrote the remote-tracking ref as well, which would have made
+  `--force-with-lease` refuse the push. A `git fetch` put it back to the real remote state first.
+- A leftover worktree of another tool (`.kilo/worktrees/`) still pointed at an old commit and kept
+  the old history alive locally after the cleanup. The user removed it; after `git worktree prune`
+  and a second `git gc` the old commits are gone locally too. A fresh clone from GitHub was clean
+  straight after the push.
+- The mirror backup `../claude_code_setup_backup.git` still exists and still holds the snapshot.
+  It can go once this sprint is closed.
+
+**Sections B–G (build agent)**
+- `global_config/CLAUDE.md` went from 231 to 236 lines, not down: the three cuts saved 11 lines,
+  the expanded tree-and-pointer rule cost 16. It is further from the 200-line target than before.
+- The Penpot checkout path was dropped from the wireframe passage; `/wireframe` carries it.
+- In the tree of `AI_INSTRUCTIONS.md`, `workflows/` is one line like `skills/`, because the
+  Saved-workflows table below it is the list. `.gitignore` was added to the tree, and the
+  `todo_<date>.md` line removed (no such file exists); the after-compaction read order now says
+  "if one exists".
+- `README.md`: two pointer rows (`skills/`, `workflows/`) replaced the eleven removed rows, so the
+  table does not read as if `global_config/` held three files. The `settings.json` row names
+  which knobs the file holds, without values.
+- The deleted auto-memory file got a local copy in `archive/` first (never delete, always archive).
+
+**Watch items**
+- The version history in `README.md` and two lines in `roadmap.md` name another project of the
+  user, and two permission entries in `global_config/settings.json` carry another project's name.
+  All four predate this plan. The new rule in `AI_INSTRUCTIONS.md` now flags them; whether they
+  change is the user's call.
+- `global_config/claude_plans/` is an empty, untracked leftover folder.
+- `doc-sweep/SKILL.md` still says `sonnet` in the fleet-size row and in step 1. Both describe the
+  literal values in `doc-sweep-fleet.js`, so they are restatements of code, not of the tier policy.
+- `global_config/CLAUDE.md` is 236 lines. The next candidates for a cut are the SOLID sub-bullets
+  and the cross-project pointer rule, both `[user-specified]`.
+- Field test still owed: the first `/realign` run with the new Phase 2. Every active project needs
+  one `/realign` with the new skill; the two realigned on 2026-09-19 need only the three new
+  checks (tree content, link form inside `docs/`, rules in auto-memory).

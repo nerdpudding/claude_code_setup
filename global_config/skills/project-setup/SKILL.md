@@ -30,44 +30,27 @@ Read `~/.claude/settings.json`. Do NOT diff against a hardcoded value block — 
 - `$schema` — points at the Claude Code settings schema.
 - `env` — telemetry disabled (`DISABLE_TELEMETRY` / `DISABLE_ERROR_REPORTING`) and Bash timeouts set (`BASH_DEFAULT_TIMEOUT_MS`, `BASH_MAX_TIMEOUT_MS`).
 - `alwaysThinkingEnabled` — present (typically `true`).
-- `effortLevel` — present, matched to the pinned model. On Opus 5 and Sonnet 5 the default is `"high"`; `"xhigh"` is a per-session step-up for demanding work, not a global pin. (Opus 4.7/4.8 were the exception that wanted `"xhigh"` by default.) Full per-model table: `docs/opus_5_alignment.md` in the claude_code_setup repo.
+- `effortLevel` — present, matched to the pinned model. On Opus 5 and Sonnet 5 the default is `"high"`; `"xhigh"` is a per-session step-up for demanding work, not a global pin. (Opus 4.7/4.8 were the exception that wanted `"xhigh"` by default.) Full per-model table: `claude_code_setup: opus_5_alignment.md` (effort level per model).
 - `plansDirectory` — set (project setups use `./claude_plans`, so plans go in-project, not the hidden `~/.claude/plans/`).
 - `includeCoAuthoredBy` — `false` (this is how no-AI-attribution is enforced; no prose rule needed).
 - `permissions.deny` — present with at least an example (e.g. private files, `**/.env`, `**/secrets/**`).
 
 Report only genuinely missing or wrong-valued keys, show the user what differs, and ask before changing anything — do not blindly overwrite.
 
-### 0.2 Global CLAUDE.md
+### 0.2 The live config against the repo
 
-Read `~/.claude/CLAUDE.md` and verify it contains the current tiered sections:
+`~/.claude/CLAUDE.md`, the skills, the workflows and the output style are all distributed from the
+`claude_code_setup` repo, so the question this step answers is not "does the file look right" but
+"is the live config identical to the repo". That repo's `AI_INSTRUCTIONS.md` sits at
+`__HOME__/vibe_claude_kilo_cli_exp/claude_code_setup/AI_INSTRUCTIONS.md`; if the path does not
+resolve, find the repo by its name. Then `git pull` in it and run `./install.sh diff`.
 
-- **Hard rules (never violate)** — English-only, no AI attribution, commit/push only when asked, no secrets, don't delete/overwrite files you didn't create.
-- **Preferences (use judgment)** — scale depth to task size, SOLID/DRY/KISS, one source of truth, build on existing work, keep docs current, session-start read order.
-- **Project organization** — the structure tree and key terms (single canonical home for the hierarchy).
-- **Planning workflow** — in-project plans via the `/custom_plan` skill: plan file first
-  (`claude_plans/PLAN_<name>.md`), build only on an explicit "implement PLAN_<name>". Native plan
-  mode is avoided for build-later planning (approving its plan starts implementation).
-- **Tone & writing style** — a short pointer to the Personal Voice output style
-  (`~/.claude/output-styles/personal-voice.md`, active via `outputStyle` with
-  `keep-coding-instructions: true`); the tone rules themselves live there, not in CLAUDE.md.
-- **Memory & compaction** — native auto-memory (MEMORY.md); short compaction summary; re-read order.
-
-If the file is missing or a section is absent, offer to create or update it from the reference template. Do not force a rewrite of sections that are present and reasonable.
+If the repo is not on this machine — the new-PC case — say so, and give the quick start from its
+`README.md`: clone it, then install from it.
 
 ### 0.3 Orphaned plans
 
 Check `~/.claude/plans/` — it should be empty when `plansDirectory` points plans into projects. If orphaned plans exist, ask the user if they can be archived or deleted.
-
-### 0.4 Global skills
-
-Verify the global skill set exists under `~/.claude/skills/`: `project-setup` (this skill), its
-`/realign` counterpart (`realign-project`), `custom_plan` (the planning workflow),
-`feature-close` (post-delivery hygiene), `doc-sweep` (the doc-consistency sweep as a capped
-workflow), the session-carryover pair `pre-clear-compact` and `post-clear-handover`, and the
-drawing/browsing pair `wireframe` and `contained-browser`.
-
-Also verify `~/.claude/workflows/` holds the saved workflows distributed with the setup:
-`doc-sweep-fleet.js` and `milestone-review.js`.
 
 **Report findings and ask before fixing anything. Then continue to Phase 1 (or stop if this was a verify-only run).**
 
@@ -121,14 +104,10 @@ Scale the structure to the project size from Phase 1.2:
 - **Medium (app):** add `roadmap.md`, `concepts/`, `docs/`, `claude_plans/`, `archive/`.
 - **Large (platform):** full structure with `phase{N}/` folders and `.claude/agents/`.
 
-**`docs/` gets category folders from the first day** (medium/large) — never a flat folder that is
-sorted out later, because every later move rewrites references across the project. Propose the
-categories this project will need, for example `docs/install/`, `docs/architecture/` (with its
-`diagrams/`), `docs/evaluation/` or `docs/measurements/`, `docs/research/`, `docs/usage/`,
-`docs/design/`. Only `docs/lessons_learned.md` sits in the root of `docs/`, because the global
-skills read it there. A requirements document lives in `concepts/` next to the concept, and is
-marked approved and frozen once the roadmap is built on it — new requirements go into the roadmap
-and the sprint plans, not back into that file.
+**`docs/` gets category folders from the first day** (medium/large) — see "Project organization"
+in the global `CLAUDE.md` for why, and for what belongs where. Propose the categories this project
+will need, for example `docs/install/`, `docs/architecture/` (with its `diagrams/`),
+`docs/evaluation/` or `docs/measurements/`, `docs/research/`, `docs/usage/`, `docs/design/`.
 
 Show the proposed tree and confirm before creating anything. Behavior also depends on the mode detected in Phase 1.0:
 
@@ -240,10 +219,13 @@ The most important file — it tells any AI tool how to work in the project, and
   archive the plan with a date prefix.
 
 ## Project hierarchy (single source of truth — nowhere else)
-This tree is the only place that says where things live. Other files point at a document by its
-path from the project root (docs/install/install.md, never install.md or ../x.md) and do not
-repeat the tree. A new document goes into an existing category folder of docs/.
-- <full file tree with short descriptions>
+This tree is the only place that says where things live: every folder with one clause on its
+purpose, the core files by name, and the files another document or an agent points at by name —
+never status, counts, dates or versions. Other files point at a document by its path from the
+project root (docs/install/install.md, never install.md or ../x.md) and never repeat the tree;
+inside docs/, as a link whose text is that root path. After a move or rename, git grep the file
+name across the project and rewrite every hit. A new document goes into a category folder of docs/.
+- <the tree>
 
 ## Agents
 | Agent | Model | When to use |
@@ -324,13 +306,10 @@ Explain that `plansDirectory` keeps plans in the project repo (not the hidden `~
 
 Subagents **do** receive the full `CLAUDE.md` hierarchy (only the built-in `Explore` and `Plan` agents skip it), so do NOT restate CLAUDE.md rules in an agent definition — that is duplication. What they do not get is the output style, the main conversation's auto memory, or its history. Give each agent a self-contained prompt covering what only it needs, plus a targeted set of files to read (not a blanket "read everything first").
 
-**Token economy first.** Every agent pins a `model:` by the tiers in the global `CLAUDE.md`:
-`sonnet` for mechanical, bulk, research and documentation work, `opus` for anything that writes or
-modifies code or configuration. `haiku` is neither pinned nor proposed. `fable`
-(above opus) is never an agent default — it is expensive and reserved for the very hardest tasks,
-only when the user explicitly asks for it. Never omit `model:` — an unpinned agent silently
-inherits the (expensive) session model. Record each agent's tier in the AI_INSTRUCTIONS agents
-table so the policy survives sessions.
+**Token economy first.** Every agent pins a `model:` by the tiers in "Model tiers for subagents"
+in the global `CLAUDE.md` — read them there and match the value to the agent's job. Never omit
+`model:`: an unpinned agent silently inherits the (expensive) session model. Record each agent's
+tier in the AI_INSTRUCTIONS agents table so the policy survives sessions.
 
 ### 5.1 Doc-keeper (offer when the project has 3+ docs)
 
@@ -369,7 +348,7 @@ When documents disagree, resolve using this priority order:
 2. **Detect stale content** — cross-reference data across documents for mismatches
 3. **Suggest consolidation or archiving** — find redundant, superseded, or misplaced docs
 4. **Update cross-references** — find and fix all references when files move
-5. **Maintain hierarchy** — the project hierarchy lives in AI_INSTRUCTIONS.md only; README references it but does not duplicate it. Flag any other list that says what lives where, any file loose in the root of `docs/` other than `lessons_learned.md`, and any document path not written from the project root. If the project has a test for document paths, run it first and report its output.
+5. **Maintain hierarchy** — the project hierarchy lives in AI_INSTRUCTIONS.md only; README references it but does not duplicate it. Flag any other list that says what lives where; a tree that carries status, counts, dates or versions, or that lists every file instead of the folders, the core files and what other documents point at; any file loose in the root of `docs/` other than `lessons_learned.md`; and any document path written bare and relative instead of from the project root (inside `docs/`, as a link whose text is that root path). After any move or rename, `git grep` the file name across the project and rewrite every hit. If the project has a test for document paths, run it first and report its output.
 6. **Relevance, not only correctness** — for every document ask whether it is still read to do the next work; a correct document nobody needs is a finding, to be archived. Flag agent brief files, agent report files and plan-review documents (a milestone review's dated document is the exception): the cycle in the global CLAUDE.md produces none.
 7. **Verify completeness after changes** — check all docs are updated after project changes
 
@@ -420,8 +399,9 @@ Evaluate and **ask the user** about each. Only offer agents that make sense — 
 
 ### 5.3 For each agent to create
 
-Write the agent definition with:
-- **Frontmatter:** keyword-led `description` (when to use it; keep worked examples in the body, not the description), and a `model:` pinned per the token-economy rule at the top of this phase (`haiku` mechanical / `sonnet` research-docs-standard / `opus` hard implementation only).
+An agent definition names no project facts — no tree, no list of files or models, no procedure
+another file owns. It says where to read them. Write the definition with:
+- **Frontmatter:** keyword-led `description` (when to use it; keep worked examples in the body, not the description), and a `model:` pinned per the token-economy rule at the top of this phase.
 - **Role statement:** what it does and explicitly what it does NOT do (one owner per domain — avoid overlapping responsibilities between agents)
 - **Startup procedure:** the targeted files this agent needs to read
 - **Source of truth hierarchy:** when documents disagree, what wins
@@ -478,23 +458,13 @@ After everything is set up, walk the user through how to work in the project:
 - **Use agents for their domain** — check the agents table before doing specialized work manually. Delegate implementation to pinned-model agents (each pinned to the cheapest tier that does the job — see the agents table) rather than doing it inline on a top-tier session model.
 - **Canonical rules** (one source of truth, archive-never-delete, English-only, no AI attribution) live in the global `CLAUDE.md` — they apply here too.
 
-### Available commands
-- `/project-setup` — this skill (run again to verify or extend a new project)
-- `/realign` — audit/fix an EXISTING project against these conventions
-- `/custom_plan <name>` — plan a feature/sprint to a reviewable file, without auto-building
-- `/feature-close` — post-delivery hygiene (docs check, backlog carry-over, archive the plan)
-- `/pre-clear-compact` — write a session carryover before freeing up context (then commit + `/clear`)
-- `/post-clear-handover` — re-orient in a fresh session, then archive the carryover
-- `/agents` — manage agents
-- `/compact` — compress context (re-reads `AI_INSTRUCTIONS.md` after)
-
 ---
 
 ## Phase Summary
 
 | Phase | What happens | Scale |
 |-------|-------------|-------|
-| 0. Environment | (Optional) Verify global Claude Code setup via key-presence checks | any |
+| 0. Environment | (Optional) Check the global settings keys, then diff the live config against the `claude_code_setup` repo | any |
 | 1. Define | Detect context, gather goal, size, use cases, constraints | any |
 | 2. Structure | Create directories scaled to size (new or fill gaps), clone repos | any |
 | 3. Documents | README + AI_INSTRUCTIONS always; concept/roadmap/lessons/tracker as warranted | any |

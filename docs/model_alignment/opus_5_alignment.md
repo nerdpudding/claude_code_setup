@@ -69,6 +69,15 @@ Frontmatter `effort:` is the per-workload lever this setup underuses. Note the c
 mid-conversation does not preserve cached prefixes, so it suits a skill invoked at session start
 better than one invoked mid-flow.
 
+**This setup pins `xhigh` anyway** (`[user-specified]` 2026-09-19). The table recommends `high` as
+the everyday default, and `global_config/settings.json` keeps `effortLevel: "xhigh"` regardless:
+the main session does only the hard thinking, while the bulk of the work goes to `opus` and
+`sonnet` subagents that carry their own effort. Recorded here so a later realign leaves it alone
+rather than "fixing" it.
+
+Which model the session runs on is one key in `settings.json` and is hard-coded nowhere else, so
+changing the top tier stays a one-key edit.
+
 ## Where the ten 4.8 principles stand
 
 Principles 1–8 and 10 hold unchanged. **Principle 9 flips**: it recommended `xhigh` as the everyday

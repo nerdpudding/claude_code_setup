@@ -20,7 +20,7 @@ sonnet) pass as `/feature-close` step 9 describes, and stop — no fleet for 3 f
 | Knob | Value |
 |---|---|
 | Fleet size | 6–10 agents: 4–7 readers + 1 sonnet verifier + 1 sonnet merger |
-| Reader models | `sonnet`; the project's own doc-keeper via `agentType` (its pinned model applies). `haiku` is not used — the global `CLAUDE.md` rules it out |
+| Reader models | The tier "Model tiers for subagents" in the global `CLAUDE.md` names for documentation work; or the project's own doc-keeper via `agentType`, whose pinned model applies |
 | Reader depth | `effort: 'low'` (this installation has no `maxTurns` knob on `agent()`) |
 | Token target | The invoking turn states **"+300k"** — enforced as a hard ceiling here; without it the workflow logs a warning and runs uncapped |
 | `/config` size guideline | `medium` |

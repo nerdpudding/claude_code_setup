@@ -39,15 +39,26 @@ When documents disagree, resolve in this order:
 
 ## What to check
 
-1. **Hierarchy vs reality** — compare the filesystem against the hierarchy documented in
-   `AI_INSTRUCTIONS.md`.
+1. **Hierarchy vs reality** — every path in the tree of `AI_INSTRUCTIONS.md` exists on disk, and
+   the tree holds what it should: every folder with one clause on its purpose, the core files by
+   name, and the files another document or an agent points at by name. Never status, counts, dates
+   or versions, and never a list of every file. Flag files loose in the root of `docs/` instead of
+   in a category folder.
 2. **Stale content** — cross-reference data across docs for mismatches (e.g. a resources table vs
    the actual files it lists).
-3. **Cross-references** — after files move or rename, find and fix every reference.
+3. **Pointers** — a document path is written from the project root, never bare and relative;
+   between files inside `docs/`, as a Markdown link whose text is that root path. After any move
+   or rename, `git grep` the file name across the whole repo and rewrite every hit; hits in other
+   projects are reported, not edited.
 4. **One source of truth** — flag duplicated facts; the hierarchy lives in `AI_INSTRUCTIONS.md`
-   only, README references it.
-5. **Agents table** — verify it matches the actual `.claude/agents/` contents.
-6. **Template files** — when the project distributes templates (e.g. `global_config/`), verify they
+   only. A README may keep a short "start here" list of links; a list that tries to be complete is
+   a second tree, and a finding.
+5. **Relevance, not only correctness** — for every document, ask whether it is still read to do the
+   next work. A correct document nobody needs is a finding, to be archived. Agent brief files,
+   agent report files and separate plan-review documents should not exist at all (a milestone
+   review's dated document is the exception).
+6. **Agents table** — verify it matches the actual `.claude/agents/` contents.
+7. **Template files** — when the project distributes templates (e.g. `global_config/`), verify they
    match what's documented.
 
 ## Report format

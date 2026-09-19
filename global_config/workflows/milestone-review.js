@@ -224,9 +224,9 @@ if (survivors.length === 0) {
 
 const summary = await agent(
   `Write the "Findings" section of ${reviewFile} from the verified review findings below. This file is a REVIEW RECORD (not a plan): if it does not exist, create it with a short header naming the date and method before the Findings section. ` +
-    'Group by dimension, order P0 first; each finding keeps its title, category, priority, locator, failure scenario, fix direction, and a [disputed] marker where one skeptic refuted it. ' +
+    'Group by dimension, most consequential first. Write every priority in words in the document — P0 is "essential now", P1 is "easy win", P2 is "later" — and never as a code, in a heading or anywhere else. Each finding keeps its title, category, that priority in words, locator, failure scenario, fix direction, and a [disputed] marker where one skeptic refuted it. ' +
     'End the section with a short "Reviewer\'s synthesis" paragraph (the 3-5 things that must be true, and what is code vs research). ' +
-    `Edit ONLY that file — create the section if it is missing; this is this fleet's single sanctioned file write. Then return the counts and a one-paragraph headline.\n` +
+    `Edit ONLY that file — create the section if it is missing; this is this fleet's single sanctioned file write. Then return the counts and a one-paragraph headline that also names priorities in words rather than codes.\n` +
     `Findings: ${JSON.stringify(survivors)}\nWatch items from the finders: ${JSON.stringify(watch)}` +
     guardrails,
   {

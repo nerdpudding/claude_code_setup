@@ -119,21 +119,35 @@ project/
 - **Never delete, always archive** — move outdated content to `archive/` with a `YYYY-MM-DD_` prefix.
   That is not "never move": a document nobody reads to do the next work any more is archived too.
 - **One tree, and pointers that cannot rot** (`[user-specified]` 2026-09-19). The hierarchy in
-  `AI_INSTRUCTIONS.md` is the only place that says where things live; other files point at a
-  document by its path from the project root and never repeat the tree. Where the project has a
-  test suite, one test fails on a document path that does not exist. Paths in code come from
-  configuration. Origin: a flat `docs/` that needed 130 references rewritten before Sprint 2.
+  `AI_INSTRUCTIONS.md` is the only place that says where things live; every other file points at
+  a document and never repeats the tree. Where the project has a test suite, one test fails on a
+  document path that does not exist; paths in code come from configuration. Origin: a flat
+  `docs/` that needed 130 references rewritten before Sprint 2.
+  - *The tree holds* every folder with one clause on its purpose, the core files by name
+    (`AI_INSTRUCTIONS.md`, `README.md`, `roadmap.md`, `docs/lessons_learned.md`,
+    `sessions/SESSION_CARRYOVER.md`, and what `claude_plans/` and `archive/` are for), and the
+    project-specific files another document or an agent points at by name. Never status, counts,
+    dates or versions, and not the rest of the application.
+  - *A pointer is* the path from the project root; between files inside `docs/`, a Markdown link
+    whose text is that root path and whose target is relative —
+    `[docs/install/install.md](../install/install.md)` — so it stays clickable and one grep on
+    the root path still finds it.
+  - *After a move or rename*, `git grep` the file name across the whole project and rewrite every
+    hit; hits in other projects under the same parent folder are reported, and edited only on the
+    user's word.
+  - *Dated records* — `archive/`, `claude_plans/`, a daily tracker — keep the pointers they were
+    written with.
 - **Pointers across projects rest on the name, never on the folder** (`[user-specified]`
   2026-09-19). No test can check another project's paths, so the pointer has to survive a move by
-  itself. Write `<project>: <file name> (<what it is cited for>)` plus the path of that project's
-  `AI_INSTRUCTIONS.md` — the one fixed address a project has, and not always in its top folder —
-  and let the reader locate the file through the tree there. Name the section, never a line number.
-  Point at the file that owns the fact, not at a copy of it, and quote the values the pointer
-  relies on, so a change shows up as a mismatch and not as a silent wrong answer. A file that other
-  projects cite is marked so in its own tree and keeps its name. The limit: a data file deep inside
-  another project — a model, an adapter — is below what that tree lists, so its path lives in ONE
-  configuration entry on the pointing side, with the date it was last verified, never in prose.
-  Dated records and `archive/` keep the pointers they were written with.
+  itself. One line does it, plus the path of that project's `AI_INSTRUCTIONS.md` — the one fixed
+  address a project has, and not always in its top folder — so the reader finds the file through
+  the tree there: `<project>: lessons_learned.md (lesson 27, copied lists in agent files)`.
+  Name the section, never a line number. Point at the file that owns the fact, not at a copy of
+  it, and quote the values the pointer relies on, so a change shows up as a mismatch and not as a
+  silent wrong answer. A file that other projects cite is marked so in its own tree and keeps its
+  name. The limit: a data file deep inside another project — a model, an adapter — is below what
+  that tree lists, so its path lives in ONE configuration entry on the pointing side, with the
+  date it was last verified, never in prose.
 
 ## The sprint cycle (how all projects run — `[user-specified]` 2026-07-17)
 
@@ -184,21 +198,14 @@ so many words when he wants it.
 
 ## Planning workflow (in-project plans; build only on explicit request)
 
-Plans are git-committed files in the project's `claude_plans/` (`plansDirectory` is set, so they
-never land in the hidden global `~/.claude/plans/`), named `PLAN_<feature>.md`, archived with a
-date prefix when done. `/custom_plan` writes them; `/feature-close` closes them out. Producing or
-approving a plan is for review — NOT a signal to start coding.
-
-> Avoid native plan mode for build-it-later planning: approving its plan transitions straight to
-> implementation and that can't be overridden here. Use `/custom_plan`, or ask for the plan written
-> to the file with "don't implement yet". Build only on an explicit "implement PLAN_<name>".
+Never native plan mode for build-later planning — approving its plan starts the build, and that
+cannot be overridden here. Use `/custom_plan`, which writes the plan file and stops.
 
 ## Wireframes — a local Penpot is available (`[user-specified]` 2026-07-28)
 
-`~/vibe_claude_kilo_cli_exp/Penpot-Self-Host` holds a self-hosted Penpot an assistant can draw in
-unattended, from any project. **Offer it when a picture would settle a screen faster than prose**;
-write HTML by hand for a throwaway sketch or a small tweak. The user's instruction ends the
-discussion either way. The `/wireframe` skill drives it and carries the operating detail.
+A self-hosted Penpot is there to draw in unattended, from any project. **Offer it when a picture
+would settle a screen faster than prose**; the user's word ends the discussion either way.
+`/wireframe` drives it and carries the operating detail.
 
 ## Tone & writing style
 
@@ -210,14 +217,12 @@ channel, so it sticks where CLAUDE.md does not. Edit tone there, not here.
 
 - **Native auto-memory owns volatile cross-session state** (`MEMORY.md` and the per-project
   memory dir). Don't hand-maintain a parallel state log in prose.
-- **Compaction summary** — keep it short: what's done, what's next, key decisions, watch-outs.
+- **Compaction summary** — keep what the user asked, decided, ruled out or corrected in his own
+  words, what was tried and set aside, and names, numbers and paths exactly.
 - **After compaction**, re-read `AI_INSTRUCTIONS.md` and `docs/lessons_learned.md` (if they
   exist), then continue.
-- **Continuing in a fresh session** — to free up tokens at a sprint/feature boundary and carry on
-  without retyping: `/pre-clear-compact` writes `sessions/SESSION_CARRYOVER.md` (status, key
-  decisions, working conventions, next step); commit it, then `/clear` (cheapest) or `/compact`. In
-  the new session, `/post-clear-handover` reads it back, reports status, proposes the next step, and
-  archives the carryover. Both skills scale to what was delivered and skip absent artifacts.
+- **Continuing in a fresh session** — `/pre-clear-compact` writes the carryover, commit it,
+  `/clear`, then `/post-clear-handover` picks it up.
 
 ## Where a rule belongs
 

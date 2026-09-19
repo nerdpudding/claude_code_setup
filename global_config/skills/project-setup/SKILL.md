@@ -30,7 +30,7 @@ Read `~/.claude/settings.json`. Do NOT diff against a hardcoded value block — 
 - `$schema` — points at the Claude Code settings schema.
 - `env` — telemetry disabled (`DISABLE_TELEMETRY` / `DISABLE_ERROR_REPORTING`) and Bash timeouts set (`BASH_DEFAULT_TIMEOUT_MS`, `BASH_MAX_TIMEOUT_MS`).
 - `alwaysThinkingEnabled` — present (typically `true`).
-- `effortLevel` — present, matched to the pinned model. On Opus 5 and Sonnet 5 the default is `"high"`; `"xhigh"` is a per-session step-up for demanding work, not a global pin. (Opus 4.7/4.8 were the exception that wanted `"xhigh"` by default.) Full per-model table: `claude_code_setup: opus_5_alignment.md` (effort level per model).
+- `effortLevel` — present and `"xhigh"`. This setup pins `"xhigh"` on purpose (`[user-specified]` 2026-09-19), so that value is correct and is not reported. Anthropic's default of `"high"` for Opus 5 and Sonnet 5 is known and was set aside. Reason and per-model table: `claude_code_setup: opus_5_alignment.md` (effort level per model, and this setup's own pin).
 - `plansDirectory` — set (project setups use `./claude_plans`, so plans go in-project, not the hidden `~/.claude/plans/`).
 - `includeCoAuthoredBy` — `false` (this is how no-AI-attribution is enforced; no prose rule needed).
 - `permissions.deny` — present with at least an example (e.g. private files, `**/.env`, `**/secrets/**`).

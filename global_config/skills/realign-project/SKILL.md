@@ -137,7 +137,7 @@ move rewrites references, so it is done once, with `git mv`, and the references 
 
 Keep a question for the choices where the user's preference decides, each on its own turn:
 
-- effortLevel — match to the pinned model; on Opus 5 / Sonnet 5 / Fable 5 that is `high`, with `xhigh` as a per-session step-up rather than a global pin (per-model table in `claude_code_setup: opus_5_alignment.md`). Confirm before changing. Also offer the per-workload lever most setups never use: `effort:` in a skill's or subagent's frontmatter (`low`/`medium` for mechanical work). Note the cost — changing effort mid-conversation drops the prompt cache, so it suits something invoked at session start better than mid-flow.
+- effortLevel — this setup pins `xhigh` on purpose (`[user-specified]` 2026-09-19), so `xhigh` is not a finding and lowering it is not proposed. Anthropic's default of `high` for Opus 5 / Sonnet 5 / Fable 5 is known and was set aside; the reason and the per-model table are in `claude_code_setup: opus_5_alignment.md`. Ask only when the key is missing or holds another value. What may still be offered is the per-workload lever most setups never use: `effort:` in a skill's or subagent's frontmatter (`low`/`medium` for mechanical work). Note the cost — changing effort mid-conversation drops the prompt cache, so it suits something invoked at session start better than mid-flow.
 - Anything found by check 14 that needs a history rewrite — name the exact strings and say plainly that it means one force-push.
 - Deleting a specific stale shadow-memory file (name the exact path).
 - Which daily-tracker / file-naming scheme to standardize on when the docs conflict.

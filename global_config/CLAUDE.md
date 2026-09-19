@@ -123,6 +123,17 @@ project/
   document by its path from the project root and never repeat the tree. Where the project has a
   test suite, one test fails on a document path that does not exist. Paths in code come from
   configuration. Origin: a flat `docs/` that needed 130 references rewritten before Sprint 2.
+- **Pointers across projects rest on the name, never on the folder** (`[user-specified]`
+  2026-09-19). No test can check another project's paths, so the pointer has to survive a move by
+  itself. Write `<project>: <file name> (<what it is cited for>)` plus the path of that project's
+  `AI_INSTRUCTIONS.md` — the one fixed address a project has, and not always in its top folder —
+  and let the reader locate the file through the tree there. Name the section, never a line number.
+  Point at the file that owns the fact, not at a copy of it, and quote the values the pointer
+  relies on, so a change shows up as a mismatch and not as a silent wrong answer. A file that other
+  projects cite is marked so in its own tree and keeps its name. The limit: a data file deep inside
+  another project — a model, an adapter — is below what that tree lists, so its path lives in ONE
+  configuration entry on the pointing side, with the date it was last verified, never in prose.
+  Dated records and `archive/` keep the pointers they were written with.
 
 ## The sprint cycle (how all projects run — `[user-specified]` 2026-07-17)
 

@@ -98,6 +98,9 @@ Detect and cite exact files + line numbers for each:
     - documents nobody reads to do the next work any more: dated reports, plan-review documents, agent
       brief and report files (a milestone review's dated document is legitimate). Count them; a large number is the finding.
     - files the cycle never asked for — see "Nothing grows beside this cycle" in the global `CLAUDE.md`.
+    - a pointer into ANOTHER project that carries a folder path or a line number instead of project +
+      file name — see "Pointers across projects" in the global `CLAUDE.md`. Grep the sibling projects
+      for pointers INTO this one as well: a document move here breaks those, and nothing else finds them.
     Where the project has a test suite and no test for document paths, propose one.
 
 **Corroborate every prose rule against deterministic state.** For each "always/never" prose rule, check whether `settings.json` / `settings.local.json` / `.gitignore` / agent frontmatter already enforces it. If so, the prose is redundant — downgrade it to a one-line pointer rather than a restated rule. This single step surfaces most duplication findings; do it explicitly, not incidentally.

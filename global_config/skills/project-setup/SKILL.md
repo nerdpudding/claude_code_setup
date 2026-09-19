@@ -171,7 +171,7 @@ Create the project overview:
 
 ### 3.3 AI_INSTRUCTIONS.md
 
-The most important file — it tells any AI tool how to work in the project, and is the single source of truth for the project's hierarchy and agents. **Its hierarchy section must match the actual filesystem**, and nothing else may restate it. Keep it a **lean core well under 200 lines**; push detail into sub-docs (`docs/`, phase plans) and link to them rather than inlining. Use the **tiered Hard-rules / Preferences** format so genuine invariants stand apart from judgment calls. Drop the sections a small project does not need rather than leaving empty headers.
+The most important file — it tells any AI tool how to work in the project, and is THE authoritative source for the project's rules, hierarchy and agents. All project rules live here: a project keeps no rules in a `CLAUDE.md` of its own (see "Where a rule belongs" in the global `CLAUDE.md`). **Its hierarchy section must match the actual filesystem**, and nothing else may restate it. Keep it a **lean core well under 200 lines**; push detail into sub-docs (`docs/`, phase plans) and link to them rather than inlining. Use the **tiered Hard-rules / Preferences** format so genuine invariants stand apart from judgment calls. Drop the sections a small project does not need rather than leaving empty headers.
 
 ```markdown
 # AI Instructions — <Project Name>
@@ -279,6 +279,8 @@ Create `todo_<today's date>.md` only if the user works in daily sprints:
 
 Create a minimal `.claude/settings.json`. The project-level file mainly needs to point plans into the repo; add a `permissions` block only if the project has files to guard. Global-level keys like `effortLevel`, `includeCoAuthoredBy`, and `model` belong in `~/.claude/settings.json`, not the per-project file, unless the project deliberately overrides them. Do not add an `outputStyle` (deferred).
 
+Do NOT create a project-level `CLAUDE.md`, neither in the root nor in `.claude/`: project rules live in `AI_INSTRUCTIONS.md`. If the folder already has one, leave it alone and tell the user that `/realign` moves its rules into `AI_INSTRUCTIONS.md`.
+
 ```json
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
@@ -304,7 +306,7 @@ Explain that `plansDirectory` keeps plans in the project repo (not the hidden `~
 
 ## Phase 5: Create Agents (optional, medium/large)
 
-Subagents **do** receive the full `CLAUDE.md` hierarchy (only the built-in `Explore` and `Plan` agents skip it), so do NOT restate CLAUDE.md rules in an agent definition — that is duplication. What they do not get is the output style, the main conversation's auto memory, or its history. Give each agent a self-contained prompt covering what only it needs, plus a targeted set of files to read (not a blanket "read everything first").
+Subagents **do** receive the global `CLAUDE.md` (only the built-in `Explore` and `Plan` agents skip it), so do NOT restate its rules in an agent definition — that is duplication. What they do not get by themselves is `AI_INSTRUCTIONS.md`, the output style, the main conversation's auto memory, or its history. So every agent's startup procedure names `AI_INSTRUCTIONS.md` first: that is how the project's rules reach it. Give each agent a self-contained prompt covering what only it needs, plus a targeted set of files to read (not a blanket "read everything first").
 
 **Token economy first.** Every agent pins a `model:` by the tiers in "Model tiers for subagents"
 in the global `CLAUDE.md` — read them there and match the value to the agent's job. Never omit
@@ -348,7 +350,7 @@ When documents disagree, resolve using this priority order:
 2. **Detect stale content** — cross-reference data across documents for mismatches
 3. **Suggest consolidation or archiving** — find redundant, superseded, or misplaced docs
 4. **Update cross-references** — find and fix all references when files move
-5. **Maintain hierarchy** — the project hierarchy lives in AI_INSTRUCTIONS.md only; README references it but does not duplicate it. Flag any other list that says what lives where; a tree that carries status, counts, dates or versions, or that lists every file instead of the folders, the core files and what other documents point at; any file loose in the root of `docs/` other than `lessons_learned.md`; and any document path written bare and relative instead of from the project root (inside `docs/`, as a link whose text is that root path). After any move or rename, `git grep` the file name across the project and rewrite every hit. If the project has a test for document paths, run it first and report its output.
+5. **Maintain hierarchy** — the project's rules and hierarchy live in AI_INSTRUCTIONS.md only; README references it but does not duplicate it. Flag a project-level `CLAUDE.md` that holds rules (they belong in AI_INSTRUCTIONS.md); any other list that says what lives where; a tree that carries status, counts, dates or versions, or that lists every file instead of the folders, the core files and what other documents point at; any file loose in the root of `docs/` other than `lessons_learned.md`; and any document path written bare and relative instead of from the project root (inside `docs/`, as a link whose text is that root path). After any move or rename, `git grep` the file name across the project and rewrite every hit. If the project has a test for document paths, run it first and report its output.
 6. **Relevance, not only correctness** — for every document ask whether it is still read to do the next work; a correct document nobody needs is a finding, to be archived. Flag agent brief files, agent report files and plan-review documents (a milestone review's dated document is the exception): the cycle in the global CLAUDE.md produces none.
 7. **Verify completeness after changes** — check all docs are updated after project changes
 
@@ -403,7 +405,7 @@ An agent definition names no project facts — no tree, no list of files or mode
 another file owns. It says where to read them. Write the definition with:
 - **Frontmatter:** keyword-led `description` (when to use it; keep worked examples in the body, not the description), and a `model:` pinned per the token-economy rule at the top of this phase.
 - **Role statement:** what it does and explicitly what it does NOT do (one owner per domain — avoid overlapping responsibilities between agents)
-- **Startup procedure:** the targeted files this agent needs to read
+- **Startup procedure:** `AI_INSTRUCTIONS.md` first, then the targeted files this agent needs to read
 - **Source of truth hierarchy:** when documents disagree, what wins
 - **Core capabilities:** numbered sections with descriptions
 - **Report format:** structured output template. For findings-producing agents (auditors,

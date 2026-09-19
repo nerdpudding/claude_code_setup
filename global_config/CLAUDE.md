@@ -42,6 +42,12 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 - **One source of truth.** Each fact lives in one place; reference it elsewhere, don't duplicate.
 - **Build on existing work** — evolve what's there rather than rewriting from scratch.
 - **Keep docs current** — after a change, fix the docs that describe it. Stale docs mislead.
+- **Test in proportion, and only what the change can affect** (`[user-specified]` 2026-07-30 and
+  2026-09-19 — he hates needless testing). Cover the real paths including the failure ones, then
+  stop; an exhaustive edge-case suite or an hours-long run needs its reason stated in the plan.
+  Run only the tests a change can reach: documents, agent files, skills or memory → at most the
+  project's document-path test. The full suite is for a change to code or configuration that
+  runs — never a closing ritual.
 - **Use the right agent** for its domain (check `.claude/agents/` if present).
 - **Model tiers for subagents** (`[user-specified]` 2026-08-16). Match the model to the task.
   - `sonnet` — simple mechanical tasks, research, documentation. Bulk work goes here too.
@@ -60,7 +66,8 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
   One agent that can do the job beats several; keep spawn counts low.
 - **Ask when project conventions are unclear** rather than guessing.
 - **Session start:** if they exist, read `AI_INSTRUCTIONS.md`, then `README.md`, then the relevant
-  active plan, before diving in.
+  active plan, before diving in. A subagent reads `AI_INSTRUCTIONS.md` first too: it loads this
+  file by itself, but not that one.
 
 ## Complex builds — guard rails (`[user-specified]` 2026-07-18)
 
@@ -89,9 +96,6 @@ defects, nearly all in the seams BETWEEN packages — these rules make that clas
     not every sprint. That is the `milestone-review` workflow, not `/feature-close` (which is
     hygiene: docs, backlog, archive). The builders' deviations and watch items feed it.
   - Both run on `opus`; `fable` is never the default — separately billed, on explicit request only.
-- **Test in proportion to the project.** Cover the real paths including the failure ones, then
-  stop. Exhaustive edge-case suites and hours-long runs are a cost, not a virtue, and are worth it
-  only where the project actually warrants them — say so in the plan rather than assuming it.
 
 ## Project organization (adapt to size)
 
@@ -227,7 +231,11 @@ channel, so it sticks where CLAUDE.md does not. Edit tone there, not here.
 ## Where a rule belongs
 
 This file = cross-project process and preferences, loaded every session.
-`AI_INSTRUCTIONS.md` = one project's rules, hierarchy and agents, tool-agnostic.
+`AI_INSTRUCTIONS.md` = one project's rules, hierarchy and agents, tool-agnostic — THE authoritative
+source for that project. A project keeps no rules in a `CLAUDE.md` of its own, neither in its root
+nor in `.claude/`: that would be a second home. When `AI_INSTRUCTIONS.md` runs long, DETAIL moves
+to a sub-doc it names — working laws for one kind of work, standing product decisions — and the
+rules stay; they never move to a `CLAUDE.md` or to memory.
 Tone = the output style. Volatile state = native auto-memory. One home each, never two.
 
 ---

@@ -50,8 +50,8 @@ When documents disagree, resolve in this order:
    between files inside `docs/`, as a Markdown link whose text is that root path. After any move
    or rename, `git grep` the file name across the whole repo and rewrite every hit; hits in other
    projects are reported, not edited.
-4. **One source of truth** — flag duplicated facts; the hierarchy lives in `AI_INSTRUCTIONS.md`
-   only. A README may keep a short "start here" list of links; a list that tries to be complete is
+4. **One source of truth** — flag duplicated facts; the rules and the hierarchy live in
+   `AI_INSTRUCTIONS.md` only, so a project-level `CLAUDE.md` that holds rules is a finding. A README may keep a short "start here" list of links; a list that tries to be complete is
    a second tree, and a finding.
 5. **Relevance, not only correctness** — for every document, ask whether it is still read to do the
    next work. A correct document nobody needs is a finding, to be archived. Agent brief files,

@@ -9,13 +9,13 @@ Audit an existing project's Claude Code setup and realign it to current Claude C
 
 This is the counterpart to `project-setup` (new projects). It runs in the main conversation thread with full context and is explicitly user-invoked — it does not auto-route.
 
-The reference repo is `claude_code_setup`; its `global_config/` is the canonical FORMAT source to compare the project against when judging what "aligned" looks like. Its `AI_INSTRUCTIONS.md` sits at `__HOME__/vibe_claude_kilo_cli_exp/claude_code_setup/AI_INSTRUCTIONS.md` — every file named below is located through the tree there. If that path does not resolve, find the repo by its name.
+**The format a project is measured against is what this session has already loaded:** the global `CLAUDE.md` and this skill. Do NOT open the `claude_code_setup` repo during a realign — it is where these files are maintained, not something a project is compared with. The documents of that repo cited below (`claude_code_setup: <file name>`) are background on why a rule exists; no check needs them read.
 
 ---
 
 ## How to use this skill
 
-Three phases, in order. Phase 1 is read-only. **No edits happen until the user confirms the proposal in Phase 2.** Scale depth to the setup's size — a single CLAUDE.md needs a quick pass; a repo with agents, skills, multiple instruction files, and committed shadow memory warrants the full audit.
+Three phases, in order. Phase 1 is read-only. Invoking `/realign` is the request to realign: a finding with one sensible fix is applied and reported afterwards, and the user is asked only in the cases Phase 2 names. Scale depth to the setup's size — a single instruction file needs a quick pass; a repo with agents, skills, multiple instruction files, and committed shadow memory warrants the full audit.
 
 ---
 
@@ -112,44 +112,62 @@ Detect and cite exact files + line numbers for each:
       proposal and are edited only on the user's word.
     Where the project has a test suite and no test for document paths, propose one.
 
+17. **Project rules outside `AI_INSTRUCTIONS.md`** (`[user-specified]` 2026-09-19). "Where a rule
+    belongs" in the global `CLAUDE.md` gives a project ONE home for its rules, and that file is THE
+    authoritative source. Flag a project-level `CLAUDE.md` or `CLAUDE.local.md` — in the root or in
+    `.claude/` — that holds rules, and an `AI_INSTRUCTIONS.md` that says its rules live somewhere
+    else. The repair is fixed, line by line: a rule `AI_INSTRUCTIONS.md` already has is dropped; a
+    rule it lacks moves into it (Hard rules first, then Preferences); text that is no rule — a
+    description of the code, a copy of the tree — is dropped once its owner is checked (check 3).
+    A rule that CONTRADICTS `AI_INSTRUCTIONS.md` is the one thing to ask about: show both lines
+    and ask which holds. Then make
+    sure the startup procedure of every project agent reads `AI_INSTRUCTIONS.md` first, then move
+    the `CLAUDE.md` to `archive/`. If that pushes `AI_INSTRUCTIONS.md` past 200 lines, make room by
+    cutting the tree to what "One tree, and pointers that cannot rot" asks for and by moving DETAIL
+    to a sub-doc — never by leaving rules in the `CLAUDE.md`. A sub-doc may hold working laws for
+    one kind of work, or standing product decisions in the roadmap, as long as `AI_INSTRUCTIONS.md`
+    names it and says what is in it, and no rule sits in two files.
+    Not this finding: a `CLAUDE.md` inside a cloned third-party repository, or one that is shipped
+    as the configuration of another tool instance.
+
 **Corroborate every prose rule against deterministic state.** For each "always/never" prose rule, check whether `settings.json` / `settings.local.json` / `.gitignore` / agent frontmatter already enforces it. If so, the prose is redundant — downgrade it to a one-line pointer rather than a restated rule. This single step surfaces most duplication findings; do it explicitly, not incidentally.
 
 Do not conclude until every discovered file has actually been read — a finding drafted before reads return is provisional and must be superseded by the full-evidence version.
 
 **Known false positives — do NOT flag these as problems:** `Explore` (and similar) are BUILT-IN capabilities, not missing project agents; an untracked `settings.local.json` is intentional, not broken; a partially-done plan correctly STAYS in `claude_plans/` until finished (don't "fix" its location).
 
-Report findings as a structured list with citations. Do not propose fixes yet.
+Keep the findings as a working list with citations. The user does not get this list as a report — Phase 2 says what he sees.
 
 **Hybrid fallback (large repos only):** if the setup is large enough that reading everything would pollute main context, the read-only audit MAY be delegated to a short-lived general-purpose subagent. That subagent returns findings only. All decisions and edits stay in the main thread — never delegate Phase 2 or 3.
 
 ---
 
-## Phase 2 — Propose (ask before editing)
+## Phase 2 — Apply what is clear, ask what is not
 
-Open with one line per finding, ordered by consequence — what it is and what it costs. No priority
-codes. Then take the findings one per turn: paste the lines the finding concerns, say what goes
-wrong, give the recommendation, and end on a yes-or-no question. Findings that have one sensible
-fix are reported together, without a question. How all of this is worded is the output style's
-job, not this skill's.
+A finding with one sensible fix is not presented first: apply it (Phase 3) and report it
+afterwards in one line — what was wrong, what changed, in which file. No priority codes, no pasted
+blocks, no closing question. A maintenance command is not a product decision.
 
-Document moves from check 16 are one proposal with the target tree shown, never piecemeal: every
-move rewrites references, so it is done once, with `git mv`, and the references repaired afterwards.
+Ask only in the cases below, and then one per turn, in the shape the output style gives: the lines
+pasted, what goes wrong, the recommendation, a yes-or-no question. Open with one line per open
+question, so the user sees how many there are.
 
-Keep a question for the choices where the user's preference decides, each on its own turn:
+- **Documents move** (check 16) — one proposal with the target tree shown, never piecemeal: every
+  move rewrites references, so it is done once, with `git mv`, and the references repaired afterwards.
+- **A tracked file would be deleted, or history rewritten** (check 14) — name the exact path or
+  strings, and say plainly that a rewrite means one force-push.
+- **Two fixes are both defensible, or a finding contradicts how the user described the project.**
+- **The user's preference decides:**
 
 - effortLevel — this setup pins `xhigh` on purpose (`[user-specified]` 2026-09-19), so `xhigh` is not a finding and lowering it is not proposed. Anthropic's default of `high` for Opus 5 / Sonnet 5 / Fable 5 is known and was set aside; the reason and the per-model table are in `claude_code_setup: opus_5_alignment.md`. Ask only when the key is missing or holds another value. What may still be offered is the per-workload lever most setups never use: `effort:` in a skill's or subagent's frontmatter (`low`/`medium` for mechanical work). Note the cost — changing effort mid-conversation drops the prompt cache, so it suits something invoked at session start better than mid-flow.
-- Anything found by check 14 that needs a history rewrite — name the exact strings and say plainly that it means one force-push.
-- Deleting a specific stale shadow-memory file (name the exact path).
 - Which daily-tracker / file-naming scheme to standardize on when the docs conflict.
 - Whether to scope-gate a mandatory workflow with a scale-to-task-size escape hatch.
 
-**Flag apply-order dependencies.** Some fixes are sequenced — extract sub-docs BEFORE repointing agents at them; add a `permissions.deny` BEFORE trimming the prose ban it replaces. State the required order in the proposal so applying it top-to-bottom never breaks a pointer.
-
-Get explicit confirmation before any write.
-
 ---
 
-## Phase 3 — Apply (only after confirmation)
+## Phase 3 — Apply
+
+**Mind the order.** Some fixes are sequenced — extract sub-docs BEFORE repointing agents at them; add a `permissions.deny` BEFORE trimming the prose ban it replaces; move rules into `AI_INSTRUCTIONS.md` BEFORE archiving the file they came from. Apply so that no pointer is broken at any step.
 
 - **Single-home each fact.** Keep one canonical copy; replace the others with a reference. Resolve drift toward the correct version (confirm with the user if ambiguous).
 - **Convert enforceable rules to settings.** Add `includeCoAuthoredBy: false` and `permissions.deny` entries. Add the settings enforcement BEFORE deleting the corresponding prose (belt-and-suspenders), then remove the now-redundant prose.
@@ -167,10 +185,14 @@ Get explicit confirmation before any write.
 - **Replace machine-specific values** (check 14) with a placeholder the project's own install or
   setup step expands locally — never break a path that has to be literal. Backup before any
   history rewrite, and verify afterwards on a fresh clone, not on the local copy.
+- **Move project rules back into `AI_INSTRUCTIONS.md`** (check 17), then archive the project-level
+  `CLAUDE.md` they came from and point every project agent's startup procedure at
+  `AI_INSTRUCTIONS.md` first.
 - **Delete approved stale shadow memory** and add its path to `.gitignore`. Delete only files the user approved.
 - Surface anything that contradicts how the user described it rather than silently "fixing" it.
 
-After applying, do a final consistency pass and report what changed.
+After applying, report what changed — one line per fix, nothing more. Run only the tests these
+changes can affect: the document-path test where the project has one, never the full suite.
 
 ---
 
@@ -185,6 +207,9 @@ After applying, do a final consistency pass and report what changed.
   What genuinely does NOT reach a subagent: the **output style** (it runs its own system prompt),
   the main conversation's **auto memory**, and the conversation history. So tone rules and memory
   facts an agent needs must be in its own prompt; CLAUDE.md rules must not be.
+  This is about the GLOBAL `CLAUDE.md`. It is no reason to put a project's rules in a
+  project-level `CLAUDE.md` (check 17): those live in `AI_INSTRUCTIONS.md`, which a subagent does
+  not load by itself — so every project agent's startup procedure names it first.
   A `fork` is the exception — it inherits the parent's full system prompt, output style included.
 - **`.claude/rules/*.md` with `paths:` frontmatter IS native Claude Code** — documented at
   `code.claude.com/docs/en/memory`, "Organize rules with `.claude/rules/`". This entry previously
@@ -213,4 +238,4 @@ After applying, do a final consistency pass and report what changed.
 
 ## Notes
 
-Reference the shared rules in the global `CLAUDE.md` and `settings.json` rather than restating them. They live in `claude_code_setup`, the canonical FORMAT source `/realign` compares a project against — located as described at the top of this skill.
+Reference the shared rules in the global `CLAUDE.md` and `settings.json` rather than restating them.

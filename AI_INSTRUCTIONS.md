@@ -35,7 +35,7 @@ and never repeats this tree.
 ```
 claude-code-setup/
 ├── AI_INSTRUCTIONS.md              # This file — project rules, hierarchy, agents, skills
-├── README.md                       # Overview, quick start, version history
+├── README.md                       # Overview, which file does what, quick start, the skills
 ├── roadmap.md                      # Sprint plan and status
 ├── install.sh                      # Sync script: diff / install / pull between repo and ~/.claude/
 ├── .gitignore                      # Ignores archive/, so archived files stay out of the public repo
@@ -43,7 +43,8 @@ claude-code-setup/
 │   └── concept.md                  # Concept, diagrams, technical decisions
 ├── docs/                           # Category folders only — nothing loose in its root
 │   ├── history/                    # Delivered work moved out of living status docs, verbatim
-│   │   └── roadmap_history.md      # Delivered sprints, newest first — a dated record; roadmap.md points here
+│   │   ├── roadmap_history.md      # Delivered sprints, newest first — a dated record; roadmap.md points here
+│   │   └── version_history.md      # What changed per version, newest first — a dated record; README.md points here
 │   ├── model_alignment/            # Why the format looks the way it does, per model generation
 │   │   ├── opus_4_8_alignment.md   # Origin story of the format — the ten principles
 │   │   ├── opus_5_alignment.md     # Current model guidance: what to delete, effort levels — cited from outside this repo by /project-setup and /realign

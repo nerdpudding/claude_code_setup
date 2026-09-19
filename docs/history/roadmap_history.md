@@ -2,7 +2,8 @@
 
 Delivered sprints, moved here verbatim from `roadmap.md` so the roadmap keeps the open work in
 front. Newest first. This is a dated record: names and paths are as they were written at the time
-and are not updated when files move.
+and are not updated when files move. The version entries these sprints refer to as "in `README.md`"
+moved to [docs/history/version_history.md](version_history.md) on 2026-09-19.
 
 ## Sprint 11: One home for every fact (Done — 2026-09-19)
 
@@ -24,6 +25,13 @@ published).
 - [x] This repo: `docs/` in category folders, example template removed, skills listed twice instead
       of seven times, `prompt-expert` reads every current model guide
 - [x] Installed to `~/.claude/` and confirmed in sync
+
+Follow-up, same day: the first realign runs with the new skill showed that the format never said
+what a project-level `CLAUDE.md` is for. "Where a rule belongs" now rules it out as a home for
+project rules; `/realign` gained check 17, stopped pointing sessions at this repo, and applies
+fixes that have one sensible answer instead of asking; `/project-setup` never creates the file;
+the testing rule now also covers which tests a change warrants; the output style says a question
+is not a correction. `global_config/CLAUDE.md` ended at 244 lines.
 
 Line budget: `global_config/CLAUDE.md` went from 231 to 236 lines — the three cuts saved 11, the
 expanded rule cost 16. Over the 200-line target, and recorded rather than hidden.

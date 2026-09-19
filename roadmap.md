@@ -76,12 +76,18 @@ control actually lies.
 
 ## Backlog
 
-- **`global_config/CLAUDE.md` is 236 lines against the 200-line target.** The next candidates for
+- **`global_config/CLAUDE.md` is 244 lines against the 200-line target.** The next candidates for
   a cut are the SOLID sub-bullets and the cross-project pointer rule. Both are `[user-specified]`,
   so this needs the user's word.
-- **Field test of the new `/realign` Phase 2.** On the first real run, check that it opens with one
-  line per finding and then takes one finding per turn, without priority codes, and that findings
-  with one sensible fix are reported without a question.
+- **Field test of `/realign` as changed twice on 2026-09-19.** On the next real run, check that a
+  finding with one sensible fix is applied and reported in one line, that questions come one per
+  turn and only in the cases Phase 2 names, that a project-level `CLAUDE.md` with rules is found
+  and its rules moved into `AI_INSTRUCTIONS.md` (check 17), and that the session does not open
+  this repo.
+- **Three preferences of the user live only in one project's auto-memory**, so no other project
+  sees them: never block the chat with a long-running job, no time estimates, announce a
+  background helper before it starts. They are cross-project, so their home is the global
+  `CLAUDE.md` or the output style. Needs his wording and his word.
 - **`/feature-close` step 4 names `docs/roadmap_history.md`**, a file loose in the root of `docs/`,
   while "Project organization" in the global `CLAUDE.md` allows only `lessons_learned.md` there.
   Pick one: a category folder in the skill, or an exception in the rule. This repo used

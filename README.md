@@ -45,6 +45,43 @@ Two deliberate choices:
 
 ## Version history
 
+### v2.7 — One home for every fact (2026-09-19)
+
+Same day as v2.6, and its consequence. The setup was audited against one goal — every fact has one
+home and everything else points at it — and turned out to break its own rule: the subagent
+model-tier policy was restated in five skills, one copy still assigning `haiku`; this repo listed
+its skills in seven places; this README stated three `settings.json` values that were no longer
+true; and a second template for a generated `AI_INSTRUCTIONS.md` had drifted from the first. Two
+realign runs on other projects showed two patterns no check covered. The four current Anthropic
+prompting guides were read in full for it and are kept as dated snapshots in
+`docs/prompting_guides/`.
+
+- **Global `CLAUDE.md`:** "One tree, and pointers that cannot rot" is now the single home for what
+  a project tree holds (folders, core files, files pointed at by name — never status or counts),
+  how a pointer is written (inside `docs/`, a link whose text is the root path), how pointers are
+  repaired after a move, and that dated records keep theirs. The compaction line says what to keep
+  instead of "keep it short". Three passages that repeated a skill's description shrank to one
+  statement each. The file is 236 lines, over the 200-line target — recorded, not hidden.
+- **Output style:** Anthropic's paragraph against figurative prose, a line asking for progress
+  updates during long work (Fable 5.1 writes fewer of them), and "ask only what the user can
+  judge" — one sensible fix is stated, not asked.
+- **`/realign`:** finds project facts copied into agent and skill files, and project rules that
+  exist only in auto-memory, each with one fixed repair; presents findings one per turn, without
+  priority codes; cites this repo by file name instead of by folder.
+- **`/project-setup`:** the stale `haiku` line is gone; its hand-kept lists of `CLAUDE.md` sections
+  and skills gave way to `./install.sh diff`; a new agent names no project facts, it says where to
+  read them. **`/feature-close`** also trims settled backlog and status narrative.
+  **`/custom_plan`** asks for a live end-to-end only where the plan changes something that runs.
+- **This repo:** `docs/` in category folders, one template instead of two, the skills listed in
+  two places, and the review agent is now a general `prompt-expert` that reads every current
+  model guide instead of the Opus 5 guide alone.
+- **Public-repo hygiene:** a snapshot of the live config that carried the home path was removed
+  from the repo and from its git history, verified on a fresh clone.
+- **Checked and not adopted:** two suggestions from Anthropic support — a claim that lines
+  prefixed `IMPORTANT:` are re-sent during a session (not in the docs; the prompting guide advises
+  less emphasis, not more) and a Stop hook that greps replies against a word list. `effortLevel:
+  xhigh` stays as a deliberate choice, recorded in `docs/model_alignment/opus_5_alignment.md`.
+
 ### v2.6 — Structure that does not drift (2026-09-19)
 
 Found in a new project, one day before its second sprint: a flat `docs/` folder, requirements

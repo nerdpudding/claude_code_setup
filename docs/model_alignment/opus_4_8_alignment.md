@@ -1,6 +1,6 @@
 # Opus 4.8 Alignment — why the format changed
 
-> **Superseded for current models by [`opus_5_alignment.md`](opus_5_alignment.md).** The ten
+> **Superseded for current models by [docs/model_alignment/opus_5_alignment.md](opus_5_alignment.md).** The ten
 > principles below still hold, with one exception: principle 9 recommends `xhigh` as the everyday
 > effort level, which was right for Opus 4.8/4.7 and is wrong for Opus 5. This document is kept as
 > the origin story of the format; the current guidance lives in the successor.

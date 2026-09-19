@@ -42,6 +42,8 @@ claude-code-setup/
 ├── concepts/                       # Concept and early design thinking
 │   └── concept.md                  # Concept, diagrams, technical decisions
 ├── docs/                           # Category folders only — nothing loose in its root
+│   ├── history/                    # Delivered work moved out of living status docs, verbatim
+│   │   └── roadmap_history.md      # Delivered sprints, newest first — a dated record; roadmap.md points here
 │   ├── model_alignment/            # Why the format looks the way it does, per model generation
 │   │   ├── opus_4_8_alignment.md   # Origin story of the format — the ten principles
 │   │   ├── opus_5_alignment.md     # Current model guidance: what to delete, effort levels — cited from outside this repo by /project-setup and /realign

@@ -1,6 +1,6 @@
 # Opus 5 Alignment — what changed, and what to delete
 
-Successor to `opus_4_8_alignment.md`, which stays as the origin story of the tiered format. That
+Successor to [docs/model_alignment/opus_4_8_alignment.md](opus_4_8_alignment.md), which stays as the origin story of the tiered format. That
 document's ten principles mostly hold; this one records where Opus 5 moved the ground under them.
 
 **The headline is counter-intuitive: Opus 5 needs FEWER instructions, not more.** It verifies its

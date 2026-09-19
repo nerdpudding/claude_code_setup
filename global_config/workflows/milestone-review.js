@@ -28,7 +28,8 @@ export const meta = {
 // "medium". No ultracode.
 //
 // Synthesis model: **opus by default** (user decision 2026-07-19 — Fable is separately
-// billed; the default hierarchy tops out at Opus 4.8). Override per run with
+// billed, so never an agent default; see "Model tiers for subagents" in the global CLAUDE.md).
+// Override per run with
 // args.synthesisModel: 'fable' for the hardest rounds — explicit opt-in only.
 //
 // Read-only fleet EXCEPT the single sanctioned write: the synthesis stage writes the

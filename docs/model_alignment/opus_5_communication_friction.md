@@ -2,7 +2,7 @@
 
 Observed during one long working session on 2026-07-30, in which the user had to correct the
 assistant's way of communicating roughly fifteen times. This is a record of what actually went
-wrong, not a theory about it. Companion to `opus_5_alignment.md`, which covers how the setup is
+wrong, not a theory about it. Companion to [docs/model_alignment/opus_5_alignment.md](opus_5_alignment.md), which covers how the setup is
 configured; this one covers why talking to it is hard.
 
 ## What went wrong

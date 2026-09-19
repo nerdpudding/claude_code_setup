@@ -86,8 +86,6 @@ control actually lies.
   while "Project organization" in the global `CLAUDE.md` allows only `lessons_learned.md` there.
   Pick one: a category folder in the skill, or an exception in the rule. This repo used
   `docs/history/`.
-- **Delete the mirror backup `../claude_code_setup_backup.git`** once Sprint 11 is committed and
-  pushed. It still holds the removed config snapshot.
 - Parked: an optional plan-rename hook; agent templates for common project types (from Sprint 4).
 - Parked: a `SessionStart` hook that auto-injects the carryover after an unplanned compaction
   (from Sprint 6).

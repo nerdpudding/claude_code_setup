@@ -37,9 +37,9 @@ sprints apart (`milestone-review`). The canonical version of this cycle lives in
 `global_config/CLAUDE.md`.
 
 Two deliberate choices:
-- **`AI_INSTRUCTIONS.md` per project**, and no project-level `CLAUDE.md` beside it: one
-  tool-agnostic file that holds all of a project's rules, easy to read, and usable by any AI
-  assistant, not just Claude Code.
+- **`AI_INSTRUCTIONS.md` per project**, and no project-level `CLAUDE.md` beside it: one file that
+  holds all of a project's rules. Another AI tool can read it too; what such a tool does or does
+  not load is not this setup's concern.
 - **Project-local plans & archives** (`claude_plans/`, `archive/` inside each project): each project
   is self-contained — easy to move, share, commit, or revisit. Plans never live in a global folder.
 
@@ -67,7 +67,7 @@ These files are kept in this repo under `global_config/`, and `install.sh` copie
 
 | File | What it is for | Good to know |
 |------|----------------|--------------|
-| `AI_INSTRUCTIONS.md` | **The authoritative source for one project**: its rules, where everything lives, its agents. | Every project has one — created by `/project-setup`, or brought in line by `/realign`. Its purpose and shape are the same everywhere; its content is about that one project. It is written for any AI assistant, not only Claude Code. Claude Code does not load it by itself: the global `CLAUDE.md` tells every session and every subagent to read it first. |
+| `AI_INSTRUCTIONS.md` | **The authoritative source for one project**: its rules, where everything lives, its agents. | Every project has one — created by `/project-setup`, or brought in line by `/realign-project`. Its purpose and shape are the same everywhere; its content is about that one project. Claude Code does not load it by itself: the global `CLAUDE.md` tells every session and every subagent to read it first. |
 | `README.md`, `roadmap.md`, `docs/`, `claude_plans/`, `archive/` | What the project is, what is planned and what is done, the detail, the plans, and what is outdated. | When `AI_INSTRUCTIONS.md` grows too long, detail moves into a document under `docs/` that it points at. The rules stay. |
 | `.claude/settings.json` | The project's own switches — mainly that plans are saved inside the project. | Small. Created by `/project-setup`. |
 | `.claude/agents/` | Helpers for this project, each with one job and a pinned model. | Always per project. Each agent reads `AI_INSTRUCTIONS.md` first. |
@@ -76,16 +76,18 @@ These files are kept in this repo under `global_config/`, and `install.sh` copie
 
 Claude Code would load one, and its `/init` command creates one. In this setup it would be a
 second place for a project's rules, next to `AI_INSTRUCTIONS.md`, and the two would drift apart.
-So `/project-setup` never creates one. Where an existing project still has one, `/realign` moves
-what is in it into `AI_INSTRUCTIONS.md` and archives the file; it asks only when the two files
-contradict each other.
+So `/project-setup` never creates one. Where an existing project still has one, `/realign-project`
+moves what is in it into `AI_INSTRUCTIONS.md` and archives the file; where the two contradict each
+other, `AI_INSTRUCTIONS.md` wins.
 
 ### Claude's own notes: auto-memory
 
-Claude Code keeps notes per project in `~/.claude/projects/<project>/memory/`, outside any repo.
-They are for **state** — where things stand, what is in flight — and for what is about the user.
-They are never for a project's rules: a rule that sits only in memory is invisible to subagents
-and to every other tool.
+Claude Code keeps notes per project in `~/.claude/projects/<project>/memory/`, outside any repo,
+and writes them by itself. In this setup that folder is an inbox, not a home: a rule or a fact
+about the project belongs in `AI_INSTRUCTIONS.md`, the state of the work in `roadmap.md`, a
+preference of the user in the global files. A note that sits only in memory is invisible to other
+projects and to subagents. `/realign-project` empties the folder, after checking that what each
+note says is in the project's documents.
 
 The rule behind all of this is three lines in the global `CLAUDE.md`, under "Where a rule
 belongs".
@@ -129,7 +131,7 @@ The Personal Voice output style and the skills take effect on the **next session
 | Skill | Use it when… | What it does |
 |-------|--------------|--------------|
 | `/project-setup` | Starting a new project, or verifying the global setup on a new PC | Scaffolds structure, docs, agents, workflow — scaled to project size (a small script needs only README + AI_INSTRUCTIONS). |
-| `/realign` | An existing project feels heavy/bureaucratic after a model upgrade | Audits CLAUDE.md / AI_INSTRUCTIONS / agents / skills / settings / memory and modernizes them to the v2 format. Asks before editing. |
+| `/realign-project` | An existing project feels heavy/bureaucratic after a model upgrade | Audits CLAUDE.md / AI_INSTRUCTIONS / agents / skills / settings / memory and modernizes them to the v2 format. Asks before editing. |
 | `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, stops. Build later on "implement PLAN_<name>". |
 | `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, records the round's real token totals, graduates lessons, archives the plan with a date prefix. |
 | `/doc-sweep` | Sprint close or periodic maintenance on a project with a substantial doc tree | Runs the doc-consistency sweep as a capped workflow fleet (4–7 cluster readers + verifier + merger); only the merged findings return to the session. Small projects: single doc-keeper pass instead. |
@@ -138,8 +140,8 @@ The Personal Voice output style and the skills take effect on the **next session
 | `/wireframe` | The layout of a screen is unsettled and seeing it is what decides it | Draws the screen in a local self-hosted Penpot and hands back a picture. Starts the stack when needed, stops it afterwards. Not for a throwaway sketch — write HTML by hand for those. |
 | `/contained-browser` | A task needs a real browser and the user's own must not be touched | Drives a headless Chromium in a container over MCP: open a page, fill a form, screenshot, scrape, test a local app. Isolated profile, loopback only. |
 
-**`/project-setup` vs `/realign`:** `/project-setup` builds structure that isn't there yet;
-`/realign` leaves the structure and updates the *wording, channel, and location* of an existing
+**`/project-setup` vs `/realign-project`:** `/project-setup` builds structure that isn't there yet;
+`/realign-project` leaves the structure and updates the *wording, channel, and location* of an existing
 project's instructions. Create with one, modernize with the other.
 
 **`/custom_plan` vs native plan mode:** native plan mode starts implementing the moment you approve

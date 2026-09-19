@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: "Interactive workflow to scaffold a NEW project with the preferred structure, docs, agents, and workflow. Trigger on \"set up a new project\", \"scaffold a project\", \"new repo structure\", \"create AI_INSTRUCTIONS\", \"bootstrap a project\", or \"verify my Claude Code setup on a new PC\". For auditing/fixing an EXISTING project against these conventions, use /realign instead."
+description: "Interactive workflow to scaffold a NEW project with the preferred structure, docs, agents, and workflow. Trigger on \"set up a new project\", \"scaffold a project\", \"new repo structure\", \"create AI_INSTRUCTIONS\", \"bootstrap a project\", or \"verify my Claude Code setup on a new PC\". For auditing/fixing an EXISTING project against these conventions, use /realign-project instead."
 ---
 
 # New Project Setup Workflow
@@ -17,7 +17,7 @@ You are guiding the user through setting up a new project with a clean, consiste
 
 **Mode:** If the user says "check global setup" or "verify environment", run Phase 0 only.
 
-**Counterpart:** For an EXISTING project that needs auditing/fixing against these conventions, use the **/realign** skill instead of this one.
+**Counterpart:** For an EXISTING project that needs auditing/fixing against these conventions, use the **/realign-project** skill instead of this one.
 
 ## Phase 0: Verify Global Environment (optional)
 
@@ -171,7 +171,9 @@ Create the project overview:
 
 ### 3.3 AI_INSTRUCTIONS.md
 
-The most important file — it tells any AI tool how to work in the project, and is THE authoritative source for the project's rules, hierarchy and agents. All project rules live here: a project keeps no rules in a `CLAUDE.md` of its own (see "Where a rule belongs" in the global `CLAUDE.md`). **Its hierarchy section must match the actual filesystem**, and nothing else may restate it. Keep it a **lean core well under 200 lines**; push detail into sub-docs (`docs/`, phase plans) and link to them rather than inlining. Use the **tiered Hard-rules / Preferences** format so genuine invariants stand apart from judgment calls. Drop the sections a small project does not need rather than leaving empty headers.
+The most important file — it tells a session how to work in the project, and is THE authoritative source for the project's rules, hierarchy and agents. All project rules live here: a project keeps no rules in a `CLAUDE.md` of its own (see "Where a rule belongs" in the global `CLAUDE.md`). **Its hierarchy section must match the actual filesystem**, and nothing else may restate it. Keep it a **lean core well under 200 lines**; push detail into sub-docs (`docs/`, phase plans) and link to them rather than inlining. Use the **tiered Hard-rules / Preferences** format so genuine invariants stand apart from judgment calls. Drop the sections a small project does not need rather than leaving empty headers.
+
+**The skeleton is the same in every project; the content is this project's own.** Write nothing into it that could sit unchanged in any project: that is a copy of a global rule, and `/realign-project` would take it out again. A section with nothing project-specific reads "None beyond the global `CLAUDE.md`."
 
 ```markdown
 # AI Instructions — <Project Name>
@@ -188,43 +190,21 @@ The most important file — it tells any AI tool how to work in the project, and
 <languages, frameworks, infra>
 
 ## Hard rules (never violate)
-- All code, docs, comments, plans, and commit messages MUST be in English — always, no
-  exceptions. The user often communicates in Dutch, but everything written to files is English.
+The global CLAUDE.md holds the rules that apply in every project. These hold only here:
 - <project-specific invariants — e.g. never touch generated/, never edit migrations by hand>
-- (Global rules still apply: one source of truth, archive-never-delete, no AI attribution.)
 
 ## Preferences (use judgment; override when the task is better served)
-- Neutral, impersonal writing style.
-- SOLID / DRY / KISS; modular where it pays off — do not over-engineer.
-- Scale workflow depth to task size — a one-line fix needs no plan, roadmap, or phase doc.
-- Build on existing work; keep docs current after a change.
-- When an approach fails or wastes effort, note it in docs/lessons_learned.md (if present).
+- <what this project prefers and why — a framework idiom, a naming scheme, a deployment habit>
 - <testing expectation: e.g. tests required for core logic; manual elsewhere>
+- When an approach fails or wastes effort, note it in docs/lessons_learned.md (if present).
 
 ## Workflow
-- The cycle is the one in the global CLAUDE.md ("The sprint cycle"): /custom_plan writes the plan;
-  an agent that did not write it reviews it and the findings go into the plan file; the user
-  approves; building starts on "implement PLAN_<name>"; test; /feature-close; then the next sprint,
-  or a handover with /pre-clear-compact. Nothing grows beside it without the user's word.
-- Use /custom_plan for non-trivial features; plans live in claude_plans/ (see Planning below).
-- Code review for substantial or risky changes — not mandatory on every trivial edit.
-- <branching / CI / release notes as the project needs>
-
-## Planning (in-project plans)
-- Plan with the /custom_plan skill: it researches read-only, writes
-  claude_plans/PLAN_<name>.md, and STOPS. Build later only on an explicit
-  "implement PLAN_<name>". (Avoid native plan mode for build-later planning — approving
-  its plan starts implementation immediately.)
-- After delivery, close out with /feature-close: docs check, leftovers to the backlog,
-  archive the plan with a date prefix.
+The sprint cycle and the planning rules are in the global CLAUDE.md. What is specific here:
+- <branching / CI / release notes / who tests, as the project needs>
 
 ## Project hierarchy (single source of truth — nowhere else)
-This tree is the only place that says where things live: every folder with one clause on its
-purpose, the core files by name, and the files another document or an agent points at by name —
-never status, counts, dates or versions. Other files point at a document by its path from the
-project root (docs/install/install.md, never install.md or ../x.md) and never repeat the tree;
-inside docs/, as a link whose text is that root path. After a move or rename, git grep the file
-name across the project and rewrite every hit. A new document goes into a category folder of docs/.
+What this tree holds and how other files point at it: "One tree, and pointers that cannot rot" in
+the global CLAUDE.md.
 - <the tree>
 
 ## Agents
@@ -255,7 +235,7 @@ Ongoing log of what worked and what didn't during development. Primarily intende
 ---
 ```
 
-Reference this file in AI_INSTRUCTIONS.md (Preferences) and in the after-compaction re-read order.
+Reference this file in AI_INSTRUCTIONS.md (Preferences).
 
 ### 3.5 roadmap.md (medium/large)
 
@@ -279,7 +259,7 @@ Create `todo_<today's date>.md` only if the user works in daily sprints:
 
 Create a minimal `.claude/settings.json`. The project-level file mainly needs to point plans into the repo; add a `permissions` block only if the project has files to guard. Global-level keys like `effortLevel`, `includeCoAuthoredBy`, and `model` belong in `~/.claude/settings.json`, not the per-project file, unless the project deliberately overrides them. Do not add an `outputStyle` (deferred).
 
-Do NOT create a project-level `CLAUDE.md`, neither in the root nor in `.claude/`: project rules live in `AI_INSTRUCTIONS.md`. If the folder already has one, leave it alone and tell the user that `/realign` moves its rules into `AI_INSTRUCTIONS.md`.
+Do NOT create a project-level `CLAUDE.md`, neither in the root nor in `.claude/`: project rules live in `AI_INSTRUCTIONS.md`. If the folder already has one, leave it alone and tell the user that `/realign-project` moves its rules into `AI_INSTRUCTIONS.md`.
 
 ```json
 {
@@ -374,17 +354,13 @@ Gaps where documentation should exist but doesn't.
 the structured findings list (no prose report sections).
 
 ## Constraints
-- All docs in English; neutral, impersonal writing style.
 - Match a document's length to what the task needs — cover the substance, don't pad with filler
   sections, redundant summaries, or boilerplate. (The user's output style carries this rule for the
   main conversation, and an output style does not reach a subagent — so it is restated here.)
-- One source of truth — flag duplicates as problems; link, do not duplicate.
-- Read before suggesting changes; present findings, don't auto-fix — ask before editing.
-- Never delete files — recommend archiving to `archive/` with a date prefix. (Narrow
-  exception: a committed in-repo auto-memory shadow tree may be deleted, since native
-  auto-memory owns that state.)
-- After file moves/renames, check ALL cross-references.
-- When uncertain, ask. Respect the structure conventions in AI_INSTRUCTIONS.md.
+- Read before judging; report findings, do not edit — the main session applies them.
+- After file moves or renames, check ALL pointers.
+- A doubt the files can settle is settled from the files; one they cannot settle is reported as
+  it stands, in one line.
 ```
 
 **Adapt this template** to the specific project: update the startup procedure with actual key files, adjust the source-of-truth hierarchy to include project-specific authoritative files, and add any project-specific capabilities or rules.
@@ -412,7 +388,7 @@ another file owns. It says where to read them. Write the definition with:
   reviewers) include a fleet-mode note — when the agent runs inside a Workflow fleet with a
   structured-output schema, it returns ONLY the structured findings list — and keep
   deviations/watch-items as explicit fields (they map 1:1 onto fleet schemas)
-- **Constraints:** hard limits (English-only, read before changing, present findings before fixing, scale effort to task size)
+- **Constraints:** hard limits that are this agent's own (read before changing, what it must never touch). Rules the global `CLAUDE.md` carries are not restated: the agent loads that file by itself
 - **Scope boundaries:** what's in/out of scope, with referrals to other agents
 
 Create the agent by writing to `.claude/agents/<name>.md` or using the `/agents` command.

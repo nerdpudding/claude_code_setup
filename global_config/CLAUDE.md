@@ -45,8 +45,9 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 - **Test in proportion, and only what the change can affect** (`[user-specified]` 2026-07-30 and
   2026-09-19 — he hates needless testing). Cover the real paths including the failure ones, then
   stop; an exhaustive edge-case suite or an hours-long run needs its reason stated in the plan.
-  Run only the tests a change can reach: documents, agent files, skills or memory → at most the
-  project's document-path test. The full suite is for a change to code or configuration that
+  Run only the tests a change can reach. A change to documents, agent files, skills or memory
+  runs no test: tests are for code, and documents are guarded by the pointer repair after a move
+  and the doc audit at the close. The full suite is for a change to code or configuration that
   runs — never a closing ritual.
 - **Use the right agent** for its domain (check `.claude/agents/` if present).
 - **Model tiers for subagents** (`[user-specified]` 2026-08-16). Match the model to the task.
@@ -64,7 +65,12 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
   and parallelizable — a wide multi-file investigation, several unrelated builds. Not for work
   finishable in a handful of tool calls, and **never to verify or double-check your own work**.
   One agent that can do the job beats several; keep spawn counts low.
-- **Ask when project conventions are unclear** rather than guessing.
+- **Settle a doubt from the files** — read them before asking anything; a routine call they do
+  not settle is made, and named in one clause.
+- **A how-to question gets an answer and a recommendation, not an action.**
+- **Never block the chat.** A long job is detached so the conversation stays answerable, and a
+  background helper is announced before it starts: the command, its log, what it does, when it
+  ends. What he may want to open goes into the project, never into a scratchpad he cannot see.
 - **Session start:** if they exist, read `AI_INSTRUCTIONS.md`, then `README.md`, then the relevant
   active plan, before diving in. A subagent reads `AI_INSTRUCTIONS.md` first too: it loads this
   file by itself, but not that one.
@@ -104,7 +110,7 @@ Minimal by default; add structure only as a project needs it. A small script may
 
 ```
 project/
-├── AI_INSTRUCTIONS.md          # Project rules, hierarchy, agents — tool-agnostic, read first
+├── AI_INSTRUCTIONS.md          # Project rules, hierarchy, agents — read first
 ├── README.md                   # Overview + status
 ├── roadmap.md                  # Sprint plan and status (larger projects)
 ├── todo_<date>.md              # Daily task tracker (temp → archive/)
@@ -124,8 +130,7 @@ project/
   That is not "never move": a document nobody reads to do the next work any more is archived too.
 - **One tree, and pointers that cannot rot** (`[user-specified]` 2026-09-19). The hierarchy in
   `AI_INSTRUCTIONS.md` is the only place that says where things live; every other file points at
-  a document and never repeats the tree. Where the project has a test suite, one test fails on a
-  document path that does not exist; paths in code come from configuration. Origin: a flat
+  a document and never repeats the tree. Paths in code come from configuration. Origin: a flat
   `docs/` that needed 130 references rewritten before Sprint 2.
   - *The tree holds* every folder with one clause on its purpose, the core files by name
     (`AI_INSTRUCTIONS.md`, `README.md`, `roadmap.md`, `docs/lessons_learned.md`,
@@ -137,8 +142,7 @@ project/
     `[docs/install/install.md](../install/install.md)` — so it stays clickable and one grep on
     the root path still finds it.
   - *After a move or rename*, `git grep` the file name across the whole project and rewrite every
-    hit; hits in other projects under the same parent folder are reported, and edited only on the
-    user's word.
+    hit — also in the other projects under the same parent folder, when the new target is known.
   - *Dated records* — `archive/`, `claude_plans/`, a daily tracker — keep the pointers they were
     written with.
 - **Pointers across projects rest on the name, never on the folder** (`[user-specified]`
@@ -219,8 +223,8 @@ channel, so it sticks where CLAUDE.md does not. Edit tone there, not here.
 
 ## Memory & compaction
 
-- **Native auto-memory owns volatile cross-session state** (`MEMORY.md` and the per-project
-  memory dir). Don't hand-maintain a parallel state log in prose.
+- **Auto-memory is an inbox, not a home.** Claude Code notes things there by itself; nothing
+  belongs there. `/realign-project` files what landed in it.
 - **Compaction summary** — keep what the user asked, decided, ruled out or corrected in his own
   words, what was tried and set aside, and names, numbers and paths exactly.
 - **After compaction**, re-read `AI_INSTRUCTIONS.md` and `docs/lessons_learned.md` (if they
@@ -231,12 +235,13 @@ channel, so it sticks where CLAUDE.md does not. Edit tone there, not here.
 ## Where a rule belongs
 
 This file = cross-project process and preferences, loaded every session.
-`AI_INSTRUCTIONS.md` = one project's rules, hierarchy and agents, tool-agnostic — THE authoritative
-source for that project. A project keeps no rules in a `CLAUDE.md` of its own, neither in its root
+`AI_INSTRUCTIONS.md` = one project's rules, hierarchy and agents — THE authoritative source for
+that project. A project keeps no rules in a `CLAUDE.md` of its own, neither in its root
 nor in `.claude/`: that would be a second home. When `AI_INSTRUCTIONS.md` runs long, DETAIL moves
 to a sub-doc it names — working laws for one kind of work, standing product decisions — and the
 rules stay; they never move to a `CLAUDE.md` or to memory.
-Tone = the output style. Volatile state = native auto-memory. One home each, never two.
+Tone = the output style. The state of the work = `roadmap.md` and the session carryover.
+One home each, never two.
 
 ---
 

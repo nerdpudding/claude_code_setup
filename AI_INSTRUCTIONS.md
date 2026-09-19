@@ -4,26 +4,22 @@
 
 This is a template repository for setting up and managing global Claude Code configuration. It contains the files (CLAUDE.md, settings.json, skills) that should be copied to `~/.claude/` on any machine. The repository itself is mostly static and serves as version-controlled source of truth for global Claude Code setup.
 
-## Principles
+## Rules of this project
 
-- **KISS** — Minimal structure, no build tools, no automation
-- **One source of truth** — No duplicate information across documents
-- **Never delete, always archive** — Move outdated content to `archive/` with date prefix
-- **English only** — All files, comments, and commit messages
-- **Neutral tone in docs** — Avoid "we", "our", "us" in documentation. Keep it general and impersonal unless the user explicitly asks for personal or team-oriented language
+The global `CLAUDE.md` holds the rules that apply in every project. These hold only here:
+
+- **No build tools, no automation.** The repo is files plus one sync script.
 - **Other projects stay unnamed** — this repository is public. Another project of the user is referred to by what it is ("a larger sibling project", "another project"), never by its name — not in docs, not in plans, not in commit messages. The one exception is a functional path a skill needs to work, which keeps its real value behind the `__HOME__` placeholder `install.sh` expands
-- **Build on existing work** — Evolve settings and skills, don't rewrite from scratch
-- **Use agents** — Check `.claude/agents/` for specialized help before starting tasks
+- **`global_config/` is the source; `~/.claude/` is the copy.** Edit here, then `./install.sh install`.
+  A change made directly in `~/.claude/` comes back with `./install.sh pull` before anything else.
+- **An instruction change is tested where it is used**: a change to a skill is run in a real project
+  before the sprint closes.
 
 ## Workflow
 
-The full cycle lives in the global `CLAUDE.md`. In this project it runs as:
-
-1. **Plan** — `/custom_plan` researches read-only, writes `claude_plans/PLAN_<name>.md`, and stops.
-2. **Approval** — the user reviews. Building starts only on an explicit "implement PLAN_<name>".
-3. **Build** — implement and test to the depth the plan set, no further.
-4. **Close** — `/feature-close`: docs brought up to date, leftovers to the backlog, the plan archived, and doc-keeper run last (files have moved by then, so an earlier check cannot see the references those moves broke).
-5. **Next** — roadmap revisited, the next sprint chosen together.
+The sprint cycle and the planning rules are in the global `CLAUDE.md`. Specific to this repo: at the
+close, the doc-keeper audit runs last, and `./install.sh diff` must report "in sync" before the commit.
+Progress is tracked in `roadmap.md`; delivered sprints and versions move to `docs/history/`.
 
 ## Project Hierarchy
 
@@ -86,7 +82,7 @@ that work is done, not carried into other projects as a template.
 | Skill | File | What it does |
 |-------|------|-------------|
 | `/project-setup` | `global_config/skills/project-setup/SKILL.md` | Scaffold a NEW project with the preferred structure, docs, agents, workflow. |
-| `/realign` | `global_config/skills/realign-project/SKILL.md` | Realign an EXISTING project's docs to the current format (see `docs/model_alignment/opus_5_alignment.md`). Counterpart to `/project-setup`. |
+| `/realign-project` | `global_config/skills/realign-project/SKILL.md` | Realign an EXISTING project's docs to the current format (see `docs/model_alignment/opus_5_alignment.md`). Counterpart to `/project-setup`. |
 | `/custom_plan` | `global_config/skills/custom_plan/SKILL.md` | Plan a sprint/feature read-only into `claude_plans/PLAN_<name>.md`, then stop. Replaces native plan mode (which auto-executes on approval). Build later on an explicit "implement PLAN_<name>". |
 | `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, record real token totals, graduate lessons, archive the plan with a date prefix. |
 | `/doc-sweep` | `global_config/skills/doc-sweep/SKILL.md` | Run the doc-consistency sweep as a capped saved workflow (4–7 cluster readers + verifier + merger); small projects keep the single doc-keeper pass. |
@@ -104,37 +100,3 @@ that work is done, not carried into other projects as a template.
 
 Caps and invocation details live in each script's header comment (single home); `/doc-sweep`
 restates the sweep's caps because it is that workflow's invocation point.
-
-## Plan Rules (plan in-project; build only on explicit request)
-
-- Plans go in `claude_plans/` (configured via `plansDirectory` in `.claude/settings.json`), git-committed,
-  named after the feature/sprint (`PLAN_<topic>.md`).
-- To plan without auto-building: use the `/custom_plan` skill (researches read-only, writes the plan file,
-  stops), or ask for the plan written to `claude_plans/PLAN_<topic>.md` with "don't implement yet".
-  Native plan mode starts implementing on approval and can't be overridden by prose — so use `/custom_plan`
-  or the file-first flow instead of toggling plan mode. See `docs/model_alignment/opus_5_alignment.md`.
-- Build later only on an explicit instruction (e.g. "implement PLAN_<name>") — saving ≠ approval.
-- Archive completed plans to `archive/` with date prefix.
-- Update progress in `roadmap.md` (single tracker for this project).
-
-## Archive Rules
-
-Move to `archive/` with date prefix (`YYYY-MM-DD_filename.md`):
-- Completed plans
-- Daily task trackers after the day is done
-- Outdated documentation
-
-## Git Commits
-
-- No AI attribution in commit messages
-- Only commit when explicitly asked
-- Write normal, descriptive commit messages
-
-## After Compaction
-
-Read order:
-1. This file (`AI_INSTRUCTIONS.md`)
-2. Active task tracker (`todo_<date>.md` in the root), if one exists
-3. Active plans in `claude_plans/`
-4. `concepts/concept.md`
-5. Continue with the task

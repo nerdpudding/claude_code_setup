@@ -79,7 +79,7 @@ control actually lies.
 - **`global_config/CLAUDE.md` is 244 lines against the 200-line target.** The next candidates for
   a cut are the SOLID sub-bullets and the cross-project pointer rule. Both are `[user-specified]`,
   so this needs the user's word.
-- **Field test of `/realign` as changed twice on 2026-09-19.** On the next real run, check that a
+- **Field test of `/realign-project` as changed twice on 2026-09-19.** On the next real run, check that a
   finding with one sensible fix is applied and reported in one line, that questions come one per
   turn and only in the cases Phase 2 names, that a project-level `CLAUDE.md` with rules is found
   and its rules moved into `AI_INSTRUCTIONS.md` (check 17), and that the session does not open
@@ -114,6 +114,6 @@ control actually lies.
 | Sprint 7 | Done | Workflow adoption (doc-sweep + milestone-review), fleet-mode notes, token recording, opus[1m] default |
 | Sprint 8 | Done | Opus 5 realignment — deletions, length/plain-words rules, effort `high`, home path out of the public repo |
 | Sprint 9 | Done | Communication rules — friction doc, five rules into the output style, `opus5-prompt-expert` agent |
-| 2026-09-19 | Done | Structure that does not drift (README v2.6): category folders in `docs/`, one tree, deviations into the plan, nothing beside the cycle, `/realign` check 16, `haiku` removed, live files pulled |
+| 2026-09-19 | Done | Structure that does not drift (README v2.6): category folders in `docs/`, one tree, deviations into the plan, nothing beside the cycle, `/realign-project` check 16, `haiku` removed, live files pulled |
 | Sprint 10 | Open | Telemetry, feature-gating and what "off" actually costs — raised 2026-08-05 |
-| Sprint 11 | Done | One home for every fact (README v2.7): skills point at `CLAUDE.md`, `/realign` finds copied facts and rules in auto-memory, config snapshot out of the git history |
+| Sprint 11 | Done | One home for every fact (README v2.7): skills point at `CLAUDE.md`, `/realign-project` finds copied facts and rules in auto-memory, config snapshot out of the git history |

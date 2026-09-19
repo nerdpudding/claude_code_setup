@@ -1,241 +1,197 @@
 ---
 name: realign-project
-description: Use when an existing project's Claude Code setup feels heavy, slow, or bureaucratic after a model upgrade, or to audit CLAUDE.md / AI_INSTRUCTIONS.md / agents / skills / settings / memory for tiering, duplication, dead references, stale shadow memory, and over-ceremony. Counterpart to project-setup (which sets up new projects). Invoke explicitly with /realign.
+description: Put an existing project's Claude Code setup in order in one go — AI_INSTRUCTIONS.md, a stray CLAUDE.md, agents, skills, settings, auto-memory and the document structure are brought in line with the global CLAUDE.md. Finds duplication, drift, dead references, oversized files and over-ceremony, repairs them itself, asks only when it truly must, and reports in a few sentences. Counterpart to project-setup (new projects). Invoke with /realign-project.
 ---
 
 # Realign Project
 
-Audit an existing project's Claude Code setup and realign it to current Claude Code idioms: two-tier instructions, deterministic settings over prose rituals, single-homed facts, native memory, and scale-to-task-size workflows. Current model guidance — including what to DELETE because the model now does it unprompted — is `claude_code_setup: opus_5_alignment.md` (what to delete, and the effort level per model).
+## How a run goes — read this part first
 
-This is the counterpart to `project-setup` (new projects). It runs in the main conversation thread with full context and is explicitly user-invoked — it does not auto-route.
+The user typed this command and expects the job finished when he looks again: he is not watching
+and does not want to be consulted. `/realign-project` with nothing after it is the whole request:
+find what is out of line, repair it, and say in a few sentences what changed.
 
-**The format a project is measured against is what this session has already loaded:** the global `CLAUDE.md` and this skill. Do NOT open the `claude_code_setup` repo during a realign — it is where these files are maintained, not something a project is compared with. The documents of that repo cited below (`claude_code_setup: <file name>`) are background on why a rule exists; no check needs them read.
+**Almost nothing is a question.** Rules elsewhere that say to ask, offer, surface or let the user
+decide are about planning and building. This command is maintenance with fixed repairs; none of
+them applies during it. What a rule settles is never asked: other tools, tests, copies of global
+rules, the length of a file, memory, pointers in a sibling project, which of two files wins.
 
----
+**The rare real question.** Ask only when it truly cannot be otherwise: a step `git` cannot undo
+that no rule prescribes, or a preference of his that no file records and whose options give a
+visibly different project. Before asking, look in three places — what he typed after the command,
+the global `CLAUDE.md`, this skill; if one of them settles it, it is not a question. A real
+question comes right after the audit and BEFORE the first edit, never after: one item per message,
+what it is, the options with what each means for him, the one you recommend and why. Then the run
+continues.
 
-## How to use this skill
+**How a doubt is settled.** A doubt a file can settle is looked up. Otherwise: what he typed after
+the command decides first; then the global `CLAUDE.md`; where neither speaks, the project's file
+stays as it is. A doubt that was settled is not mentioned in the report.
 
-Three phases, in order. Phase 1 is read-only. Invoking `/realign` is the request to realign: a finding with one sensible fix is applied and reported afterwards, and the user is asked only in the cases Phase 2 names. Scale depth to the setup's size — a single instruction file needs a quick pass; a repo with agents, skills, multiple instruction files, and committed shadow memory warrants the full audit.
+**Nothing is lost and nothing is committed.** Edit in place. A tracked file that goes is moved to
+`archive/` with a date prefix — `git mv` where `archive/` is tracked, plain `mv` where git ignores
+it. A memory note is deleted only after what it says is confirmed in a tracked document (check 7).
+Before the first edit run `git status --porcelain`: if the tree already holds changes, build on
+them, do not redo them, and say so in one sentence of the report. A file git does not track is
+left as it is. Git history is never rewritten. A sub-doc that a check tells you to create is asked
+for by this command.
 
----
+**Other tools are no factor.** The user works in Claude Code. What another tool loads is not
+weighed: a rule the global `CLAUDE.md` carries does not stay in a project file "for other tools".
 
-## Phase 1 — Audit (read-only)
+**What the format is.** The global `CLAUDE.md` this session has loaded, and this skill. Do not open
+the `claude_code_setup` repo: it is where these files are maintained, not something to compare with.
 
-Discover before reading. Do NOT assume a fixed file list.
+**What stays per project.** A line goes when it could sit unchanged in any project: it is a copy of
+a global rule, current or stale. A line stays when it names something that exists only here — a
+path, a component, a command — says why this project differs, or carries `[user-specified]`.
 
-- Glob for: `CLAUDE.md`, `**/CLAUDE.md`, `AI_INSTRUCTIONS.md`, `.claude/settings.json`, `.claude/settings.local.json`, `.claude/agents/*.md`, `.claude/skills/**/SKILL.md`, `**/MEMORY.md`, `claude_plans/*.md`, `.claude/projects/**/memory/*.md`.
-- Also read the project's **native auto-memory folder** — the one this session's own system prompt names, under `~/.claude/projects/`. It is outside the repo, so a Glob relative to the project never reaches it; read the path from the system prompt and list it directly.
-- Read every discovered instruction/config file IN FULL. These files steer everything; skimming misses drift.
+**Tests.** A realign runs no test and never suggests or builds one. Tests are for code; documents
+are guarded by the pointer repair after a move and by the doc audit at a sprint close.
 
-Detect and cite exact files + line numbers for each:
+**While working:** one sentence before the first tool call, then no text until the report, unless a
+failure stops the run.
 
-1. **Oversized always-loaded / always-read files.** CLAUDE.md or AI_INSTRUCTIONS.md over **200 lines** — Anthropic's own target; longer files consume more context and reduce adherence. Also flag agents that read large files on every spawn. The fix is NOT `@path` imports (they still load at launch); it is deleting what isn't needed every session, moving procedure into a skill, or a path-scoped `.claude/rules/` file. See Corrected mechanics below.
-2. **Flat emphasis.** ALWAYS / NEVER / MUST / CRITICAL applied to mere preferences alongside genuine invariants, with no tier separation.
-3. **Duplicated rules and facts** across CLAUDE.md / AI_INSTRUCTIONS.md / MEMORY.md / agents / skills — and whether the copies have DRIFTED (contradict each other). Facts count as much as rules: a copy of the tree, a list of models, of sources or of files, a procedure another file owns. Flag drift as higher priority than plain duplication. The repair is fixed: check each item in the copy against the file that owns it, move anything that exists nowhere else into that file, then delete the copy and leave a pointer — never bring the copy up to date.
-4. **Prose rituals that should be deterministic.** Commit-attribution reminders, file-read bans, plan-rename steps written as prose the model must remember. These belong in settings: `includeCoAuthoredBy: false`, `permissions.deny`.
-5. **Unqualified universal-imperative workflows.** "No shortcuts", "ALWAYS run X", "Do NOT skip", "Not optional" — with no scale-to-task-size escape hatch.
-6. **Subagent description hygiene.** Vague or overlapping descriptions; multiple owners for one domain; worked examples bloating the description field; dead agent references (named in docs/CLAUDE.md but no file exists). Fix only real problems — descriptions are often already fine.
-7. **Shadow memory vs native memory (first-class check).** Find git-tracked in-repo memory (e.g. `.claude/projects/.../memory/*.md`; confirm with `git ls-files`). DIFF it against the native `MEMORY.md` fact by fact: a copy that *contradicts* native memory is higher-consequence than one that merely duplicates it (subagents act on the in-repo file but don't inherit native memory). Before recommending deletion, check whether the shadow file holds anything UNIQUE (e.g. open research questions) not in native memory — preserve that to a tracked doc first; delete only the stale/duplicated remainder.
-   Then read the **native** auto-memory folder found in Phase 1 and sort every entry the same fixed way. A memory that states how to work in the project is a rule: move it to `AI_INSTRUCTIONS.md` and delete it. A memory that repeats a rule already in a tracked file: delete it. State — where things stand, what is in flight — stays. A rule whose content is private keeps only the private detail in memory, with the rule itself in the tracked file.
-8. **Doc self-contradictions.** Two sections describing different file layouts; inconsistent file-naming schemes (e.g. `todo_<date>.md` vs another tracker); mis-located or partially-done plans; settings-check blocks that mis-report the current config as drift.
-9. **Model tiering (token economy).** The main thread's model is the expensive tier; agents
-   without a `model:` frontmatter key silently inherit it. The tiers themselves live in "Model
-   tiers for subagents" in the global `CLAUDE.md` — read them there. Check: every project agent
-   has a `model:` key; its value matches the tier that section names for the agent's job; the
-   project's agent table (AI_INSTRUCTIONS) records it so the policy survives sessions;
-   implementation work is delegated to agents rather than done inline when the session runs on a
-   top-tier model. Flag any agent pinned to `fable` as a finding.
-10. **Register: calibration, plain words, and readability.** Over-ceremony is not only in workflow prose — it is also a response habit. Check that the tone channel — the Personal Voice output style, or the project's own tone instructions — carries all of the following, and flag whichever is absent. Every one of them was written after an observed failure; see `claude_code_setup: opus_5_communication_friction.md` (the failure behind each rule).
-    - *Response calibration* — match answer size to request, neither padded nor half-baked.
-    - *Document length* — files written to disk are not exempt from the brevity that applies in conversation.
-    - *Plain words* — name things instead of internal labels like plan IDs or priority codes, and don't assume a tool, file or term is known.
-    - *Self-contained messages* — name the thing again rather than pointing back at an earlier turn ("that list", "option b"). The reader is not holding the thread.
-    - *Show, don't describe* — when pointing at something wrong, paste the few lines it concerns rather than summarising them.
-    - *One decision at a time* — with any others named in a line so they are not silently dropped.
-    - *Rewrite on "I don't follow"* — a different shape, shorter or as a table, rather than the same explanation at greater length.
-    - *Short sentences in the user's own language* when that is not English — long constructions come out as literal translations rather than as the language itself.
-    - *No word-for-word idioms* in that language — "say the word", "touch base", "the ball is in your court" do not survive translation, and the result reads as machine output.
-    - *No coined compound for a term the field says in English* — if the local-language word has to be invented, the term was supposed to stay English. Short sentences do not catch this: both failures that produced these two rules were single words.
-11. **Fleet-mode return format.** Findings-producing agents (doc auditors, reviewers) should
-    carry a short fleet-mode note: when run inside a Workflow fleet with a structured-output
-    schema, return ONLY the structured findings list (no prose report sections). Flag
-    findings-producing agents that lack it.
-12. **Instructions the model already follows.** Flag prose telling the model to verify or re-check
-    work it just did ("a final verification step", "re-read before responding", "use a subagent to
-    verify") — it does this unprompted, so the instruction buys a second pass for nothing. Checking
-    something EXTERNAL (files, another agent's findings, a live run) is not self-verification and
-    stays. Also confirm Claude Code still ships the scope/correction text this setup relies on
-    instead of restating. Both: `claude_code_setup: opus_5_alignment.md` (what the model now does
-    unprompted).
-13. **Testing and review proportionality.** Flag project instructions that mandate exhaustive
-    edge-case suites, blanket coverage targets, or long test runs with no "scale it to the
-    project" escape hatch — hours-long runs on work that never warranted them is a real,
-    measured cost. Separately, check the project describes **two distinct reviews**: an
-    independent review of the PLAN before building (routine when a plan is complex or runs across
-    parallel agents) and a full adversarial review of the BUILD at milestones, several sprints
-    apart. A project describing one review, or treating its sprint-close hygiene pass as the
-    review, has them conflated.
-14. **Machine-specific and private values in tracked files.** `git grep` the tracked tree for the
-    user's username, absolute paths under a home directory, hostnames, internal IPs, and the names
-    of the user's OTHER projects. Check git HISTORY too (`git log -S`) — removing a string from
-    the working tree does not remove it from a repo that has been pushed. Report severity by what
-    it is: a credential is critical, a username or hostname high, a bare path low. **Do not
-    propose `~` or `$HOME` as the fix blindly** — some permission rules match command text
-    literally and need the path spelled out; in that case the value belongs in a placeholder that
-    an install/setup step expands locally, not in the file. Ask before touching history: a rewrite
-    means a force-push.
-15. **Delegation policy.** Check 9 covers WHICH model an agent gets; this covers WHETHER to spawn
-    one. Flag instructions that delegate work finishable in a handful of tool calls, that spawn
-    several agents where one would do, or that **use a subagent to verify the session's own work**
-    — the last is explicitly counter-productive on current models. A doc audit or an independent
-    review of someone else's output is not self-verification and stays.
+### The closing report
 
-16. **Document structure drift** (`[user-specified]` 2026-09-19). Compare the project with
-    "Project organization" and "One tree, and pointers that cannot rot" in the global `CLAUDE.md`:
-    - files loose in the root of `docs/` other than `lessons_learned.md`, instead of category folders;
-    - the hierarchy described in more than one place — a "Sub-docs" or "Documentation" list that
-      repeats the tree in `AI_INSTRUCTIONS.md` or `README.md`. A README may keep a short "start
-      here" list of links; a list that tries to be complete is the finding;
-    - a tree that carries status, counts, dates or versions, or that lists every file instead of
-      the folders, the core files, and the files another document or an agent points at by name;
-    - document paths written as bare relative paths (`install.md`, `../roadmap.md`) instead of the
-      path from the project root — inside `docs/`, as a Markdown link whose text is that root path
-      and whose target is relative;
-    - a requirements or concept document still marked "draft" after the roadmap was built on it;
-    - documents nobody reads to do the next work any more: dated reports, plan-review documents, agent
-      brief and report files (a milestone review's dated document is legitimate). Count them; a large number is the finding.
-    - files the cycle never asked for — see "Nothing grows beside this cycle" in the global `CLAUDE.md`.
-    - a pointer into ANOTHER project that carries a folder path or a line number instead of project +
-      file name — see "Pointers across projects" in the global `CLAUDE.md`. Grep the sibling projects
-      — the other projects under the same parent folder — for pointers INTO this one as well: a
-      document move here breaks those, and nothing else finds them. Inbound hits go into the move
-      proposal and are edited only on the user's word.
-    Where the project has a test suite and no test for document paths, propose one.
+Three to five plain sentences: what was cleaned up, in ordinary words; how many files changed; that
+nothing is committed and `git diff` shows every edit; any file in a sibling project that was
+repaired, uncommitted there. For this command this shape replaces the longer closing-report example
+in the output style. Example:
 
-17. **Project rules outside `AI_INSTRUCTIONS.md`** (`[user-specified]` 2026-09-19). "Where a rule
-    belongs" in the global `CLAUDE.md` gives a project ONE home for its rules, and that file is THE
-    authoritative source. Flag a project-level `CLAUDE.md` or `CLAUDE.local.md` — in the root or in
-    `.claude/` — that holds rules, and an `AI_INSTRUCTIONS.md` that says its rules live somewhere
-    else. The repair is fixed, line by line: a rule `AI_INSTRUCTIONS.md` already has is dropped; a
-    rule it lacks moves into it (Hard rules first, then Preferences); text that is no rule — a
-    description of the code, a copy of the tree — is dropped once its owner is checked (check 3).
-    A rule that CONTRADICTS `AI_INSTRUCTIONS.md` is the one thing to ask about: show both lines
-    and ask which holds. Then make
-    sure the startup procedure of every project agent reads `AI_INSTRUCTIONS.md` first, then move
-    the `CLAUDE.md` to `archive/`. If that pushes `AI_INSTRUCTIONS.md` past 200 lines, make room by
-    cutting the tree to what "One tree, and pointers that cannot rot" asks for and by moving DETAIL
-    to a sub-doc — never by leaving rules in the `CLAUDE.md`. A sub-doc may hold working laws for
-    one kind of work, or standing product decisions in the roadmap, as long as `AI_INSTRUCTIONS.md`
-    names it and says what is in it, and no rule sits in two files.
-    Not this finding: a `CLAUDE.md` inside a cloned third-party repository, or one that is shipped
-    as the configuration of another tool instance.
+> Realigned. The copies of global rules came out of `AI_INSTRUCTIONS.md`, two agents now read that
+> file first, and three memory notes moved to the files that own them. Seven files changed and
+> nothing is committed; `git diff` shows every edit. One pointer in the sibling project <name> was
+> repaired and is uncommitted there.
 
-**Corroborate every prose rule against deterministic state.** For each "always/never" prose rule, check whether `settings.json` / `settings.local.json` / `.gitignore` / agent frontmatter already enforces it. If so, the prose is redundant — downgrade it to a one-line pointer rather than a restated rule. This single step surfaces most duplication findings; do it explicitly, not incidentally.
+**Report a failure, never a doubt.** A failure is something that happened: a command ended with an
+error; a file could not be read or parsed; a repair this skill prescribes was not made; text typed
+after the command was not carried out; a credential sits in a tracked file or in git history. Each
+gets one sentence — what, where, and the state it leaves — on top of the five. The test: can you
+point to an error message, a path, or a prescribed repair with no edit behind it? If not, it stays
+out: a choice you made, something you weighed, something that was fine, something that could be
+done next.
 
-Do not conclude until every discovered file has actually been read — a finding drafted before reads return is provisional and must be superseded by the full-evidence version.
-
-**Known false positives — do NOT flag these as problems:** `Explore` (and similar) are BUILT-IN capabilities, not missing project agents; an untracked `settings.local.json` is intentional, not broken; a partially-done plan correctly STAYS in `claude_plans/` until finished (don't "fix" its location).
-
-Keep the findings as a working list with citations. The user does not get this list as a report — Phase 2 says what he sees.
-
-**Hybrid fallback (large repos only):** if the setup is large enough that reading everything would pollute main context, the read-only audit MAY be delegated to a short-lived general-purpose subagent. That subagent returns findings only. All decisions and edits stay in the main thread — never delegate Phase 2 or 3.
+Before sending the report, read it for any sentence that puts a question, holds out an extra, gives
+advice for later, or leaves something for him. For each: look it up or decide it, do it, delete the
+sentence.
 
 ---
 
-## Phase 2 — Apply what is clear, ask what is not
+## The audit (read-only)
 
-A finding with one sensible fix is not presented first: apply it (Phase 3) and report it
-afterwards in one line — what was wrong, what changed, in which file. No priority codes, no pasted
-blocks, no closing question. A maintenance command is not a product decision.
+Discover before reading; do not assume a fixed file list.
 
-Ask only in the cases below, and then one per turn, in the shape the output style gives: the lines
-pasted, what goes wrong, the recommendation, a yes-or-no question. Open with one line per open
-question, so the user sees how many there are.
+- Glob for: `CLAUDE.md`, `**/CLAUDE.md`, `CLAUDE.local.md`, `AI_INSTRUCTIONS.md`,
+  `.claude/settings.json`, `.claude/settings.local.json`, `.claude/agents/*.md`,
+  `.claude/skills/**/SKILL.md`, `**/MEMORY.md`, `claude_plans/*.md`,
+  `.claude/projects/**/memory/*.md`.
+- List the project's auto-memory folder — the one this session's system prompt names, under
+  `~/.claude/projects/`. It is outside the repo, so a Glob relative to the project never reaches it.
+- Read every instruction and configuration file found IN FULL; skimming misses drift.
 
-- **Documents move** (check 16) — one proposal with the target tree shown, never piecemeal: every
-  move rewrites references, so it is done once, with `git mv`, and the references repaired afterwards.
-- **A tracked file would be deleted, or history rewritten** (check 14) — name the exact path or
-  strings, and say plainly that a rewrite means one force-push.
-- **Two fixes are both defensible, or a finding contradicts how the user described the project.**
-- **The user's preference decides:**
+For a very large setup the read-only audit may go to one subagent, pinned to the tier "Model tiers
+for subagents" in the global `CLAUDE.md` names for research. The edits stay in this session.
 
-- effortLevel — this setup pins `xhigh` on purpose (`[user-specified]` 2026-09-19), so `xhigh` is not a finding and lowering it is not proposed. Anthropic's default of `high` for Opus 5 / Sonnet 5 / Fable 5 is known and was set aside; the reason and the per-model table are in `claude_code_setup: opus_5_alignment.md`. Ask only when the key is missing or holds another value. What may still be offered is the per-workload lever most setups never use: `effort:` in a skill's or subagent's frontmatter (`low`/`medium` for mechanical work). Note the cost — changing effort mid-conversation drops the prompt cache, so it suits something invoked at session start better than mid-flow.
-- Which daily-tracker / file-naming scheme to standardize on when the docs conflict.
-- Whether to scope-gate a mandatory workflow with a scale-to-task-size escape hatch.
+Not out of line, so leave alone: `Explore` and similar are built-in, not missing project agents; an
+untracked `settings.local.json` is intentional; a partially-done plan stays in `claude_plans/`;
+`effortLevel: "xhigh"` is this setup's deliberate pin.
 
 ---
 
-## Phase 3 — Apply
+## The checks — what is out of line, and the repair
 
-**Mind the order.** Some fixes are sequenced — extract sub-docs BEFORE repointing agents at them; add a `permissions.deny` BEFORE trimming the prose ban it replaces; move rules into `AI_INSTRUCTIONS.md` BEFORE archiving the file they came from. Apply so that no pointer is broken at any step.
+1. **An always-read file over 200 lines** — `AI_INSTRUCTIONS.md`, or a large file an agent reads on
+   every spawn. Cut the tree to what "One tree, and pointers that cannot rot" in the global
+   `CLAUDE.md` asks for, move DETAIL to a sub-doc that `AI_INSTRUCTIONS.md` names, move a procedure
+   into a project skill. The rules stay in `AI_INSTRUCTIONS.md`. `@path` imports do not help:
+   imported files load at launch.
+2. **Flat emphasis** — ALWAYS / NEVER / MUST on preferences and invariants alike. Sort into Hard
+   rules and Preferences and take the emphasis off the preferences.
+3. **Copies.** A rule or a fact written in more than one file — an agent, a skill, a README, a
+   memory. A copy is a version, a path, a list, a tree or a procedure that another file owns. Check
+   each item against the owner, move what exists nowhere else into the owner, and put a pointer in
+   place of the copy; never bring a copy up to date. Not a copy: a summary for human readers that
+   names its source; a status line that states a result. A copy of a GLOBAL rule in a project file
+   goes entirely (see "What stays per project").
+4. **Prose that a setting enforces** — commit attribution, a ban on reading a file, any
+   "always/never" rule that `settings.json`, `.gitignore` or agent frontmatter already holds. Make
+   sure the setting exists (`includeCoAuthoredBy: false`, `permissions.deny`), then remove the prose.
+5. **A mandatory-sounding workflow with no scale-to-size clause** — "ALWAYS run X", "do NOT skip".
+   Add the clause, the way "Scale depth to task size" in the global `CLAUDE.md` puts it.
+6. **Agent descriptions** that overlap, are vague, or name an agent that has no file. Repair those;
+   a description that works is left as it is.
+7. **Memory.** Auto-memory is an inbox, not a home; a realign empties it. For every note, first
+   check whether what it says is in the project's documents — `AI_INSTRUCTIONS.md`, `README.md`,
+   `roadmap.md`, `docs/lessons_learned.md`, the sub-docs. Where it is missing, write it into the
+   document that owns it: a rule or a fact about the project into `AI_INSTRUCTIONS.md`, the state
+   of the work into `roadmap.md` or wherever the project keeps its status, something learned into
+   `docs/lessons_learned.md`. What the global `CLAUDE.md` or the output style already says needs no
+   move. Only then delete the note and its line in `MEMORY.md`. One kind stays: a preference of
+   the user that the global files do not carry, because a realign does not edit those files. A
+   memory folder committed inside the repo is handled the same way and then moved to `archive/`.
+8. **Documents that contradict themselves** — two layouts, two names for the daily tracker, a plan
+   in the wrong folder. Resolve toward what the global `CLAUDE.md` says.
+9. **Model tiers.** Every project agent has a `model:` key, its value matches the tier "Model tiers
+   for subagents" names for the agent's job, and the agents table in `AI_INSTRUCTIONS.md` records
+   it. An agent on `fable` is re-pinned to `opus` unless `AI_INSTRUCTIONS.md` records that pin as
+   deliberate.
+10. **Tone rules restated in a project file** go: the output style owns them. What a subagent needs
+    from them stays in that agent's own file, because no output style reaches a subagent.
+11. **A findings-producing agent without a fleet-mode note** gets one line: inside a Workflow fleet
+    with a structured-output schema it returns only the structured findings list.
+12. **Prose that tells the model to re-check work it just did** — "re-read before responding", "use
+    a subagent to verify". Remove it. Checking something external — files on disk, another agent's
+    findings, a live run — is not that, and stays.
+13. **Testing and review.** A mandate for exhaustive suites or long runs gets a scale-to-the-project
+    clause. A project that describes one review gets the two the global `CLAUDE.md` describes: the
+    plan before building, the build at milestones.
+14. **Machine-specific values in tracked files** — a username, a home path, a hostname, an internal
+    IP. Where the project has a setup step that can expand a placeholder, replace the value with
+    one; never break a path that has to be literal, since permission rules match command text.
+15. **Delegation prose** that hands out work finishable in a handful of tool calls, spawns several
+    agents where one does, or uses a subagent to verify the session's own work. Bring it in line
+    with "When to delegate at all" in the global `CLAUDE.md`.
+16. **Document structure**, against "Project organization" and "One tree, and pointers that cannot
+    rot" in the global `CLAUDE.md`:
+    - files loose in the root of `docs/` other than `lessons_learned.md` go into category folders;
+    - a second list of what lives where — in a README, in a "Sub-docs" section — becomes a pointer
+      to the tree; a README may keep a short "start here" list;
+    - a tree that carries status, counts, dates or versions, or lists every file, is cut to the
+      folders, the core files and the files another document or an agent points at by name;
+    - a bare relative path (`install.md`, `../roadmap.md`) becomes the path from the project root —
+      inside `docs/`, a Markdown link whose text is that root path;
+    - a requirements or concept document still marked "draft" after the roadmap was built on it is
+      marked approved and frozen;
+    - documents nobody reads to do the next work — dated reports, plan-review documents, agent brief
+      and report files — move to `archive/`; a milestone review's dated document stays;
+    - a pointer into another project that carries a folder path or a line number is rewritten the
+      way "Pointers across projects" asks.
+    A move is `git mv`, followed by the pointer repair that section describes. A pointer in a
+    sibling project — another project under the same parent folder — is repaired too when the new
+    target is known.
+17. **Project rules outside `AI_INSTRUCTIONS.md`** — a project-level `CLAUDE.md` or
+    `CLAUDE.local.md`, in the root or in `.claude/`, that holds rules; or an `AI_INSTRUCTIONS.md`
+    that says its rules live elsewhere. Line by line: a rule `AI_INSTRUCTIONS.md` already has is
+    dropped; a rule it lacks moves into it, Hard rules first; text that is no rule — a description
+    of the code, a copy of the tree — is dropped once its owner is checked; where the two
+    contradict, `AI_INSTRUCTIONS.md` wins. Make every project agent's startup procedure read
+    `AI_INSTRUCTIONS.md` first, then move the file to `archive/`. Not this: a `CLAUDE.md` inside a
+    cloned third-party repository, or one shipped as the configuration of another tool instance.
 
-- **Single-home each fact.** Keep one canonical copy; replace the others with a reference. Resolve drift toward the correct version (confirm with the user if ambiguous).
-- **Convert enforceable rules to settings.** Add `includeCoAuthoredBy: false` and `permissions.deny` entries. Add the settings enforcement BEFORE deleting the corresponding prose (belt-and-suspenders), then remove the now-redundant prose.
-- **Add scale-to-task-size escape hatches** to mandatory-sounding workflows.
-- **Ensure a response-calibration register exists.** If the tone channel lacks it, add a short "match the answer to the request — neither padded ceremony nor half-baked minimalism" rule, single-homed in the output style (not restated across files).
-- **Slim oversized files** to a lean two-tier core ("Hard rules" + "Preferences") plus on-demand sub-docs that are referenced, not inlined.
-- **Fix drift and self-contradictions**; standardize naming; relocate mis-placed plans.
-- **After every move or rename, repair the pointers** the way "One tree, and pointers that cannot
-  rot" in the global `CLAUDE.md` says: `git grep` the file name across the whole project, rewrite
-  every hit, and report hits in sibling projects instead of editing them.
-- **Add the fleet-mode note** to findings-producing agents flagged in check 11 — one line in
-  their report-format section.
-- **Delete the self-verification prose** flagged in check 12; add a scale-to-the-project clause to
-  the testing mandates from check 13, and split a conflated review into the two named ones.
-- **Replace machine-specific values** (check 14) with a placeholder the project's own install or
-  setup step expands locally — never break a path that has to be literal. Backup before any
-  history rewrite, and verify afterwards on a fresh clone, not on the local copy.
-- **Move project rules back into `AI_INSTRUCTIONS.md`** (check 17), then archive the project-level
-  `CLAUDE.md` they came from and point every project agent's startup procedure at
-  `AI_INSTRUCTIONS.md` first.
-- **Delete approved stale shadow memory** and add its path to `.gitignore`. Delete only files the user approved.
-- Surface anything that contradicts how the user described it rather than silently "fixing" it.
-
-After applying, report what changed — one line per fix, nothing more. Run only the tests these
-changes can affect: the document-path test where the project has one, never the full suite.
+Apply in an order that never breaks a pointer: rules go into `AI_INSTRUCTIONS.md` before the file
+they came from is archived; a sub-doc exists before an agent is pointed at it; a setting is in
+place before the prose it replaces goes.
 
 ---
 
-## Corrected mechanics (do not repeat these over-claims)
+## Facts a realign relies on
 
-- **Subagents DO receive the full CLAUDE.md hierarchy** — `~/.claude/CLAUDE.md`, project rules,
-  `CLAUDE.local.md`, managed policy files. Only the built-in `Explore` and `Plan` agents skip it,
-  and that cannot be configured. This entry previously claimed the opposite; corrected 2026-07-30
-  against `code.claude.com/docs/en/sub-agents`, "What loads at startup". It matters because it
-  makes restating CLAUDE.md rules inside every agent definition pure duplication — flag that as a
-  finding rather than recommending it.
-  What genuinely does NOT reach a subagent: the **output style** (it runs its own system prompt),
-  the main conversation's **auto memory**, and the conversation history. So tone rules and memory
-  facts an agent needs must be in its own prompt; CLAUDE.md rules must not be.
-  This is about the GLOBAL `CLAUDE.md`. It is no reason to put a project's rules in a
-  project-level `CLAUDE.md` (check 17): those live in `AI_INSTRUCTIONS.md`, which a subagent does
-  not load by itself — so every project agent's startup procedure names it first.
-  A `fork` is the exception — it inherits the parent's full system prompt, output style included.
-- **`.claude/rules/*.md` with `paths:` frontmatter IS native Claude Code** — documented at
-  `code.claude.com/docs/en/memory`, "Organize rules with `.claude/rules/`". This entry previously
-  said the opposite ("a Cursor convention, do not recommend it"); that was wrong and was corrected
-  2026-07-30 against the official page. It matters because path-scoped rules are the *actual*
-  mechanism for shrinking an oversized instruction file: a rule with `paths:` loads only when
-  Claude touches a matching file. Rules WITHOUT `paths:` load every session like CLAUDE.md itself.
-  `~/.claude/rules/` is the user-level equivalent.
-- **Splitting an oversized CLAUDE.md into `@path` imports does NOT reduce context.** Official:
-  *"Splitting into `@path` imports helps organization but doesn't reduce context, since imported
-  files load at launch."* Only three things actually shrink the loaded surface: deleting content
-  that isn't needed every session, moving task-specific procedure into a **skill** (loads on
-  invocation), or a **path-scoped rule** (loads on matching files). Recommend those, never imports.
-- The official size target is **under 200 lines per CLAUDE.md file**; longer files "consume more
-  context and reduce adherence". `/doctor` (Claude Code 2.1.206+) proposes trims for a checked-in
-  CLAUDE.md — it cuts what Claude can derive from the codebase and keeps pitfalls and rationale.
-- CLAUDE.md is delivered as a **user message after the system prompt**, not as part of it — which
-  is why an output style (which does modify the system prompt) holds tone rules more reliably than
-  CLAUDE.md ever did.
-- `plansDirectory` LOCATES plans; it does not rename them. Plan mode's save-and-return option writes the plan to that directory WITHOUT executing it; rename the generated `*-ultraplan.md` to `PLAN_<topic>.md` afterward.
-- Tune depth with `effortLevel`, not by adding or removing prose "be thorough" mandates.
-- Tone/register is single-homed in the **Personal Voice output style** (`~/.claude/output-styles/personal-voice.md`, active via `outputStyle` in settings, with `keep-coding-instructions: true` so default coding behavior is preserved). CLAUDE.md keeps only a short pointer. When auditing a project, restated tone rules in CLAUDE.md/AI_INSTRUCTIONS are duplication — trim to the pointer. (Historical note: tone-in-CLAUDE.md was the old default before the keep-coding mechanism was verified.)
-- Descriptions are often already fine — fix only real overlaps and dead references; do not wholesale-rewrite them.
-
----
-
-## Notes
-
-Reference the shared rules in the global `CLAUDE.md` and `settings.json` rather than restating them.
+- A subagent loads the global `CLAUDE.md` by itself; only the built-in `Explore` and `Plan` skip it.
+  So an agent file never restates it. A subagent does NOT load `AI_INSTRUCTIONS.md`, the output
+  style, auto-memory or the conversation: what it needs from those is in its own file, and its
+  startup procedure names `AI_INSTRUCTIONS.md` first. A `fork` inherits everything.
+- `CLAUDE.md` arrives as a user message after the system prompt; the output style is part of the
+  system prompt. That is why tone lives in the output style and nowhere else.
+- `plansDirectory` says where plans are saved; it does not rename them.
+- Depth is tuned with `effortLevel`, not with "be thorough" prose.

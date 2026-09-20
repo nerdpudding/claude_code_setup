@@ -83,7 +83,8 @@ point to an error message, a path, or a prescribed repair with no edit behind it
 out: a choice you made, something you weighed, something that was fine, something that could be
 done next.
 
-Before sending the report, count its sentences and cut it back to five plus one per failure. Then
+Before sending the report, count its sentences and cut it back to five, plus one per failure and
+the one line check 18 asks for. Then
 read it for any sentence that puts a question, holds out an extra, gives advice for later, or
 leaves something for him. For each: look it up or decide it, do it, delete the sentence.
 
@@ -194,6 +195,14 @@ untracked `settings.local.json` is intentional; a partially-done plan stays in `
     contradict, `AI_INSTRUCTIONS.md` wins. Make every project agent's startup procedure read
     `AI_INSTRUCTIONS.md` first, then move the file to `archive/`. Not this: a `CLAUDE.md` inside a
     cloned third-party repository, or one shipped as the configuration of another tool instance.
+
+18. **Kilo CLI's copies**, only when `command -v kilo-sync` finds the command; absent, skip this
+    check without a word. Kilo CLI is a second coding agent that cannot read this project's agents
+    or the global `CLAUDE.md`, so it keeps translated copies of both. Run `kilo-sync agents check .`
+    and `kilo-sync global check`; on exit code `1`, run the matching part of `/kilo-sync`, which
+    owns that procedure. This refreshes a generated copy and changes nothing a project file says,
+    so "Other tools are no factor" above still holds. The report carries one line for it on top of
+    the five: `Kilo: in order`, or what was refreshed.
 
 Apply in an order that never breaks a pointer: rules go into `AI_INSTRUCTIONS.md` before the file
 they came from is archived; a sub-doc exists before an agent is pointed at it; a setting is in

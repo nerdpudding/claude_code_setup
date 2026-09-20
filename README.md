@@ -94,7 +94,7 @@ belongs".
 
 ## Version history
 
-Current version: **v2.8 — A realign finishes the job** (2026-09-19). What changed in each version,
+Current version: **v2.9 — Kilo CLI follows along** (2026-09-20). What changed in each version,
 newest first: [docs/history/version_history.md](docs/history/version_history.md).
 
 ## Quick start
@@ -139,6 +139,7 @@ The Personal Voice output style and the skills take effect on the **next session
 | `/post-clear-handover` | First command in a new session after clearing | Reads the carryover + project docs, reports where things stand, proposes the next step without doing it, and archives the carryover. |
 | `/wireframe` | The layout of a screen is unsettled and seeing it is what decides it | Draws the screen in a local self-hosted Penpot and hands back a picture. Starts the stack when needed, stops it afterwards. Not for a throwaway sketch — write HTML by hand for those. |
 | `/contained-browser` | A task needs a real browser and the user's own must not be touched | Drives a headless Chromium in a container over MCP: open a page, fill a form, screenshot, scrape, test a local app. Isolated profile, loopback only. |
+| `/kilo-sync` | Kilo CLI is in use too, and the global rules or a project's agents have changed | Refreshes Kilo's own copies of both, then installs them. Says so and stops when Kilo is not set up on the machine. |
 
 **`/project-setup` vs `/realign-project`:** `/project-setup` builds structure that isn't there yet;
 `/realign-project` leaves the structure and updates the *wording, channel, and location* of an existing
@@ -157,6 +158,16 @@ archive with date prefix).
 **Across sessions:** after closing, if you want to free up context and keep going in a fresh
 session, `/pre-clear-compact` writes a carryover, you commit it and `/clear`, and
 `/post-clear-handover` picks it up on the other side.
+
+**What a kilo sync is:** Kilo CLI is a second terminal coding agent, one that can run a model from
+another provider. It cannot read this setup's global `CLAUDE.md`, and it cannot read a project's
+`.claude/agents/` either, so it works from its own translated copies of both. A kilo sync is the
+run that brings those copies back in line with the originals. Claude Code stays the source: the
+copies are generated, never edited by hand, and nothing under `~/.claude/` is touched. Run
+`/kilo-sync` after changing the global rules here, or in any project where Kilo should follow the
+same rules as Claude Code — `/realign-project` checks by itself whether one is needed, and
+`/project-setup` offers it for a new project. Without Kilo on the machine the skill says so in one
+line and stops, so the other two skills are unaffected.
 
 **`/project-setup` vs `/init`:** the built-in `/init` writes a single `CLAUDE.md` by reading
 existing code. `/project-setup` scaffolds a whole environment (structure, docs, agents, workflow).

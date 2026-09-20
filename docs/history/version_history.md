@@ -4,6 +4,30 @@ What changed in each version of this setup, newest first. Moved here verbatim fr
 2026-09-19, so the README keeps to what a reader needs first. This is a dated record: names and
 paths are as they were written at the time. New versions are added at the top.
 
+## v2.9 — Kilo CLI follows along (2026-09-20)
+
+Kilo CLI is a second terminal coding agent that can run any model from any provider. It picks up
+the skills of this setup by itself, but it cannot read the global `CLAUDE.md` as it stands or a
+project's `.claude/agents/`, so it works from translated copies of both. Keeping those copies
+current is now part of the routine that already existed, instead of a job of its own.
+
+- **New skill `/kilo-sync`.** Refreshes Kilo's copy of the global rules when the rules changed,
+  and the Kilo copies of the current project's agents. It runs in any project, and here too, where
+  only the global part applies. A translation that does not pass its check is never installed: the
+  rules Kilo already had stay live, and the report says so first.
+- **`/realign-project` checks Kilo too** (check 18) and reports one extra line: `Kilo: in order`,
+  or what it refreshed.
+- **`/project-setup` asks** "Set up Kilo CLI for this project as well?" once the agents exist.
+- **All three rest on one thing: a command `kilo-sync` that may or may not be on the machine.**
+  Where it is absent, `/kilo-sync` says so in one line and the other two skip their step without a
+  word, so nothing changes for a machine without Kilo. The skills name no path and no project; the
+  command prints the paths it wants used. What the command does and where its files live is not
+  this repository's concern.
+- **Tested for real:** `/kilo-sync` was carried out by an agent that had the skill text and nothing
+  else; it produced a translation that passed its check in one round, and three sentences of the
+  skill were tightened from what it reported. The new check of `/realign-project` was run against
+  an agent that had really changed: it saw the stale copy, refreshed it, and came back in order.
+
 ## v2.8 — A realign finishes the job (2026-09-19)
 
 Same day as v2.7. The realign skill was run on a handful of living projects and every run ended in

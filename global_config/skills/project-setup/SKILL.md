@@ -409,6 +409,16 @@ If the user wants project-specific skills:
 
 If no: continue to Phase 6.
 
+### 5.6 Kilo CLI (only when it is set up on this machine)
+
+Check with `command -v kilo-sync`. If the command is not there, skip this step without mentioning it.
+
+**Ask the user:** "Set up Kilo CLI for this project as well?" Kilo CLI is a second terminal coding
+agent; it cannot read `.claude/agents/`, so it works from translated copies of the agents just
+created.
+
+On yes, run `kilo-sync agents sync .` and report what it wrote. On no: continue to Phase 6.
+
 ---
 
 ## Phase 6: Initialize Git
@@ -446,6 +456,6 @@ After everything is set up, walk the user through how to work in the project:
 | 2. Structure | Create directories scaled to size (new or fill gaps), clone repos | any |
 | 3. Documents | README + AI_INSTRUCTIONS always; concept/roadmap/lessons/tracker as warranted | any |
 | 4. Settings | Minimal project-level `.claude/settings.json` (plansDirectory + optional permissions) | any |
-| 5. Agents & Skills | Offer doc-keeper and others; add project-specific skills | medium/large |
+| 5. Agents & Skills | Offer doc-keeper and others; add project-specific skills; offer Kilo CLI when it is installed | medium/large |
 | 6. Git | `git init`, `.gitignore`, initial commit (on request) | any |
 | 7. Explain | Teach the user the workflow | any |

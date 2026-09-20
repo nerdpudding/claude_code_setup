@@ -166,8 +166,17 @@ run that brings those copies back in line with the originals. Claude Code stays 
 copies are generated, never edited by hand, and nothing under `~/.claude/` is touched. Run
 `/kilo-sync` after changing the global rules here, or in any project where Kilo should follow the
 same rules as Claude Code — `/realign-project` checks by itself whether one is needed, and
-`/project-setup` offers it for a new project. Without Kilo on the machine the skill says so in one
-line and stops, so the other two skills are unaffected.
+`/project-setup` offers it for a new project.
+
+**What it depends on:** the three skills here are only the controls. The work is done by a command
+named `kilo-sync`, and that command — together with Kilo's own settings and the translated rules —
+comes from a separate, private setup that is **not part of this repository**. Installing this
+repository alone therefore does nothing for Kilo. The skills test for the command with
+`command -v kilo-sync`: when it is not on the machine, `/kilo-sync` says in one line that Kilo is
+not set up and stops, and `/realign-project` and `/project-setup` skip their Kilo step without a
+word, so everything else works exactly as it would without Kilo. To get the Kilo side on a machine,
+install that other setup as well; its own README lists what it needs (Kilo CLI, `python3` with
+PyYAML, `~/.local/bin` in the `PATH`).
 
 **`/project-setup` vs `/init`:** the built-in `/init` writes a single `CLAUDE.md` by reading
 existing code. `/project-setup` scaffolds a whole environment (structure, docs, agents, workflow).

@@ -3,6 +3,7 @@
   "env": {
     "DISABLE_TELEMETRY": "1",
     "DISABLE_ERROR_REPORTING": "1",
+    "DISABLE_FEEDBACK_COMMAND": "1",
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "600000"
   },
@@ -40,7 +41,7 @@
     ],
     "defaultMode": "default"
   },
-  "model": "claude-fable-5-1[1m]",
+  "model": "opus[1m]",
   "fallbackModel": [
     "claude-opus-4-8",
     "claude-opus-4-7",
@@ -63,10 +64,10 @@
   "effortLevel": "xhigh",
   "modelSettings": {
     "claude-fable-5-1": {
-      "effortLevel": "xhigh"
+      "effortLevel": "high"
     },
     "claude-opus-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "high"
     }
   },
   "plansDirectory": "./claude_plans",

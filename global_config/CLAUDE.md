@@ -217,6 +217,13 @@ A self-hosted Penpot is there to draw in unattended, from any project. **Offer i
 would settle a screen faster than prose**; the user's word ends the discussion either way.
 `/wireframe` drives it and carries the operating detail.
 
+## Browsers — one throwaway container (`[user-specified]` 2026-09-25)
+
+When a task needs a real browser, start a throwaway `playwright-shot:1` container yourself; it exits when
+done and nothing has to run beforehand. Its README (`~/vibe_claude_kilo_cli_exp/playwright-shot/README.md`)
+says how, and whose every other browser is: Penpot's serves `/wireframe` only, OpenWebUI's serves its own
+agents, and the user's own browser is never driven.
+
 ## Tone & writing style
 
 Single-homed in the **Personal Voice** output style

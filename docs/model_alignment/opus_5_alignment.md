@@ -68,11 +68,14 @@ Frontmatter `effort:` is the per-workload lever this setup underuses. Note the c
 mid-conversation does not preserve cached prefixes, so it suits a skill invoked at session start
 better than one invoked mid-flow.
 
-**This setup pins `xhigh` anyway** (`[user-specified]` 2026-09-19). The table recommends `high` as
-the everyday default, and `global_config/settings.json` keeps `effortLevel: "xhigh"` regardless:
-the main session does only the hard thinking, while the bulk of the work goes to `opus` and
-`sonnet` subagents that carry their own effort. Recorded here so a later realign leaves it alone
-rather than "fixing" it.
+**Opus 5.5 runs at `high`** (`[user-specified]` 2026-09-25). Opus 5.5 defaults to `medium`, and
+Claude Code no longer applies a top-level `effortLevel` in user settings to it: *"it keeps applying
+where it applied before, on Opus 5, Fable 5.1, and earlier models, while Opus 5.5 and models
+released after it start at their own default until you choose a level"* (model configuration
+docs). The level is therefore pinned per model, as `modelSettings."claude-opus-5-5".effortLevel:
+"high"` in `global_config/settings.json`; `/effort` writes that key itself. The top-level
+`"xhigh"` still in the file reaches only the older models. Recorded here so a later realign
+leaves it alone rather than "fixing" it.
 
 Which model the session runs on is one key in `settings.json` and is hard-coded nowhere else, so
 changing the top tier stays a one-key edit.

@@ -215,8 +215,8 @@ still the backbone of the format:
 10. **Crisp, non-overlapping subagent descriptions** — keyword-led, one owner per domain.
 
 **For current models, read [`docs/model_alignment/opus_5_alignment.md`](docs/model_alignment/opus_5_alignment.md) instead.** It
-carries what changed on Opus 5 — principle 9's `xhigh` recommendation flips to `high` (this setup
-pins `xhigh` anyway, as a recorded choice), the effort table per kind of work, which instructions to DELETE because the model now does them unprompted,
+carries what changed on Opus 5 — principle 9's `xhigh` recommendation flips to `high` (Opus 5.5
+runs at `high`, set per model, as a recorded choice), the effort table per kind of work, which instructions to DELETE because the model now does them unprompted,
 and which parts Claude Code's own system prompt already ships so the setup must not duplicate them.
 
 ## Project structure & docs

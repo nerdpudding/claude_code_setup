@@ -42,7 +42,7 @@ files because the close asked only whether documents were correct):
 - **Is each document still read to do the next work?** One that is correct but no longer needed
   moves to `archive/`. "Never delete, always archive" does not mean "never move".
 - **Does every new document sit in a category folder of `docs/` and in the hierarchy of
-  `AI_INSTRUCTIONS.md`?** If the project has a test for document paths, run it.
+  `AI_INSTRUCTIONS.md`?** Checked by reading the files, never by running a test: tests are for code.
 
 ### 3. Update status + carry leftovers
 - Update the roadmap/status line (roadmap.md, README "status", or wherever this project keeps it)

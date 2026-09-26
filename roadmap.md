@@ -34,6 +34,30 @@ Open work first, then the backlog, then one status line per sprint. Delivered de
   unavailable while telemetry is disabled, so nothing is done with it (found in the Sprint 12 review).
 - Open problem, no rule written: much of what gets written did not need to exist (recorded in
   Sprint 9).
+- **To consider, not decided: the doc-keeper checks, after an outside review of the documentation
+  approach** (2026-09-26). The user put the way of working to another AI; its conclusion was that
+  the approach holds, and that the risk it named first — a later session writing a plausible
+  motivation for a decision instead of the real one — is covered: the reason is written into the
+  sprint plan in the same session as the discussion, the plan is archived unchanged, the
+  architecture document carries only the current state, and decisions are marked by origin
+  ("(owner, <date>)" against "decided in the main session", with the measurement it rests on).
+  Worth checking whether that origin marking is written down anywhere as a rule, or only practised.
+  What remained are points for the doc-keeper agent that `project-setup` writes and `realign-project`
+  checks, if they are adopted — here, so that new and realigned projects get them alike:
+  - A check that compares file ages (a rendered diagram image against its source, as one larger
+    project's doc-keeper does) uses the time of the last commit per file
+    (`git log -1 --format=%ct -- <file>`), not the file time: git keeps no file times, so after a
+    clone every file has the same time and a stale image passes.
+  - A path check reads the file system and does not run tests. Done 2026-09-26: the remnant of the
+    abandoned experiment with tests for documents ("If the project has a test for document paths,
+    run it") is out of `project-setup`'s doc-keeper template and of `feature-close`; both now say
+    "Check paths by reading the files, never by running a test: tests are for code".
+  - The relevance check ("is it still read for the next work?") is a judgement, not a fact; it
+    stays report-only, the user decides.
+  - Cost: a full audit at every close repeats work on untouched documents. A middle way is to start
+    from what changed since the last close (`git diff` against its commit) and follow the
+    references, with a full audit now and then. It misses drift in untouched documents whose
+    targets moved; the full audit misses less. The user leans to keeping the full audit.
 
 ## Status
 

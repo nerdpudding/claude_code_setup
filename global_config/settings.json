@@ -34,7 +34,10 @@
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(rm __HOME__/vibe_claude_kilo_cli_exp/*)",
+      "Bash(rm -r __HOME__/vibe_claude_kilo_cli_exp/*)",
+      "Bash(rm -rf __HOME__/vibe_claude_kilo_cli_exp/*)"
     ],
     "deny": [
       "Read(**/sampling_prompts.txt)"
@@ -43,9 +46,9 @@
   },
   "model": "opus[1m]",
   "fallbackModel": [
+    "claude-opus-5",
     "claude-opus-4-8",
-    "claude-opus-4-7",
-    "claude-sonnet-5"
+    "claude-sonnet-5-5"
   ],
   "enabledPlugins": {
     "diagram-design@diagram-design": true,

@@ -73,6 +73,12 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 - **Never block the chat.** A long job is detached so the conversation stays answerable, and a
   background helper is announced before it starts: the command, its log, what it does, when it
   ends. What he may want to open goes into the project, never into a scratchpad he cannot see.
+- **Delete with a full path, as a command of its own** (`[user-specified]` 2026-10-17). Allow rules
+  in `settings.json` approve `rm`, `rm -r` and `rm -rf` on any path under
+  `__HOME__/vibe_claude_kilo_cli_exp/` without the auto mode classifier, which otherwise refuses such
+  deletes even at his explicit word. The rules match the command text, so write the full path and
+  put no `cd ... &&` in front. They do not check whether he asked: delete only what he asked for or
+  what you created yourself.
 - **Session start:** if they exist, read `AI_INSTRUCTIONS.md`, then `README.md`, then the relevant
   active plan, before diving in. A subagent reads `AI_INSTRUCTIONS.md` first too: it loads this
   file by itself, but not that one.
@@ -216,6 +222,12 @@ cannot be overridden here. Use `/custom_plan`, which writes the plan file and st
 A self-hosted Penpot is there to draw in unattended, from any project. **Offer it when a picture
 would settle a screen faster than prose**; the user's word ends the discussion either way.
 `/wireframe` drives it and carries the operating detail.
+
+**Screens: names, not descriptions** (`[user-specified]` 2026-10-17). A control's label is its function's
+name (Prompt, Effect, Length); every description sits behind a "?" or tooltip, never on the screen — no
+explainer lines, hints or text inside buttons; real values ("1 s"), not abstractions ("Normal"); a choice
+appears only where it gives the user something, never to expose how a model works. Calm and compact, like
+a professional editor. A project may hold the detail (SmartPrepper: `agent_guide.md` §10).
 
 ## Browsers — one throwaway container (`[user-specified]` 2026-09-25)
 

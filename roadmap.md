@@ -59,6 +59,29 @@ Open work first, then the backlog, then one status line per sprint. Delivered de
     references, with a full audit now and then. It misses drift in untouched documents whose
     targets moved; the full audit misses less. The user leans to keeping the full audit.
 
+- **Low priority, to judge later: Claude Code plugins that could improve UI/UX during development**
+  (2026-10-17, from SmartPrepper's Extend redesign; the user is not a frontend developer and converges on a
+  screen through Penpot wireframe rounds, `/wireframe`). A research agent's shortlist, nothing installed:
+  - **Try first:** Anthropic's `design` plugin, https://github.com/anthropics/knowledge-work-plugins/tree/main/design
+    — skills `design-critique`, `accessibility-review`, `ux-writing` (`/critique`, `/accessibility`,
+    `/ux-copy`) that review a built screen or a screenshot. Use: as a step in a browser gate, with the
+    project's screen rules pasted in as the checklist (it does not know them). Markdown only; it may ship MCP
+    connectors (Figma and others) — read `design/.mcp.json` before installing and leave every connector off.
+    Install (inferred from the README's pattern): `claude plugin marketplace add anthropics/knowledge-work-plugins`,
+    then `claude plugin install design@knowledge-work-plugins`.
+  - **Skip, against the user's rules:** Impeccable (https://github.com/pbakaus/impeccable) — calls
+    impeccable.style on every new design and sends telemetry by default (opt-out `DO_NOT_TRACK=1`; whether
+    the call stays with telemetry off is untested); `frontend-design`
+    (`claude-plugins-official`) — steers towards decorative, "distinctive" design, the opposite of a calm
+    tool UI (its list of AI-design tells is still useful).
+  - **Already in place:** the Penpot MCP (used inside `/wireframe`); a browser for screenshots
+    (`playwright-shot`).
+  - **An idea, a new kind of file, the user's word needed:** a per-project `DESIGN.md` holding the visual
+    tokens (colours, type, spacing, components) beside the screen rules — examples in
+    https://github.com/VoltAgent/awesome-design-md (Linear, Raycast).
+  - Scope note: the global `CLAUDE.md` got a "Screens: names, not descriptions" paragraph on 2026-10-17
+    (+6 lines against the 200-line target above).
+
 ## Status
 
 | Sprint | Status | Notes |

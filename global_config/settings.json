@@ -1,5 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "cleanupPeriodDays": 365,
   "env": {
     "DISABLE_TELEMETRY": "1",
     "DISABLE_ERROR_REPORTING": "1",
@@ -37,14 +38,15 @@
       "Bash(git commit:*)",
       "Bash(rm __HOME__/vibe_claude_kilo_cli_exp/*)",
       "Bash(rm -r __HOME__/vibe_claude_kilo_cli_exp/*)",
-      "Bash(rm -rf __HOME__/vibe_claude_kilo_cli_exp/*)"
+      "Bash(rm -rf __HOME__/vibe_claude_kilo_cli_exp/*)",
+      "Bash(bash __HOME__/.claude/skills/beep/beep.sh*)"
     ],
     "deny": [
       "Read(**/sampling_prompts.txt)"
     ],
-    "defaultMode": "default"
+    "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "fallbackModel": [
     "claude-opus-5",
     "claude-opus-4-8",
@@ -67,7 +69,7 @@
   "effortLevel": "xhigh",
   "modelSettings": {
     "claude-fable-5-1": {
-      "effortLevel": "high"
+      "effortLevel": "xhigh"
     },
     "claude-opus-5": {
       "effortLevel": "high"
@@ -87,6 +89,19 @@
     "allow": [
       "$defaults",
       "This is the user's own single-user development machine and he owns all of its GPUs and Docker. Local GPU training runs, Docker container lifecycle (run/stop/rm/logs), and starting/stopping the local llama-server are authorized routine dev-loop actions and should be allowed without a per-action sentence."
+    ]
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash __HOME__/.claude/skills/beep/beep.sh"
+          }
+        ]
+      }
     ]
   }
 }

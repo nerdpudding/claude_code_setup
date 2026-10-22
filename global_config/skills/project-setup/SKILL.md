@@ -7,9 +7,9 @@ description: "Interactive workflow to scaffold a NEW project with the preferred 
 
 You are guiding the user through setting up a new project with a clean, consistent structure.
 
-**Scale the phases and the document set to project size** — a small script may only need `README.md` + `AI_INSTRUCTIONS.md`; run the full set only for substantial projects. The phases below are an order to follow when they apply, not a checklist to force onto every project.
+**Scale the phases and the document set to project size** — a small script may only need `README.md`, `AI_INSTRUCTIONS.md` and the two agents of Phase 5.1; run the full set only for substantial projects. The phases below are an order to follow when they apply, not a checklist to force onto every project.
 
-**Quick / minimal scaffold:** for a script or tiny tool, skip straight to creating `README.md` + `AI_INSTRUCTIONS.md` (Phase 3.2 and 3.3), a `.gitignore`, and `git init` (Phase 6). Skip concept.md, roadmap, daily trackers, agents, and phase folders unless the project clearly warrants them.
+**Quick / minimal scaffold:** for a script or tiny tool, skip straight to creating `README.md` + `AI_INSTRUCTIONS.md` (Phase 3.2 and 3.3), the two agents of Phase 5.1, a `.gitignore`, and `git init` (Phase 6). Skip concept.md, roadmap, daily trackers, other agents, and phase folders unless the project clearly warrants them.
 
 **Canonical rules** (English-only, one source of truth, archive-never-delete, no AI attribution) live in the global `CLAUDE.md`. This skill references them rather than restating them, so there is one home per rule.
 
@@ -100,9 +100,9 @@ Before asking any questions, determine WHERE the project will live:
 
 Scale the structure to the project size from Phase 1.2:
 
-- **Small (script/tool):** just the project root — `README.md`, `AI_INSTRUCTIONS.md`, maybe a `docs/` folder.
+- **Small (script/tool):** the project root — `README.md`, `AI_INSTRUCTIONS.md`, `.claude/agents/` (Phase 5.1), maybe a `docs/` folder.
 - **Medium (app):** add `roadmap.md`, `concepts/`, `docs/`, `claude_plans/`, `archive/`.
-- **Large (platform):** full structure with `phase{N}/` folders and `.claude/agents/`.
+- **Large (platform):** full structure with `phase{N}/` folders.
 
 **`docs/` gets category folders from the first day** (medium/large) — see "Project organization"
 in the global `CLAUDE.md` for why, and for what belongs where. Propose the categories this project
@@ -203,7 +203,7 @@ The sprint cycle and the planning rules are in the global CLAUDE.md. What is spe
 
 ## Project hierarchy (single source of truth — nowhere else)
 What this tree holds and how other files point at it: "One tree, and pointers that cannot rot" in
-the global CLAUDE.md.
+the global CLAUDE.md. A pointer into another project: as `/realign-project` check 16 writes it.
 - <the tree>
 
 ## Agents
@@ -281,9 +281,12 @@ With an optional permissions block when the project has sensitive paths:
 
 Explain that `plansDirectory` keeps plans in the project repo (not the hidden `~/.claude/plans/`).
 
+A permission rule that has to match a literal home path goes into `.claude/settings.local.json`,
+not into this tracked file; `/realign-project` check 14 says why and how.
+
 ---
 
-## Phase 5: Create Agents (optional, medium/large)
+## Phase 5: Create Agents
 
 Subagents **do** receive the global `CLAUDE.md` (only the built-in `Explore` and `Plan` agents skip it), so do NOT restate its rules in an agent definition — that is duplication. What they do not get by themselves is `AI_INSTRUCTIONS.md`, the output style, the main conversation's auto memory, or its history. So every agent's startup procedure names `AI_INSTRUCTIONS.md` first: that is how the project's rules reach it. Give each agent a self-contained prompt covering what only it needs, plus a targeted set of files to read (not a blanket "read everything first").
 
@@ -292,77 +295,18 @@ in the global `CLAUDE.md` — read them there and match the value to the agent's
 `model:`: an unpinned agent silently inherits the (expensive) session model. Record each agent's
 tier in the AI_INSTRUCTIONS agents table so the policy survives sessions.
 
-### 5.1 Doc-keeper (offer when the project has 3+ docs)
+### 5.1 The two agents every project gets: doc-keeper and plan-reviewer
 
-**Ask the user:** "Would you like a doc-keeper agent for documentation audits and consistency checks?"
+Every project gets both, whatever its size, without asking (`[user-specified]` 2026-10-22). Create
+them from the templates beside this skill — `/realign-project` adds them from the same files where
+an existing project lacks one:
 
-If yes, create `.claude/agents/doc-keeper.md` from the template below, adapted to the project's actual files. (The template is inlined here for convenience; if it grows, it could later move to a bundled file for progressive disclosure — do not over-engineer that now.)
-
-```markdown
----
-name: doc-keeper
-description: "Use this agent when documentation needs to be audited, maintained, or organized to ensure accuracy and consistency across the project. Specifically:\n\n- After making changes to the project — to verify documentation still reflects reality\n- When the user asks to \"clean up docs\", \"check if everything is up to date\", or \"organize documentation\"\n- After a session of iterative changes where multiple files were modified\n- When archiving or renaming files — to find and fix all broken references\n- Periodically as a maintenance sweep"
-model: sonnet
----
-
-You are an elite documentation architect and audit specialist. Your sole focus is **documentation accuracy and organization**. You do not write application code, configure infrastructure, or debug runtime issues. You read project state as source of truth and only change the documentation that describes it. (You DO receive the global and project CLAUDE.md, so those rules are not restated here; what follows is what only this agent needs.)
-
-## Startup Procedure
-
-Read only the files relevant to the audit, starting with:
-1. `AI_INSTRUCTIONS.md` — project rules, hierarchy, principles
-2. `README.md` — user-facing overview
-3. `roadmap.md` — current status and plans (if present)
-[Add other key project files here]
-
-## Source of Truth Hierarchy
-
-When documents disagree, resolve using this priority order:
-1. **`AI_INSTRUCTIONS.md`** — project rules, hierarchy, and principles
-2. **Actual filesystem** — what files and directories really exist on disk
-3. **`README.md`** — must conform to the above
-4. **Everything else** — must conform to the above
-
-## Core Capabilities
-
-1. **Audit documentation state** — compare filesystem against documented hierarchies
-2. **Detect stale content** — cross-reference data across documents for mismatches
-3. **Suggest consolidation or archiving** — find redundant, superseded, or misplaced docs
-4. **Update cross-references** — find and fix all references when files move
-5. **Maintain hierarchy** — the project's rules and hierarchy live in AI_INSTRUCTIONS.md only; README references it but does not duplicate it. Flag a project-level `CLAUDE.md` that holds rules (they belong in AI_INSTRUCTIONS.md); any other list that says what lives where; a tree that carries status, counts, dates or versions, or that lists every file instead of the folders, the core files and what other documents point at; any file loose in the root of `docs/` other than `lessons_learned.md`; and any document path written bare and relative instead of from the project root (inside `docs/`, as a link whose text is that root path). After any move or rename, `git grep` the file name across the project and rewrite every hit. Check paths by reading the files, never by running a test: tests are for code.
-6. **Relevance, not only correctness** — for every document ask whether it is still read to do the next work; a correct document nobody needs is a finding, to be archived. Flag agent brief files, agent report files and plan-review documents (a milestone review's dated document is the exception): the cycle in the global CLAUDE.md produces none.
-7. **Verify completeness after changes** — check all docs are updated after project changes
-
-## Report Format
-
-### Up to Date
-Brief summary of what's correct.
-
-### Inconsistencies Found
-- The specific inconsistency
-- File and line/section references
-- What the correct value should be
-
-### Recommended Actions
-Numbered list: what to do, which file(s), priority.
-
-### Missing Documentation
-Gaps where documentation should exist but doesn't.
-
-**Fleet mode:** when run inside a Workflow fleet with a structured-output schema, return ONLY
-the structured findings list (no prose report sections).
-
-## Constraints
-- Match a document's length to what the task needs — cover the substance, don't pad with filler
-  sections, redundant summaries, or boilerplate. (The user's output style carries this rule for the
-  main conversation, and an output style does not reach a subagent — so it is restated here.)
-- Read before judging; report findings, do not edit — the main session applies them.
-- After file moves or renames, check ALL pointers.
-- A doubt the files can settle is settled from the files; one they cannot settle is reported as
-  it stands, in one line.
-```
-
-**Adapt this template** to the specific project: update the startup procedure with actual key files, adjust the source-of-truth hierarchy to include project-specific authoritative files, and add any project-specific capabilities or rules.
+- `.claude/agents/doc-keeper.md` from `${CLAUDE_SKILL_DIR}/templates/doc-keeper.md`: put the
+  project's key files in its startup procedure and its source-of-truth hierarchy.
+- `.claude/agents/plan-reviewer.md` from `${CLAUDE_SKILL_DIR}/templates/plan-reviewer.md`: fill in
+  the project name and the two `[SLOT …]` lines — the documents it reads first, and the project's
+  traps (from `docs/lessons_learned.md` and the rules in `AI_INSTRUCTIONS.md`). A new project with
+  nothing to put there deletes the slot lines.
 
 ### 5.2 Additional agents (offer based on project needs)
 
@@ -423,7 +367,7 @@ On yes, run `kilo-sync agents sync .` and report what it wrote. On no: continue 
 
 ## Phase 6: Initialize Git
 
-If not already a repo, run `git init`. Create a `.gitignore` appropriate to the stack (include any sensitive paths covered by `permissions.deny`). Make an initial commit when the user asks. No AI attribution is needed in the message — that is enforced globally via `includeCoAuthoredBy: false`.
+If not already a repo, run `git init`. Create a `.gitignore` appropriate to the stack (include any sensitive paths covered by `permissions.deny`, and `.claude/settings.local.json` — git does not ignore it by itself). Make an initial commit when the user asks. No AI attribution is needed in the message — that is enforced globally via `includeCoAuthoredBy: false`.
 
 **Check the branch name before the first commit.** Git's own default is still `master`; it creates `main` only when `init.defaultBranch` is set. The user's own projects are on `main` — the `master` ones are third-party clones. So verify with `git config --global init.defaultBranch`, and if it is unset or the new repo landed on `master`, fix both: `git branch -m main`, and set the global default so it cannot recur. Renaming is free before the first push and awkward afterwards. (`[user-specified]` 2026-07-27 — a fresh repo silently got `master` because the setting was missing, and the mismatch only surfaced when VS Code showed the branch as unpublished.)
 
@@ -438,7 +382,8 @@ After everything is set up, walk the user through how to work in the project:
 - **Read `AI_INSTRUCTIONS.md` first**, then README.md, then the relevant active plan.
 - **Scale workflow depth to the task** — a small fix needs no plan, roadmap, or ceremony.
 - **Use /custom_plan for non-trivial features.** It researches read-only, writes
-  `claude_plans/PLAN_<name>.md`, and stops — a persistent, reviewable plan file.
+  `claude_plans/PLAN_<name>.md`, and stops — a persistent, reviewable plan file. The project's
+  `plan-reviewer` agent reviews it before anything is built.
 - **Build later, only on an explicit instruction** (e.g. "implement PLAN_<name>"). Saving or approving a plan is not approval to start coding.
 - **After delivery, run /feature-close** — docs check, leftovers carried to the backlog, the plan archived with a date prefix (e.g. `2026-01-28_PLAN_<topic>.md`).
 - **To continue in a fresh session** after freeing up context: `/pre-clear-compact` writes `sessions/SESSION_CARRYOVER.md` (created on demand), you commit it and `/clear`, and `/post-clear-handover` picks it up on the other side and archives it.
@@ -456,6 +401,6 @@ After everything is set up, walk the user through how to work in the project:
 | 2. Structure | Create directories scaled to size (new or fill gaps), clone repos | any |
 | 3. Documents | README + AI_INSTRUCTIONS always; concept/roadmap/lessons/tracker as warranted | any |
 | 4. Settings | Minimal project-level `.claude/settings.json` (plansDirectory + optional permissions) | any |
-| 5. Agents & Skills | Offer doc-keeper and others; add project-specific skills; offer Kilo CLI when it is installed | medium/large |
+| 5. Agents & Skills | Create doc-keeper and plan-reviewer; offer other agents; add project-specific skills; offer Kilo CLI when it is installed | any |
 | 6. Git | `git init`, `.gitignore`, initial commit (on request) | any |
 | 7. Explain | Teach the user the workflow | any |

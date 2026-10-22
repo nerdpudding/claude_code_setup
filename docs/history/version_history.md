@@ -2,7 +2,29 @@
 
 What changed in each version of this setup, newest first. Moved here verbatim from `README.md` on
 2026-09-19, so the README keeps to what a reader needs first. This is a dated record: names and
-paths are as they were written at the time. New versions are added at the top.
+paths are as they were written at the time, except other projects' names, which this public repo
+does not carry (2026-10-22). New versions are added at the top.
+
+## v3.0 — Agents in every project, quieter sessions (2026-10-22)
+
+- **Every project gets two agents, `doc-keeper` and `plan-reviewer`,** whatever its size.
+  `/project-setup` creates them without asking; `/realign-project` adds a missing one (new check
+  18). Both come from templates beside `/project-setup` (`templates/`), one home for both skills.
+  `/custom_plan` offers the review by the project's `plan-reviewer`.
+- **`/feature-close` checks the project's agents** at every close: does the sprint change what an
+  agent reads or relies on, and if so the agent is updated.
+- **The account name out of tracked files where it can be avoided** — a preference, not a rule.
+  `/realign-project` check 14 repairs documents (`~/...`), never touches code that runs but names
+  it in the report and puts a refactoring item on that project's backlog, and offers — default no
+  — to remove the name from git history.
+- **New skill `/beep`**: a sound after an implementation round, before a decision is asked, and on
+  a permission prompt; never in regular chat. Sound and count are set with `/beep`.
+- **A question is answered, not acted on**: the output style says so in one place; the global
+  `CLAUDE.md` copy went.
+- **Global `CLAUDE.md` shorter**: SOLID without its per-letter list; the cross-project pointer rule
+  now lives in `/realign-project` check 16; "Complex builds" keeps what holds while building, and
+  what a plan must contain lives in `/custom_plan`.
+- **Plans mark every decision** `(the user, <date>)` or `(decided in session)`.
 
 ## v2.9 — Kilo CLI follows along (2026-09-20)
 
@@ -253,8 +275,8 @@ model-dependent (Fable 5 and Sonnet 5 default to `high`).
 
 ## v2.1 — Fable 5 / field-test sync (2026-07-03)
 
-Synced `global_config/` back from the live `~/.claude/` after a month of field use (mainly on the
-SmartPrepper project) and the move to Claude Fable 5:
+Synced `global_config/` back from the live `~/.claude/` after a month of field use (mainly in a
+larger sibling project) and the move to Claude Fable 5:
 
 - **New skill `/feature-close`** — post-delivery hygiene: verify docs/roadmap match what was built,
   carry leftovers to the backlog, graduate lessons to `lessons_learned.md`, archive the plan with a

@@ -33,7 +33,7 @@ stays as it is. A doubt that was settled is not mentioned in the report.
 it. A memory note is deleted only after what it says is confirmed in a tracked document (check 7).
 Before the first edit run `git status --porcelain`: if the tree already holds changes, build on
 them, do not redo them, and say so in one sentence of the report. A file git does not track is
-left as it is. Git history is never rewritten. A sub-doc that a check tells you to create is asked
+left as it is. Git history is never rewritten without a yes to check 14's history question. A sub-doc that a check tells you to create is asked
 for by this command.
 
 **Other tools are no factor.** The user works in Claude Code. What another tool loads is not
@@ -83,8 +83,8 @@ point to an error message, a path, or a prescribed repair with no edit behind it
 out: a choice you made, something you weighed, something that was fine, something that could be
 done next.
 
-Before sending the report, count its sentences and cut it back to five, plus one per failure and
-the one line check 18 asks for. Then
+Before sending the report, count its sentences and cut it back to five, plus one per failure, one
+naming check 14's code files, and the one line check 19 asks for. Then
 read it for any sentence that puts a question, holds out an extra, gives advice for later, or
 leaves something for him. For each: look it up or decide it, do it, delete the sentence.
 
@@ -158,11 +158,31 @@ untracked `settings.local.json` is intentional; a partially-done plan stays in `
 13. **Testing and review.** A mandate for exhaustive suites or long runs gets a scale-to-the-project
     clause. A project that describes one review gets the two the global `CLAUDE.md` describes: the
     plan before building, the build at milestones.
-14. **Machine-specific values in a repo with a public remote** (github.com, gitlab.com — look it
-    up with `git remote -v`; a private or home server is not this). A username, a home path, a
-    hostname or an internal IP in a document or an instruction file becomes a placeholder the
-    project's setup step expands; never break a path that has to be literal, since permission
-    rules match command text.
+14. **The user's account name, and machine-specific values.** The global `CLAUDE.md` prefers the
+    account name kept out of tracked files where it can be avoided.
+    - *Any repo:* `git grep -n -w "$(id -un)"` and `git grep -n "$HOME"`. Repair where `~/...` or a
+      path relative to the project does the same job: documents and instruction files, dated
+      records included (`~/` keeps their meaning); a scratchpad path becomes `<scratchpad>`; a
+      `permissions` entry in a tracked `.claude/settings.json` that must match a literal home path
+      moves to `.claude/settings.local.json`, which goes into `.gitignore`. Where the name is
+      needed — an ssh login, a git remote, a sudoers line — it stays. Code, configuration that
+      runs, a generator or a conda export is never edited: a realign must not break how the
+      project works. The report names those files in one sentence, and one backlog item in the
+      project's `roadmap.md` (or wherever it keeps its backlog) says to consider refactoring them
+      to take the path from configuration, with the file list. A project with no backlog at all
+      gets no new file; the report sentence is the record.
+    - *A repo with a public remote* (github.com, gitlab.com — look it up with `git remote -v`; a
+      private or home server is not this): a hostname or an internal IP in a document or an
+      instruction file becomes a placeholder the project's setup step expands. Never break a path
+      that has to be literal, since permission rules match command text.
+    - *History — optional.* When `git log --all -S "$(id -un)"` finds the name and
+      `AI_INSTRUCTIONS.md` records no earlier answer, this is the run's one real question, asked
+      as "The rare real question" says: remove the name from earlier commits? Default no. Write
+      the answer into `AI_INSTRUCTIONS.md`, so it is asked once. On yes, before any other edit: the
+      tree must be clean, otherwise skip it and say so; `git filter-repo` must be installed,
+      otherwise say how to install it and skip; make a mirror backup (`git clone --mirror`) beside
+      the project; replace the home path with `~/` in every commit (`git filter-repo
+      --replace-text`). The force push is left to the user.
 15. **Delegation prose** that hands out work finishable in a handful of tool calls, spawns several
     agents where one does, or uses a subagent to verify the session's own work. Bring it in line
     with "When to delegate at all" in the global `CLAUDE.md`.
@@ -179,8 +199,17 @@ untracked `settings.local.json` is intentional; a partially-done plan stays in `
       marked approved and frozen;
     - documents nobody reads to do the next work — dated reports, plan-review documents, agent brief
       and report files — move to `archive/`; a milestone review's dated document stays;
-    - a pointer into another project that carries a folder path or a line number is rewritten the
-      way "Pointers across projects" asks.
+    - a pointer into another project rests on the name, never on the folder (`[user-specified]`
+      2026-09-19) — no test can check another project's paths, so the pointer has to survive a
+      move by itself. One line, plus the path of that project's `AI_INSTRUCTIONS.md` (written
+      `~/...`), the one fixed address a project has, so the reader finds the file through the tree
+      there: `<project>: lessons_learned.md (lesson 27, copied lists in agent files)`. It names the
+      section, never a line number; it points at the file that owns the fact, not at a copy, and
+      quotes the values it relies on, so a change shows up as a mismatch and not as a silent wrong
+      answer. A file other projects cite is marked so in its own tree and keeps its name. A data
+      file deep inside another project — a model, an adapter — is below what that tree lists, so
+      its path lives in ONE configuration entry on the pointing side, with the date it was last
+      verified, never in prose. A pointer that breaks this is rewritten.
     - a test that checks documentation — document paths, pointers — moves out of the test suite to
       `archive/`, its entry leaves the script that runs the tests (the one edit to a script a
       realign makes), and the documents that describe it are corrected.
@@ -196,7 +225,17 @@ untracked `settings.local.json` is intentional; a partially-done plan stays in `
     `AI_INSTRUCTIONS.md` first, then move the file to `archive/`. Not this: a `CLAUDE.md` inside a
     cloned third-party repository, or one shipped as the configuration of another tool instance.
 
-18. **Kilo CLI's copies**, only when `command -v kilo-sync` finds the command; absent, skip this
+18. **The two agents every project has: `doc-keeper` and `plan-reviewer`** (`[user-specified]`
+    2026-10-22). A missing one is created from
+    `${CLAUDE_SKILL_DIR}/../project-setup/templates/<name>.md`: the doc-keeper's startup files and
+    source-of-truth hierarchy become this project's; the plan-reviewer's project name and its two
+    `[SLOT …]` lines are filled from `AI_INSTRUCTIONS.md` and `docs/lessons_learned.md`, or the slot
+    lines are deleted where there is nothing yet. Each goes into the agents table in
+    `AI_INSTRUCTIONS.md`. An existing one is left as it is, apart from what the other checks
+    repair.
+
+19. **Kilo CLI's copies**, always the last check, so the copies include what the checks above
+    changed. Only when `command -v kilo-sync` finds the command; absent, skip this
     check without a word. Kilo CLI is a second coding agent that cannot read this project's agents
     or the global `CLAUDE.md`, so it keeps translated copies of both. Run `kilo-sync agents check .`
     and `kilo-sync global check`; on exit code `1`, run the matching part of `/kilo-sync`, which

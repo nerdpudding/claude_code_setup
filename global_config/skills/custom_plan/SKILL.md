@@ -72,12 +72,15 @@ The design and the order of work. Interface contracts, data flow, non-trivial de
 
 ## Shared state & seams        <!-- REQUIRED for multi-package/multi-agent work -->
 Every state/file/flag that crosses a package boundary: its ONE owning writer, the ONE shared
-read-predicate every consumer uses, and which integration test covers that seam. (Parallel
-builds fail in the seams, not the packages — see the global "Complex builds" guard rails.)
+read-predicate every consumer reads — never its own interpretation of the raw state — and the
+integration test that crosses that seam. (Parallel builds fail in the seams, not the packages: a
+five-agent round once delivered green per-package suites while the review found 26 defects,
+nearly all in the seams.)
 
 ## Failure & resume semantics  <!-- REQUIRED when any step is long-running or multi-stage -->
-Per long-running step: what happens on mid-run failure, what state is on disk, how a re-run
-resumes. Gating state may only be set on verified success — error paths fail loudly.
+Per long-running step, settled here before the build: what happens on mid-run failure, what state
+is on disk (not in memory), how a re-run resumes. Gating state may only be set on verified
+success — error paths fail loudly.
 
 ## Risks & open questions
 What could go wrong; anything needing a decision before building.
@@ -96,14 +99,18 @@ edge-case testing IS warranted here, say why; otherwise it is cost without value
 ```
 
 Keep it concrete (real file paths, real function/endpoint names from step 2), not generic.
+Mark every decision in the plan with its origin — `(the user, <date>)` when he made it,
+`(decided in session)` when the plan's author did — so a later session cannot take one for the
+other.
 Build agents must be briefed to report deviations + watch items in their final output — those
 feed the milestone review when one comes.
 
 ### 4. Offer an independent review of the plan
 When the plan is complex, or must run seamlessly across parallel agents each with their own task,
-offer to have it reviewed by **an agent that did not write it** — for which model, see "Model
-tiers for subagents" in the global `CLAUDE.md` — before anything is built. Feed the findings back
-into the plan file. This is the routine
+offer to have it reviewed by the project's **`plan-reviewer` agent**
+(`.claude/agents/plan-reviewer.md`) before anything is built; where a project lacks one, by an
+agent that did not write the plan, on the tier "Model tiers for subagents" in the global
+`CLAUDE.md` names. Feed the findings back into the plan file. This is the routine
 check for that kind of plan — the user often has no time to read a plan in full and relies on it.
 Skip it for a small, single-agent plan.
 

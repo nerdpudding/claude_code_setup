@@ -8,8 +8,9 @@ This is a template repository for setting up and managing global Claude Code con
 
 The global `CLAUDE.md` holds the rules that apply in every project. These hold only here:
 
-- **No build tools, no automation.** The repo is files plus one sync script.
-- **Other projects stay unnamed** — this repository is public. Another project of the user is referred to by what it is ("a larger sibling project", "another project"), never by its name — not in docs, not in plans, not in commit messages. The one exception is a functional path a skill needs to work, which keeps its real value behind the `__HOME__` placeholder `install.sh` expands
+- **No build tools, no automation.** The repo is files plus one sync script, and the small script
+  `/beep` runs.
+- **Other projects stay unnamed** — this repository is public. Another project of the user is referred to by what it is ("a larger sibling project", "another project"), never by its name — not in docs, not in plans, not in commit messages. The one exception is a functional path a skill or the global `CLAUDE.md` needs to work, which keeps its real value behind the `__HOME__` placeholder `install.sh` expands; the tool repos those paths name (`Penpot-Self-Host`, `playwright-shot`) may also be named in plain text
 - **`global_config/` is the source; `~/.claude/` is the copy.** Edit here, then `./install.sh install`.
   A change made directly in `~/.claude/` comes back with `./install.sh pull` before anything else.
 - **An instruction change is tested where it is used**: a change to a skill is run in a real project
@@ -61,6 +62,7 @@ claude-code-setup/
     ├── settings.json               # Project-level Claude settings (plansDirectory: ./claude_plans)
     └── agents/
         ├── doc-keeper.md           # Documentation audit agent
+        ├── plan-reviewer.md        # Independent review of a plan before building
         └── prompt-expert.md        # Judges instruction changes before they ship (temporary)
 ```
 
@@ -69,6 +71,7 @@ claude-code-setup/
 | Agent | Model | File | When to use |
 |-------|-------|------|-------------|
 | doc-keeper | `sonnet` | `.claude/agents/doc-keeper.md` | After making changes — to verify docs still reflect reality. When asked to clean up, audit, or organize documentation. |
+| plan-reviewer | `opus` | `.claude/agents/plan-reviewer.md` | After `/custom_plan`, before anything is built — checks a plan's premises against the files, one home per fact, whether a rule will bind, scope against the roadmap. Read-only; the main thread writes its findings into the plan. |
 | prompt-expert | `fable` | `.claude/agents/prompt-expert.md` | Before adding, rewording or deleting a rule in CLAUDE.md, an output style, a skill or an agent — judges whether it will bind, whether the wording is right, and whether the channel is right. Reads the official docs first; reports only. |
 
 **Two deliberate exceptions on `prompt-expert`, so a later audit does not "fix" them:**
@@ -82,15 +85,16 @@ that work is done, not carried into other projects as a template.
 
 | Skill | File | What it does |
 |-------|------|-------------|
-| `/project-setup` | `global_config/skills/project-setup/SKILL.md` | Scaffold a NEW project with the preferred structure, docs, agents, workflow. |
+| `/project-setup` | `global_config/skills/project-setup/SKILL.md` | Scaffold a NEW project with the preferred structure, docs, agents, workflow; every project gets `doc-keeper` and `plan-reviewer` from the templates in `templates/` beside it. |
 | `/realign-project` | `global_config/skills/realign-project/SKILL.md` | Bring an EXISTING project in line with the global `CLAUDE.md`: repairs what is out of line itself, asks almost nothing, reports in a few sentences, commits nothing. Counterpart to `/project-setup`. |
 | `/custom_plan` | `global_config/skills/custom_plan/SKILL.md` | Plan a sprint/feature read-only into `claude_plans/PLAN_<name>.md`, then stop. Replaces native plan mode (which auto-executes on approval). Build later on an explicit "implement PLAN_<name>". |
-| `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, record real token totals, graduate lessons, archive the plan with a date prefix. |
+| `/feature-close` | `global_config/skills/feature-close/SKILL.md` | Post-delivery hygiene: verify docs/roadmap, carry leftovers to the backlog, record real token totals, graduate lessons, update the project's agents, archive the plan with a date prefix. |
 | `/doc-sweep` | `global_config/skills/doc-sweep/SKILL.md` | Run the doc-consistency sweep as a capped saved workflow (4–7 cluster readers + verifier + merger); small projects keep the single doc-keeper pass. |
 | `/pre-clear-compact` | `global_config/skills/pre-clear-compact/SKILL.md` | Write a session carryover (`sessions/SESSION_CARRYOVER.md`) before freeing up context, then stop. |
 | `/post-clear-handover` | `global_config/skills/post-clear-handover/SKILL.md` | Re-orient in a fresh session: read the carryover + docs, report, propose the next step, archive the carryover. |
 | `/wireframe` | `global_config/skills/wireframe/SKILL.md` | Draw a screen in the local self-hosted Penpot and hand back a picture, instead of describing it in prose. |
 | `/contained-browser` | `global_config/skills/contained-browser/SKILL.md` | Drive a headless Chromium in a container over MCP — never the user's own browser. |
+| `/beep` | `global_config/skills/beep/SKILL.md` | Switch on or off the sound that tells the user Claude needs him, and set which sound and how often; `beep.sh` beside it plays it and keeps the settings. |
 | `/kilo-sync` | `global_config/skills/kilo-sync/SKILL.md` | Refresh Kilo CLI's own copies of the global rules and of a project's agents, through the `kilo-sync` command. Says so and stops when that command is not installed; `/realign-project` and `/project-setup` reach the same command conditionally. |
 
 ## Saved workflows (distributed via `global_config/workflows/`)

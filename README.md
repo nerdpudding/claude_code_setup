@@ -70,7 +70,7 @@ These files are kept in this repo under `global_config/`, and `install.sh` copie
 | `AI_INSTRUCTIONS.md` | **The authoritative source for one project**: its rules, where everything lives, its agents. | Every project has one — created by `/project-setup`, or brought in line by `/realign-project`. Its purpose and shape are the same everywhere; its content is about that one project. Claude Code does not load it by itself: the global `CLAUDE.md` tells every session and every subagent to read it first. |
 | `README.md`, `roadmap.md`, `docs/`, `claude_plans/`, `archive/` | What the project is, what is planned and what is done, the detail, the plans, and what is outdated. | When `AI_INSTRUCTIONS.md` grows too long, detail moves into a document under `docs/` that it points at. The rules stay. |
 | `.claude/settings.json` | The project's own switches — mainly that plans are saved inside the project. | Small. Created by `/project-setup`. |
-| `.claude/agents/` | Helpers for this project, each with one job and a pinned model. | Always per project. Each agent reads `AI_INSTRUCTIONS.md` first. |
+| `.claude/agents/` | Helpers for this project, each with one job and a pinned model. Every project has at least `doc-keeper` and `plan-reviewer`. | Always per project. Each agent reads `AI_INSTRUCTIONS.md` first. |
 
 ### What a project does not have: a `CLAUDE.md` of its own
 
@@ -94,7 +94,7 @@ belongs".
 
 ## Version history
 
-Current version: **v2.9 — Kilo CLI follows along** (2026-09-20). What changed in each version,
+Current version: **v3.0 — Agents in every project, quieter sessions** (2026-10-22). What changed in each version,
 newest first: [docs/history/version_history.md](docs/history/version_history.md).
 
 ## Quick start
@@ -120,7 +120,9 @@ cd claude-code-setup
 
 `install.sh` only touches the files this repo manages (`CLAUDE.md`, `settings.json`,
 `output-styles/`, `skills/`, `workflows/`) — machine-local state like `settings.local.json`, memory, history,
-and plugins is left alone. The reverse direction works too: after editing the live config, run
+and plugins is left alone. So are the settings inside `settings.json` that belong to one machine —
+a status line, extra directories — listed in `LOCAL_SETTINGS` at the top of `install.sh`: install
+keeps them, diff ignores them, pull leaves them out of the repo. The reverse direction works too: after editing the live config, run
 `./install.sh pull` to bring the changes back into the repo and commit them. (Manual equivalent:
 `cp -r global_config/* ~/.claude/`.)
 
@@ -130,15 +132,16 @@ The Personal Voice output style and the skills take effect on the **next session
 
 | Skill | Use it when… | What it does |
 |-------|--------------|--------------|
-| `/project-setup` | Starting a new project, or verifying the global setup on a new PC | Scaffolds structure, docs, agents, workflow — scaled to project size (a small script needs only README + AI_INSTRUCTIONS). |
+| `/project-setup` | Starting a new project, or verifying the global setup on a new PC | Scaffolds structure, docs, agents, workflow — scaled to project size (a small script needs only README + AI_INSTRUCTIONS and the two agents every project gets, `doc-keeper` and `plan-reviewer`). |
 | `/realign-project` | An existing project needs bringing in line — after a model upgrade, after this setup changed, or when its docs have drifted | Audits `AI_INSTRUCTIONS.md`, a stray `CLAUDE.md`, agents, skills, settings, auto-memory and the document structure, repairs what is out of line itself, and reports in a few sentences. Asks only for a step git cannot undo or a preference no file records — before the first edit. Commits nothing. |
-| `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, stops. Build later on "implement PLAN_<name>". |
-| `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, records the round's real token totals, graduates lessons, archives the plan with a date prefix. |
+| `/custom_plan` | Planning a sprint or feature | Explores read-only, writes `claude_plans/PLAN_<name>.md`, offers a review by the project's `plan-reviewer`, stops. Build later on "implement PLAN_<name>". |
+| `/feature-close` | A feature/sprint has been delivered | Verifies docs/roadmap match what was built, carries leftovers to the backlog, records the round's real token totals, graduates lessons, updates the project's agents where the sprint changed what they rely on, archives the plan with a date prefix. |
 | `/doc-sweep` | Sprint close or periodic maintenance on a project with a substantial doc tree | Runs the doc-consistency sweep as a capped workflow fleet (4–7 cluster readers + verifier + merger); only the merged findings return to the session. Small projects: single doc-keeper pass instead. |
 | `/pre-clear-compact` | You want to free up context and continue in a fresh session | Writes a curated `sessions/SESSION_CARRYOVER.md` (status, decisions, conventions, next step), then stops so you can commit and `/clear`. |
 | `/post-clear-handover` | First command in a new session after clearing | Reads the carryover + project docs, reports where things stand, proposes the next step without doing it, and archives the carryover. |
 | `/wireframe` | The layout of a screen is unsettled and seeing it is what decides it | Draws the screen in a local self-hosted Penpot and hands back a picture. Starts the stack when needed, stops it afterwards. Not for a throwaway sketch — write HTML by hand for those. |
 | `/contained-browser` | A task needs a real browser and the user's own must not be touched | Drives a headless Chromium in a container over MCP: open a page, fill a form, screenshot, scrape, test a local app. Isolated profile, loopback only. |
+| `/beep` | You step away and want to hear when Claude needs you | Switches on or off a sound that plays after an implementation round, before a decision is asked, and on a permission prompt — never in regular chat. Sets which sound and how often. |
 | `/kilo-sync` | Kilo CLI is in use too, and the global rules or a project's agents have changed | Refreshes Kilo's own copies of both, then installs them. Says so and stops when Kilo is not set up on the machine. |
 
 **`/project-setup` vs `/realign-project`:** `/project-setup` builds structure that isn't there yet;

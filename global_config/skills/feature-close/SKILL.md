@@ -34,7 +34,7 @@ deferred, what changed along the way.
 ### 2. Bring the docs up to date — yourself, in the main thread
 Update every doc the sprint's changes made stale: README, architecture and usage docs,
 cross-references to files that moved or were renamed, tables listing files or commands. You built
-this; you know what changed. Do not delegate this and do not defer it to the audit in step 9 —
+this; you know what changed. Do not delegate this and do not defer it to the audit in step 10 —
 that audit exists to catch what you could NOT have known, not to hand you your own to-do list back.
 
 Two questions belong to this step (`[user-specified]` 2026-09-19 — one project's `docs/` reached 84
@@ -83,7 +83,14 @@ needs it. Then move the plan to `archive/YYYY-MM-DD_PLAN_<name>.md` and repair t
 If auto-memory is active and the project's cross-session state changed (e.g. an ongoing goal is
 now done), update it — don't leave memory pointing at closed work.
 
-### 9. Alignment audit — LAST, once everything else has moved
+### 9. The project's agents
+For each file in `.claude/agents/`, ask whether this sprint or session changed what it relies on
+(`[user-specified]` 2026-10-22): a document it reads first, a file it points at that moved, a new
+trap or lesson, a new seam or decision. Where it did, edit the agent; one that still fits is left
+as it is. When an agent changed and `command -v kilo-sync` finds the command, run the agents part
+of `/kilo-sync`, so Kilo CLI's copies follow.
+
+### 10. Alignment audit — LAST, once everything else has moved
 Only now delegate the doc audit, to the project's **doc-keeper agent** if it has one, otherwise a
 general agent on the tier "Model tiers for subagents" in the global `CLAUDE.md` names for
 documentation work. Run it inline only for a trivially small project; for a substantial doc tree
@@ -102,7 +109,7 @@ Three rules, each learned the hard way (`[user-specified]` 2026-07-30):
 Apply the findings in the main thread (read each target before editing). If it reports something
 that contradicts how the sprint was described, surface it — don't silently "fix" it.
 
-### 10. Report and hand back
+### 11. Report and hand back
 Summarize: what was verified/updated, where the leftovers landed, what was archived, anything
 that contradicted expectations (surface it, don't silently "fix" it). Offer — but don't perform —
 the commit.

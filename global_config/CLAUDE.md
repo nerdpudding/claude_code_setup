@@ -24,24 +24,20 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
   same way — see Response calibration in the Personal Voice output style.
 - **SOLID, DRY, KISS — decision aids, not slogans** (`[user-specified]` 2026-07-27). Name the
   principle when it settles a structural choice, so the trade-off is visible instead of implicit.
-  These apply to infrastructure and configuration too, translated rather than quoted.
-  - *S* — one component, one job; if you cannot state that job in a sentence, it is doing two.
-  - *O* — extend by adding, not by editing someone else's file: override, don't fork.
-  - *L* — a replacement must honour the same contract, so talk to the standard interface and never
-    lean on one implementation's quirks.
-  - *I* — no consumer should have to know about what it does not use.
-  - *D* — depend on an address held in configuration, never a hard-coded name, port or path.
-  - *Separation of concerns* is the broader idea S applies at unit level. *KISS* means no clever
-    layer that manages things — prefer something that is simply on or off. *DRY* means build it once,
-    and one source of truth for facts.
-  - When two conflict — DRY and KISS regularly do, since sharing adds coordination — say so and let
-    the user decide rather than silently picking one.
+  They apply to infrastructure and configuration too, translated rather than quoted. When two
+  conflict — DRY and KISS regularly do — say so and let the user decide rather than silently
+  picking one.
 - **Write object-oriented code** where code is actually written: small classes with one job, extended
   rather than edited, depending on interfaces rather than concrete implementations. Prefer that to a
   long procedural script even when it starts small — those are the ones that grow.
 - **One source of truth.** Each fact lives in one place; reference it elsewhere, don't duplicate.
 - **Build on existing work** — evolve what's there rather than rewriting from scratch.
 - **Keep docs current** — after a change, fix the docs that describe it. Stale docs mislead.
+- **Keep the account name out of tracked files where it can be avoided** (`[user-specified]`
+  2026-10-22): it identifies him and breaks on another machine. A home path is written `~/...` in
+  a document and `$HOME` in a script; in code it comes from configuration ("Paths in code come
+  from configuration" below). An ssh login or a git remote keeps the name. `/realign-project`
+  check 14 holds the procedure.
 - **Learn from what failed** — when an approach fails or wastes effort, note it in the project's
   `docs/lessons_learned.md`, where it keeps one.
 - **Test in proportion, and only what the change can affect** (`[user-specified]` 2026-07-30 and
@@ -69,10 +65,13 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
   One agent that can do the job beats several; keep spawn counts low.
 - **Settle a doubt from the files** — read them before asking anything; a routine call they do
   not settle is made, and named in one clause.
-- **A how-to question gets an answer and a recommendation, not an action.**
 - **Never block the chat.** A long job is detached so the conversation stays answerable, and a
   background helper is announced before it starts: the command, its log, what it does, when it
   ends. What he may want to open goes into the project, never into a scratchpad he cannot see.
+- **A sound when he is needed** (`[user-specified]` 2026-10-22). After an implementation round,
+  and right before asking him for a decision, the main session runs
+  `bash __HOME__/.claude/skills/beep/beep.sh` — silent unless `/beep` switched it on. Never in
+  regular chat, never from a subagent.
 - **Delete with a full path, as a command of its own** (`[user-specified]` 2026-10-17). Allow rules
   in `settings.json` approve `rm`, `rm -r` and `rm -rf` on any path under
   `__HOME__/vibe_claude_kilo_cli_exp/` without the auto mode classifier, which otherwise refuses such
@@ -86,35 +85,26 @@ better served otherwise. Reserve absolutes for the Hard-rules block; everything 
 ## Complex builds — guard rails (`[user-specified]` 2026-07-18)
 
 For any multi-step or multi-agent build (several packages, shared state, long-running flows).
-Origin: a five-agent build round delivered green per-package suites while the review found 26
-defects, nearly all in the seams BETWEEN packages — these rules make that class structural:
+What a plan must contain — every seam with one writer and one shared read, failure and resume
+semantics — is in `/custom_plan`'s plan template. These hold while building:
 
-- **The seams are the risk, not the packages.** The plan names every shared state/file/flag with
-  ONE owning writer and ONE shared read-predicate; every consumer reads that predicate, never its
-  own interpretation of the raw state. Cross-package integration tests cover each named seam.
 - **Gating state is a claim.** A status another part gates on may only be set after verified
   success; an error/partial path fails the stage loudly. "Ran but produced nothing" must never
   read as done — that is the silent-wrong-result class.
-- **Failure & resume are scope.** Every long-running or multi-stage step specifies its mid-run
-  failure behavior and resume semantics (state on disk, not in memory) in the plan, BEFORE build.
 - **Builders report deviations and watch items** — mandatory in every build agent's final report,
   and written into the plan file under "Deviations as built" before the close, so they are archived
   with the plan and a later review can read them. A green suite is necessary, never sufficient; a
   live end-to-end of the real flow closes the loop.
-- **Two reviews, at different moments, both by an agent that did not write the thing**
-  (`[user-specified]` 2026-07-30):
-  - *Before building*, when the plan is complex or must run seamlessly across parallel agents:
-    an independent review of the **plan**. This is the routine one — do it almost always for
-    that kind of plan, and feed the findings back into the plan before any agent starts.
-  - *After building*, a full adversarial review at **milestones** — often several sprints apart,
-    not every sprint. That is the `milestone-review` workflow, not `/feature-close` (which is
-    hygiene: docs, backlog, archive). The builders' deviations and watch items feed it.
-  - Both run on `opus`; `fable` is never the default — separately billed, on explicit request only.
+- **Two reviews, both by an agent that did not write the thing** (`[user-specified]` 2026-07-30):
+  the plan before building, by the project's `plan-reviewer` agent; what was built at
+  **milestones**, often several sprints apart, by the `milestone-review` workflow — not
+  `/feature-close`, which is hygiene. Both on `opus`; `fable` only on explicit request.
 
 ## Project organization (adapt to size)
 
 Minimal by default; add structure only as a project needs it. A small script may only need
-`README.md` + `AI_INSTRUCTIONS.md`.
+`README.md`, `AI_INSTRUCTIONS.md` and the two agents every project has, `doc-keeper` and
+`plan-reviewer`.
 
 ```
 project/
@@ -152,18 +142,10 @@ project/
   - *After a move or rename*, `git grep` the file name across the whole project and rewrite every
     hit — also in the other projects under the same parent folder, when the new target is known.
   - *Dated records* — `archive/`, `claude_plans/`, a daily tracker — keep the pointers they were
-    written with.
+    written with; only a home path in them becomes `~/...`, which keeps its meaning.
 - **Pointers across projects rest on the name, never on the folder** (`[user-specified]`
-  2026-09-19). No test can check another project's paths, so the pointer has to survive a move by
-  itself. One line does it, plus the path of that project's `AI_INSTRUCTIONS.md` — the one fixed
-  address a project has, and not always in its top folder — so the reader finds the file through
-  the tree there: `<project>: lessons_learned.md (lesson 27, copied lists in agent files)`.
-  Name the section, never a line number. Point at the file that owns the fact, not at a copy of
-  it, and quote the values the pointer relies on, so a change shows up as a mismatch and not as a
-  silent wrong answer. A file that other projects cite is marked so in its own tree and keeps its
-  name. The limit: a data file deep inside another project — a model, an adapter — is below what
-  that tree lists, so its path lives in ONE configuration entry on the pointing side, with the
-  date it was last verified, never in prose.
+  2026-09-19): the file name and its section, never a folder path or a line number.
+  `/realign-project` check 16 holds the detail.
 
 ## The sprint cycle (how all projects run — `[user-specified]` 2026-07-17)
 
@@ -219,15 +201,17 @@ cannot be overridden here. Use `/custom_plan`, which writes the plan file and st
 
 ## Wireframes — a local Penpot is available (`[user-specified]` 2026-07-28)
 
-A self-hosted Penpot is there to draw in unattended, from any project. **Offer it when a picture
-would settle a screen faster than prose**; the user's word ends the discussion either way.
-`/wireframe` drives it and carries the operating detail.
+A self-hosted Penpot is there to draw in unattended, from any project. **It is a help, not a step:
+offer it only for a large screen design where words do not settle it, and draw only on the user's
+word** (`[user-specified]` 2026-10-18 — a drawing takes minutes per screen, and drawings he did not
+ask for are noise). Never put "draw first" into a project's rules or a sprint's deliverables; the
+user's word ends the discussion either way. `/wireframe` drives it and carries the operating detail.
 
 **Screens: names, not descriptions** (`[user-specified]` 2026-10-17). A control's label is its function's
 name (Prompt, Effect, Length); every description sits behind a "?" or tooltip, never on the screen — no
 explainer lines, hints or text inside buttons; real values ("1 s"), not abstractions ("Normal"); a choice
 appears only where it gives the user something, never to expose how a model works. Calm and compact, like
-a professional editor. A project may hold the detail (SmartPrepper: `agent_guide.md` §10).
+a professional editor. A project may hold the detail in its own docs.
 
 ## Browsers — one throwaway container (`[user-specified]` 2026-09-25)
 

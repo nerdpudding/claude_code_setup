@@ -2,7 +2,8 @@
 
 Delivered sprints, moved here verbatim from `roadmap.md` so the roadmap keeps the open work in
 front. Newest first. This is a dated record: names and paths are as they were written at the time
-and are not updated when files move. The version entries these sprints refer to as "in `README.md`"
+and are not updated when files move — except other projects' names, which this public repo does not
+carry (2026-10-22). The version entries these sprints refer to as "in `README.md`"
 moved to [docs/history/version_history.md](version_history.md) on 2026-09-19.
 
 ## Sprint 13: Opus 5.5 as the main model — make sure it is the one running, then align to it (Done — 2026-09-25)
@@ -416,7 +417,7 @@ Deferred (optional — left out to keep the flow simple: two commands, one file)
 
 ## Sprint 5: Fable 5 / field-test sync (Done — 2026-07-03)
 
-Synced `global_config/` back from the live `~/.claude/` after field use (mainly SmartPrepper) and
+Synced `global_config/` back from the live `~/.claude/` after field use (mainly in a larger sibling project) and
 the move to Claude Fable 5. See the v2.1 entry in `README.md` for the full change list.
 
 - [x] Add `/feature-close` skill (post-delivery hygiene — counterpart to `/custom_plan`)

@@ -73,6 +73,11 @@ run, has a finding.
 - `haiku` is never pinned or proposed; `fable` only where `AI_INSTRUCTIONS.md` records it or the
   user asks.
 - `docs/history/` and `archive/` are dated records; their names and paths are not rewritten.
+- `install.sh` keeps the settings listed in `LOCAL_SETTINGS` out of the repo and in place on
+  install. A plan that adds a machine-only key to `settings.json` without adding it there loses
+  the key on install, or leaks it into the public repo on pull.
+- A pointer by number ("check 14", "step 9") rots when a list is renumbered. A plan that
+  renumbers checks or steps greps for every numbered reference.
 - `/realign-project` never edits code or configuration that runs, and asks almost nothing; a plan
   that adds a question to it must show that no rule settles it.
 

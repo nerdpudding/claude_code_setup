@@ -73,7 +73,7 @@ Claude Code no longer applies a top-level `effortLevel` in user settings to it: 
 where it applied before, on Opus 5, Fable 5.1, and earlier models, while Opus 5.5 and models
 released after it start at their own default until you choose a level"* (model configuration
 docs). The level is therefore pinned per model, as `modelSettings."claude-opus-5-5".effortLevel:
-"high"` in `global_config/settings.json`; `/effort` writes that key itself. The top-level
+"high"` in `settings.example.json`; `/effort` writes that key itself. The top-level
 `"xhigh"` still in the file reaches only the older models. Recorded here so a later realign
 leaves it alone rather than "fixing" it.
 

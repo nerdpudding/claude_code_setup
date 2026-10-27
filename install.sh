@@ -6,10 +6,11 @@
 #   ./install.sh install   # repo -> ~/.claude (backs up files it overwrites)
 #   ./install.sh pull      # ~/.claude -> repo (bring live edits under version control)
 #
-# Scope: only the files this repo manages — CLAUDE.md, settings.json,
-# output-styles/, skills/, and workflows/. Machine-local state (settings.local.json,
-# memory, history, plugins, credentials) is never touched, and neither are the
-# machine-only keys inside settings.json listed in LOCAL_SETTINGS below.
+# Scope: only the files this repo manages — CLAUDE.md, output-styles/, skills/, and
+# workflows/. settings.json is never touched: it holds machine-specific permissions and
+# context that do not belong in a public repo, so each machine keeps its own, started
+# once from settings.example.json. Other machine-local state (settings.local.json,
+# memory, history, plugins, credentials) is never touched either.
 #
 # Home-path placeholder: this repo is PUBLIC, so no home directory is ever committed.
 # Files store the token __HOME__ where an absolute home path is required; `install`
@@ -41,54 +42,12 @@ to_live() { sed "s|${HOME_TOKEN}/|$HOME_REP/|g" "$1"; }
 # live form -> repo form: this machine's home path becomes the placeholder.
 to_repo() { sed "s|$HOME_PAT/|$HOME_TOKEN/|g" "$1"; }
 
-# Settings that belong to this machine only: install keeps them, diff ignores them, and pull
-# leaves them out of the repo (it is public, and they name local folders). Dotted paths into
-# settings.json; add one here when a new machine-only setting appears.
-LOCAL_SETTINGS="statusLine permissions.additionalDirectories"
-
-# settings_json strip FILE        -> FILE without the local settings, formatted the repo's way
-# settings_json merge FILE LIVE   -> FILE with the local settings copied over from LIVE
-settings_json() {
-  python3 - "$LOCAL_SETTINGS" "$@" <<'PY'
-import json, sys
-keys = [k.split(".") for k in sys.argv[1].split()]
-mode, path = sys.argv[2], sys.argv[3]
-data = json.load(open(path))
-
-def find(d, ks):
-    for k in ks:
-        if not isinstance(d, dict) or k not in d:
-            return False, None
-        d = d[k]
-    return True, d
-
-for ks in keys:
-    if mode == "strip":
-        found, parent = find(data, ks[:-1])
-        if found and isinstance(parent, dict):
-            parent.pop(ks[-1], None)
-    else:
-        found, value = find(json.load(open(sys.argv[4])), ks)
-        if found:
-            d = data
-            for k in ks[:-1]:
-                d = d.setdefault(k, {})
-            d[ks[-1]] = value
-print(json.dumps(data, indent=2, ensure_ascii=False))
-PY
-}
-
-# want REL SRC: the repo file as the live file should read, local settings left out.
-want() { if [ "$1" = settings.json ]; then settings_json strip <(to_live "$2"); else to_live "$2"; fi; }
-# have REL DST: the live file as it reads, local settings left out.
-have() { if [ "$1" = settings.json ]; then settings_json strip "$2"; else cat "$2"; fi; }
-
 # Union of managed files on both sides, as paths relative to global_config/.
 tracked_paths() {
   {
     (cd "$REPO_DIR" && find . -type f)
     if [ -d "$CLAUDE_DIR" ]; then
-      (cd "$CLAUDE_DIR" && find ./CLAUDE.md ./settings.json ./output-styles ./skills ./workflows -type f 2>/dev/null || true)
+      (cd "$CLAUDE_DIR" && find ./CLAUDE.md ./output-styles ./skills ./workflows -type f 2>/dev/null || true)
     fi
   } | sed 's|^\./||' | sort -u
 }
@@ -102,9 +61,9 @@ case "$MODE" in
         echo "only in repo:    $rel"; drift=1
       elif [ ! -f "$src" ]; then
         echo "only in ~/.claude: $rel"; drift=1
-      elif ! cmp -s <(want "$rel" "$src") <(have "$rel" "$dst"); then
+      elif ! cmp -s <(to_live "$src") "$dst"; then
         echo "differs:         $rel"; drift=1
-        diff -u <(want "$rel" "$src") <(have "$rel" "$dst") | sed 's/^/  /' || true
+        diff -u <(to_live "$src") "$dst" | sed 's/^/  /' || true
       fi
     done < <(tracked_paths)
     [ "$drift" -eq 0 ] && echo "in sync: repo matches $CLAUDE_DIR"
@@ -116,17 +75,13 @@ case "$MODE" in
     while IFS= read -r rel; do
       src="$REPO_DIR/$rel" dst="$CLAUDE_DIR/$rel"
       [ -f "$src" ] || continue
-      if [ -f "$dst" ] && cmp -s <(want "$rel" "$src") <(have "$rel" "$dst"); then continue; fi
+      if [ -f "$dst" ] && cmp -s <(to_live "$src") "$dst"; then continue; fi
       if [ -f "$dst" ]; then
         mkdir -p "$backup_dir/$(dirname "$rel")"
         cp -p "$dst" "$backup_dir/$rel"
       fi
       mkdir -p "$(dirname "$dst")"
-      if [ "$rel" = settings.json ] && [ -f "$dst" ]; then
-        settings_json merge <(to_live "$src") "$backup_dir/$rel" > "$dst"
-      else
-        to_live "$src" > "$dst"
-      fi
+      to_live "$src" > "$dst"
       echo "installed: $rel"
       changed=1
     done < <(tracked_paths)
@@ -143,9 +98,9 @@ case "$MODE" in
     while IFS= read -r rel; do
       src="$CLAUDE_DIR/$rel" dst="$REPO_DIR/$rel"
       [ -f "$src" ] || continue
-      if [ -f "$dst" ] && cmp -s <(to_repo <(have "$rel" "$src")) <(have "$rel" "$dst"); then continue; fi
+      if [ -f "$dst" ] && cmp -s <(to_repo "$src") "$dst"; then continue; fi
       mkdir -p "$(dirname "$dst")"
-      to_repo <(have "$rel" "$src") > "$dst"
+      to_repo "$src" > "$dst"
       echo "pulled: $rel"
       changed=1
     done < <(tracked_paths)

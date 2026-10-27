@@ -39,6 +39,7 @@ claude-code-setup/
 ├── README.md                       # Overview, which file does what, quick start, the skills
 ├── roadmap.md                      # Sprint plan and status
 ├── install.sh                      # Sync script: diff / install / pull between repo and ~/.claude/
+├── settings.example.json           # Example ~/.claude/settings.json — copied by hand once, never synced
 ├── .gitignore                      # Ignores archive/, so archived files stay out of the public repo
 ├── concepts/                       # Concept and early design thinking
 │   └── concept.md                  # Concept, diagrams, technical decisions
@@ -53,7 +54,6 @@ claude-code-setup/
 │   └── prompting_guides/           # Dated snapshots of Anthropic's prompting guides; `url:` and `fetched:` in each header
 ├── global_config/                  # The files install.sh copies to ~/.claude/ (mirrors its layout)
 │   ├── CLAUDE.md                   # Global CLAUDE.md, loaded every session
-│   ├── settings.json               # Global settings
 │   ├── output-styles/
 │   │   └── personal-voice.md       # Tone/voice output style (on by default via outputStyle)
 │   ├── skills/                     # One folder per skill — the Skills table below is the list

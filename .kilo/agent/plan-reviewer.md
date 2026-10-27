@@ -41,7 +41,7 @@ wrong, with the evidence.
   longer is, is a finding.
 - A skill that reads another skill's file, or a hook that runs a script, depends on the installed
   path under `~/.claude/`. Check that the path the reader uses is the path `install.sh` produces.
-- `install.sh` syncs only `CLAUDE.md`, `settings.json`, `output-styles/`, `skills/` and
+- `install.sh` syncs only `CLAUDE.md`, `output-styles/`, `skills/` and
   `workflows/`, writes files without their executable bit, and turns `__HOME__/` into the real home
   path. A plan step that relies on anything else is a finding.
 - Kilo CLI works from generated copies of the global rules and of each project's agents; a plan
@@ -73,9 +73,9 @@ run, has a finding.
 - `haiku` is never pinned or proposed; `fable` only where `AI_INSTRUCTIONS.md` records it or the
   user asks.
 - `docs/history/` and `archive/` are dated records; their names and paths are not rewritten.
-- `install.sh` keeps the settings listed in `LOCAL_SETTINGS` out of the repo and in place on
-  install. A plan that adds a machine-only key to `settings.json` without adding it there loses
-  the key on install, or leaks it into the public repo on pull.
+- `~/.claude/settings.json` is never synced; the repo holds only `settings.example.json`, with
+  placeholder paths. A plan that puts a real path, repo name or machine detail into the example,
+  or makes `install.sh` sync `settings.json` again, leaks it into the public repo.
 - A pointer by number ("check 14", "step 9") rots when a list is renumbered. A plan that
   renumbers checks or steps greps for every numbered reference.
 - `/realign-project` never edits code or configuration that runs, and asks almost nothing; a plan

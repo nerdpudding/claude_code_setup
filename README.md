@@ -1,8 +1,8 @@
 # claude-code-setup
 
-A version-controlled home for one person's Claude Code environment: the global `CLAUDE.md`,
-`settings.json`, an output style, a set of skills, and saved workflows. Its owner clones it,
-copies `global_config/*` into `~/.claude/`, and every machine works the same way.
+A version-controlled home for one person's Claude Code environment: the global `CLAUDE.md`, an
+output style, a set of skills, saved workflows, and an example `settings.json`. Its owner clones
+it, copies `global_config/*` into `~/.claude/`, and every machine works the same way.
 
 **Published as an example, not as a template to copy.** It shows one way to set up and run Claude
 Code; it is not the way to do it. Take what fits how you work and build your own setup on it — see
@@ -41,10 +41,9 @@ you their preferences as your rules. Read it instead, and copy the ideas rather 
   Of everything here, this is the file least suited to copying as-is: it is already longer than an
   output style needs to be, and it is still an experiment, reworded with each model release. Write
   a short style of your own and borrow single rules from it where they match a problem you have.
-- `global_config/settings.json` — permissions for the owner's own tools and folders, privacy
-  switches, model and effort choices. Do not copy this one either: it is customised to one
-  machine and one way of working. Read it to see which keys exist, and start from Claude Code's
-  defaults.
+- `settings.example.json` — permissions for the owner's tools, privacy switches, model and
+  effort choices, with paths replaced by placeholders. Read it to see which keys exist, and start
+  from Claude Code's defaults. [Settings](#settings) says what each part is for.
 - `/wireframe` and `/contained-browser` (they need a local self-hosted Penpot and browser
   container), `/kilo-sync` (needs a private setup that is not in this repo), and `/beep` (Linux
   sound through `paplay`).
@@ -93,7 +92,7 @@ These files are kept in this repo under `global_config/`, and `install.sh` copie
 |------|----------------|--------------|
 | `CLAUDE.md` | How the work is done, in any project: the hard rules, the sprint cycle, how a project is organised, which model a subagent gets, how much to test. | Claude Code loads it by itself, in every session and in every subagent. There is exactly one. |
 | `output-styles/personal-voice.md` | How Claude talks to the user: short, plain words, no invented labels, one decision at a time, Dutch that keeps its English terms. | It is part of the system prompt, which is why tone rules hold here and never held in `CLAUDE.md`. It does not reach a subagent. Switched on through `outputStyle` in `settings.json`. |
-| `settings.json` | Switches instead of prose: model and fallback chain, effort level, permissions, where plans are saved, no AI attribution in commits. | The values live in the file; read them there. A project can override a key in its own `.claude/settings.json`. |
+| `settings.json` | Switches instead of prose: model and fallback chain, effort level, permissions, where plans are saved, no AI attribution in commits. | Not synced by `install.sh`: each machine keeps its own, started once from `settings.example.json` — see [Settings](#settings). A project can override a key in its own `.claude/settings.json`. |
 | `skills/` | Step-by-step procedures called with a slash command: set a project up, realign one, plan, close a sprint, hand over to a new session. See [The skills](#the-skills). | A skill costs nothing until it is called. A project may add skills of its own in `.claude/skills/`. |
 | `workflows/` | Saved runs with several agents: the doc sweep and the milestone review. See [Saved workflows](#saved-workflows). | Available in every project. |
 
@@ -156,15 +155,35 @@ cd claude-code-setup
 #    /project-setup   (verify global setup, or scaffold a project)
 ```
 
-`install.sh` only touches the files this repo manages (`CLAUDE.md`, `settings.json`,
-`output-styles/`, `skills/`, `workflows/`) — machine-local state like `settings.local.json`, memory, history,
-and plugins is left alone. So are the settings inside `settings.json` that belong to one machine —
-a status line, extra directories — listed in `LOCAL_SETTINGS` at the top of `install.sh`: install
-keeps them, diff ignores them, pull leaves them out of the repo. The reverse direction works too: after editing the live config, run
-`./install.sh pull` to bring the changes back into the repo and commit them. (Manual equivalent:
+`install.sh` only touches the files this repo manages (`CLAUDE.md`, `output-styles/`, `skills/`,
+`workflows/`) — `settings.json`, `settings.local.json`, memory, history and plugins are left
+alone. The reverse direction works too: after editing the live config, run `./install.sh pull` to
+bring the changes back into the repo and commit them. (Manual equivalent:
 `cp -r global_config/* ~/.claude/`.)
 
 The Personal Voice output style and the skills take effect on the **next session** after copying.
+
+### Settings
+
+`~/.claude/settings.json` stays out of the repo: it holds permissions and context about one
+machine — its folders, its repos, where sensitive data lives — and this repo is public. On a new
+machine, copy `settings.example.json` to `~/.claude/settings.json` once, replace `USER` and
+`PROJECTS` in the paths, and edit it there from then on.
+
+| Part | Why it is there |
+|------|-----------------|
+| `env` | Telemetry, error reporting and the feedback command off; longer shell timeouts for builds and model runs. |
+| `attribution`, `includeCoAuthoredBy` | No AI attribution in commits or pull requests. |
+| `permissions.allow` | Routine commands that run without a prompt: read-only git, `git add`/`commit`/`push`/`mv`, Docker, GPU status. `rm` is allowed only under the projects folder, written as a full path because the rule matches the command text. The `beep.sh` rule lets the `/beep` sound play without a prompt. |
+| `permissions.deny` | Force push is never allowed — it overwrites history on the remote. |
+| `defaultMode: auto` | Auto mode: a command no rule covers is judged by the auto mode classifier instead of a prompt. |
+| `autoMode.allow` | One sentence of context for that classifier, so routine work on one's own machine is not refused. `$defaults` keeps Claude Code's built-in list. |
+| `model`, `fallbackModel`, `effortLevel`, `modelSettings` | The session model, what to fall back to when it is unavailable, and the reasoning effort per model. |
+| `outputStyle` | Switches on the Personal Voice output style. |
+| `enabledPlugins`, `extraKnownMarketplaces` | The `diagram-design` plugin for architecture diagrams, and a Go language server. |
+| `plansDirectory` | Plans are saved in the project, not in `~/.claude/`. |
+| `hooks.Notification` | Plays the `/beep` sound when a permission prompt appears. |
+| the rest | Display preferences: full-screen TUI, thinking summaries, theme, verbose output, fewer warnings. |
 
 ## The skills
 

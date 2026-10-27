@@ -26,23 +26,22 @@
       "Bash(docker run:*)",
       "Bash(docker compose:*)",
       "Bash(uv run:*)",
-      "Bash(.venv/bin/distillery:*)",
-      "Bash(distillery:*)",
-      "Bash(.venv/bin/python:*)",
       "Bash(tmux:*)",
-      "Bash(./start.sh:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(rm __HOME__/vibe_claude_kilo_cli_exp/*)",
-      "Bash(rm -r __HOME__/vibe_claude_kilo_cli_exp/*)",
-      "Bash(rm -rf __HOME__/vibe_claude_kilo_cli_exp/*)",
-      "Bash(bash __HOME__/.claude/skills/beep/beep.sh*)"
+      "Bash(git push *)",
+      "Bash(git mv *)",
+      "Bash(rm /home/USER/PROJECTS/*)",
+      "Bash(rm -r /home/USER/PROJECTS/*)",
+      "Bash(rm -rf /home/USER/PROJECTS/*)",
+      "Bash(bash /home/USER/.claude/skills/beep/beep.sh*)"
     ],
     "deny": [
-      "Read(**/sampling_prompts.txt)"
+      "Bash(git push --force*)",
+      "Bash(git push -f*)"
     ],
     "defaultMode": "auto"
   },
@@ -88,7 +87,7 @@
   "autoMode": {
     "allow": [
       "$defaults",
-      "This is the user's own single-user development machine and he owns all of its GPUs and Docker. Local GPU training runs, Docker container lifecycle (run/stop/rm/logs), and starting/stopping the local llama-server are authorized routine dev-loop actions and should be allowed without a per-action sentence."
+      "This is the user's own single-user development machine and the user owns all of its GPUs and Docker. Local GPU jobs, Docker container lifecycle (run/stop/rm/logs) and starting/stopping local model servers are authorized routine dev-loop actions and should be allowed without a per-action sentence."
     ]
   },
   "hooks": {
@@ -98,7 +97,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash __HOME__/.claude/skills/beep/beep.sh"
+            "command": "bash /home/USER/.claude/skills/beep/beep.sh"
           }
         ]
       }

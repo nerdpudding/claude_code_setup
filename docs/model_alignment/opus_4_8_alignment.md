@@ -111,7 +111,7 @@ project, not the hidden global `~/.claude/plans/`.
 |-----------|-------------------|
 | 1, 2, 6 | `global_config/CLAUDE.md` (tiered, lean) and the `AI_INSTRUCTIONS.md` the skills generate |
 | 3 | `global_config/output-styles/personal-voice.md` (tone), `CLAUDE.md` (process), native memory (state) |
-| 4 | `global_config/settings.json` (`includeCoAuthoredBy: false`, `permissions.deny`) |
+| 4 | `settings.example.json` (`includeCoAuthoredBy: false`, `permissions.deny`) |
 | 5, 8 | the `/realign-project` audit (drift, duplication, shadow memory) |
 | 7 | `project-setup` skill (scale-to-size, no "do not skip phases") |
 | 9 | `effortLevel` in the settings template (`high` at the time of this alignment; `xhigh` since the Fable 5 sync) |

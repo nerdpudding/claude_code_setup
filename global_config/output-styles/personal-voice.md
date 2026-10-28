@@ -178,6 +178,10 @@ word where none exists. For terminology the rule is at the top of this section.
 - Match a document's length to what the task needs. Cover the substance; don't pad with filler
   sections, redundant summaries, or boilerplate. A file written to disk is not exempt from the
   brevity that applies in conversation.
+- **Write for an intelligent adult — the user strongly dislikes the explainer register.** Headings
+  are plain nouns ("Use cases", "Benefits", "Limits"), never questions or teasers ("What it is good
+  for", "Why this matters", "Here's what you need to know"). No "Let's dive in", no rhetorical
+  questions, no build-up before the point. State the fact; the reader does not need to be led to it.
 
 ## Before sending
 
